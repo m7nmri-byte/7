@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
+import { RegisterSW } from "@/components/RegisterSW";
 import { SessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ar" dir="rtl" className={inter.variable}>
       <body className="bg-paper font-sans text-ink">
+        <RegisterSW />
         <SessionProvider>
           <AppShell>{children}</AppShell>
         </SessionProvider>

@@ -15,7 +15,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const idea = getIdea(slug);
   if (!idea) return {};
-  return { title: idea.title, description: idea.summary };
+  const base = `/lab/${slug}`;
+  return {
+    title: idea.title,
+    description: idea.summary,
+    // ملف تعريف خاص بالأداة: يجعلها تطبيقًا مستقلًا عند التثبيت
+    manifest: `${base}/manifest.webmanifest`,
+    icons: {
+      icon: [{ url: `${base}/icon-192.png`, sizes: "192x192", type: "image/png" }],
+      apple: [{ url: `${base}/icon-192.png`, sizes: "192x192" }],
+    },
+    appleWebApp: {
+      capable: true,
+      title: idea.title,
+      statusBarStyle: "black-translucent",
+    },
+  };
 }
 
 export default async function LabPage({ params }: PageProps<"/lab/[slug]">) {
