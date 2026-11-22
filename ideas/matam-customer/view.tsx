@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Combo, Item, Order } from "../matam/types";
 import {
+  fetchBanners,
   fetchCategories,
   fetchCombos,
   fetchItems,
@@ -17,6 +18,7 @@ import { isOpenOrder } from "../matam/status";
 import { Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
 import { Menu } from "./Menu";
 import { ItemSheet } from "./ItemSheet";
+import { ComboSheet } from "./ComboSheet";
 import { Cart } from "./Cart";
 import { Checkout } from "./Checkout";
 import { OrderDetail, OrdersList } from "./Tracking";
@@ -55,6 +57,7 @@ export default function CustomerApp() {
   const deviceId = useDeviceId();
   const [tab, setTab] = useState<Tab>("menu");
   const [item, setItem] = useState<Item | null>(null);
+  const [combo, setCombo] = useState<Combo | null>(null);
   const [checkout, setCheckout] = useState(false);
   const [openOrder, setOpenOrder] = useState<Order | null>(null);
   const { toast, node } = useMToast();
@@ -65,6 +68,7 @@ export default function CustomerApp() {
   const { data: items } = useLive("matam_items", fetchItems);
   const { data: combos } = useLive("matam_combos", fetchCombos);
   const { data: zones } = useLive("matam_zones", fetchZones);
+  const { data: banners } = useLive("matam_banners", fetchBanners);
 
   const loadOrders = useCallback(
     () => (deviceId ? fetchOrders({ deviceId, limit: 60 }) : Promise.resolve([])),
@@ -140,8 +144,9 @@ export default function CustomerApp() {
             categories={categories ?? []}
             items={items ?? []}
             combos={combos ?? []}
+            banners={banners ?? []}
             onOpenItem={setItem}
-            onOpenCombo={(c: Combo) => toast(`${c.name} — الوجبات المركّبة قريبًا`)}
+            onOpenCombo={setCombo}
           />
         ) : tab === "cart" ? (
           <Cart
@@ -164,6 +169,13 @@ export default function CustomerApp() {
       </Body>
 
       <ItemSheet item={item} onClose={() => setItem(null)} onAdded={() => toast("أُضيف إلى السلة")} />
+
+      <ComboSheet
+        combo={combo}
+        items={items ?? []}
+        onClose={() => setCombo(null)}
+        onAdded={() => toast("أُضيفت الوجبة إلى السلة")}
+      />
 
       <Checkout
         open={checkout}

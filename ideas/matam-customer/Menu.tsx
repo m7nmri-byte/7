@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Category, Combo, Item, Settings } from "../matam/types";
+import type { Banner, Category, Combo, Item, Settings } from "../matam/types";
 import { discounted } from "../matam/cart";
 import { money } from "../matam/format";
 import { Chip, Empty } from "../matam/ui";
@@ -39,6 +39,7 @@ export function Menu({
   categories,
   items,
   combos,
+  banners,
   onOpenItem,
   onOpenCombo,
 }: {
@@ -46,6 +47,7 @@ export function Menu({
   categories: Category[];
   items: Item[];
   combos: Combo[];
+  banners: Banner[];
   onOpenItem: (item: Item) => void;
   onOpenCombo: (combo: Combo) => void;
 }) {
@@ -71,6 +73,23 @@ export function Menu({
       {closed && (
         <div className="bg-m-danger/15 px-4 py-2.5 text-center text-xs text-m-danger">
           المطعم مغلق الآن — يمكنك التصفّح دون طلب
+        </div>
+      )}
+
+      {banners.filter((b) => b.is_active).length > 0 && (
+        <div className="m-noscroll flex gap-3 overflow-x-auto px-4 pt-4">
+          {banners
+            .filter((b) => b.is_active)
+            .map((b) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={b.id}
+                src={b.image_url}
+                alt=""
+                loading="lazy"
+                className="h-32 w-72 shrink-0 rounded-2xl object-cover"
+              />
+            ))}
         </div>
       )}
 

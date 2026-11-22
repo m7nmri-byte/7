@@ -5,6 +5,7 @@ import {
   fetchAds,
   fetchBanners,
   fetchCategories,
+  fetchCombos,
   fetchDrivers,
   fetchItems,
   fetchOrders,
@@ -18,6 +19,7 @@ import { Body, Phone, TabBar, TopBar } from "../matam/ui";
 import { Home } from "./Home";
 import { Orders } from "./Orders";
 import { Items } from "./Items";
+import { Combos } from "./Combos";
 import { Categories } from "./Categories";
 import { Drivers, Zones } from "./Fleet";
 import { Banners } from "./Banners";
@@ -29,6 +31,7 @@ type Tab = "home" | "orders" | "menu" | "more";
 type MorePage =
   | null
   | "categories"
+  | "combos"
   | "drivers"
   | "zones"
   | "banners"
@@ -64,6 +67,7 @@ const ICONS = {
 
 const MORE_ITEMS: { key: Exclude<MorePage, null>; label: string; hint: string }[] = [
   { key: "categories", label: "الفئات", hint: "تنظيم القائمة" },
+  { key: "combos", label: "الوجبات المركّبة", hint: "عدة أصناف بسعر واحد" },
   { key: "drivers", label: "المندوبون", hint: "من يوصّل الطلبات" },
   { key: "zones", label: "مناطق التوصيل", hint: "الرسوم حسب المنطقة" },
   { key: "banners", label: "اللافتات", hint: "صور أعلى قائمة الزبون" },
@@ -85,6 +89,7 @@ export default function AdminApp() {
   const { data: drivers, refresh: refreshDrivers } = useLive("matam_drivers", fetchDrivers);
   const { data: zones, refresh: refreshZones } = useLive("matam_zones", fetchZones);
   const { data: banners, refresh: refreshBanners } = useLive("matam_banners", fetchBanners);
+  const { data: combos, refresh: refreshCombos } = useLive("matam_combos", fetchCombos);
   const loadTickets = useCallback(() => fetchTickets(), []);
   const { data: tickets, refresh: refreshTickets } = useLive("matam_tickets", loadTickets);
   useLive("matam_popup_ads", fetchAds);
@@ -98,6 +103,8 @@ export default function AdminApp() {
   const content = () => {
     if (page === "categories")
       return <Categories categories={categories ?? []} onChanged={refreshCats} />;
+    if (page === "combos")
+      return <Combos combos={combos ?? []} items={items ?? []} onChanged={refreshCombos} />;
     if (page === "drivers") return <Drivers drivers={drivers ?? []} onChanged={refreshDrivers} />;
     if (page === "zones") return <Zones zones={zones ?? []} onChanged={refreshZones} />;
     if (page === "banners") return <Banners banners={banners ?? []} onChanged={refreshBanners} />;
