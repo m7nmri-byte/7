@@ -25,7 +25,7 @@ function NavLink({
       aria-current={active ? "page" : undefined}
       className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors ${
         active
-          ? "bg-clay-soft font-medium text-clay"
+          ? "bg-brand-soft font-medium text-brand"
           : "text-muted hover:bg-card hover:text-ink"
       }`}
     >
@@ -42,7 +42,7 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
       <Link
         href="/"
         onClick={onNavigate}
-        className="mark px-3 text-lg font-semibold tracking-tight text-ink transition-colors hover:text-clay"
+        className="mark px-3 text-lg font-semibold tracking-tight text-ink transition-colors hover:text-brand"
       >
         m7nmri
       </Link>

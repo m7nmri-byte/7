@@ -25,10 +25,10 @@ export default function Home() {
             <li key={idea.slug}>
               <Link
                 href={`/lab/${idea.slug}`}
-                className="group flex h-full flex-col gap-3 rounded-2xl border border-edge bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-clay/40 hover:shadow-lg hover:shadow-black/5 sm:p-6"
+                className="group flex h-full flex-col gap-3 rounded-2xl border border-edge bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-lg hover:shadow-black/5 sm:p-6"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="text-lg font-medium transition-colors group-hover:text-clay">
+                  <h2 className="text-lg font-medium transition-colors group-hover:text-brand">
                     {idea.title}
                   </h2>
                   <StatusChip status={idea.status} />

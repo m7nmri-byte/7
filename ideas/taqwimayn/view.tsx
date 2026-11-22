@@ -24,7 +24,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 const control =
   "bg-card border border-edge rounded-xl px-3 py-2.5 text-ink outline-none " +
-  "transition-colors focus:border-clay/60 hover:border-edge";
+  "transition-colors focus:border-brand/60 hover:border-edge";
 
 export default function Taqwimayn() {
   const [mode, setMode] = useState<"g2h" | "h2g">("g2h");
@@ -84,7 +84,7 @@ export default function Taqwimayn() {
             onClick={() => setMode(key)}
             aria-pressed={mode === key}
             className={`rounded-md px-4 py-2 text-sm transition-colors ${
-              mode === key ? "bg-clay-soft text-clay font-medium" : "text-muted hover:text-ink"
+              mode === key ? "bg-brand-soft text-brand font-medium" : "text-muted hover:text-ink"
             }`}
           >
             {label}
@@ -146,7 +146,7 @@ export default function Taqwimayn() {
       <div className="rounded-2xl border border-edge bg-card p-6 sm:p-8">
         {result ? (
           <div className="flex flex-col gap-5">
-            <p className="text-sm font-medium text-clay">{dayName(result.date)}</p>
+            <p className="text-sm font-medium text-brand">{dayName(result.date)}</p>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <span className="text-xs tracking-wide text-faint">هجري</span>

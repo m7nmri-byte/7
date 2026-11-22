@@ -7,7 +7,7 @@ export default function NotFound() {
       <p className="text-muted">لا يوجد شيء هنا.</p>
       <Link
         href="/"
-        className="rounded-full bg-clay px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+        className="rounded-full bg-brand px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
       >
         العودة للرئيسية
       </Link>

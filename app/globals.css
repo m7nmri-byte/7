@@ -7,49 +7,47 @@
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
-  --color-clay: var(--clay);
-  --color-clay-soft: var(--clay-soft);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
 
-  --font-sans: var(--font-arabic), system-ui, sans-serif;
-  --font-mark: var(--font-mark-latin), system-ui, sans-serif;
+  --font-sans: var(--font-inter), var(--font-cairo), system-ui, sans-serif;
+  --font-mark: var(--font-inter), system-ui, sans-serif;
 }
 
 :root {
-  /* ورق دافئ لا رمادي بارد */
-  --paper: #faf8f5;
+  --paper: #f8fafc;   /* slate-50  */
   --card: #ffffff;
-  --edge: #ebe4dc;
-  --ink: #1c1917;
-  --muted: #78716c;
-  --faint: #a8a29e;
+  --edge: #e2e8f0;    /* slate-200 */
+  --ink: #1e293b;     /* slate-800 */
+  --muted: #64748b;   /* slate-500 */
+  --faint: #94a3b8;   /* slate-400 */
 
-  /* طينيّ: اللون المميّز */
-  --clay: #9a3412;
-  --clay-soft: #fdf3ed;
+  --brand: #0f766e;        /* teal-700 */
+  --brand-soft: #f0fdfa;   /* teal-50  */
 
   /* حالات الأفكار */
-  --st-seed: #78716c;        --st-seed-tint: #f5f4f2;
-  --st-building: #b45309;    --st-building-tint: #fef8ec;
-  --st-ripe: #15803d;        --st-ripe-tint: #f1faf2;
-  --st-freed: #1d4ed8;       --st-freed-tint: #eff4ff;
+  --st-seed: #64748b;        --st-seed-tint: #f1f5f9;
+  --st-building: #ca8a04;    --st-building-tint: #fefce8;
+  --st-ripe: #0f766e;        --st-ripe-tint: #f0fdfa;
+  --st-freed: #0369a1;       --st-freed-tint: #f0f9ff;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14110f;
-    --card: #1c1816;
-    --edge: #2e2724;
-    --ink: #ece7e1;
-    --muted: #a8a09a;
-    --faint: #786f68;
+    --paper: #020617;   /* slate-950 */
+    --card: #0f172a;    /* slate-900 */
+    --edge: #1e293b;    /* slate-800 */
+    --ink: #f1f5f9;     /* slate-100 */
+    --muted: #94a3b8;
+    --faint: #64748b;
 
-    --clay: #e0785a;
-    --clay-soft: #2a1a13;
+    --brand: #2dd4bf;        /* teal-400 */
+    --brand-soft: #042f2e;   /* teal-950 */
 
-    --st-seed: #a8a29e;        --st-seed-tint: #26211f;
-    --st-building: #e0a44a;    --st-building-tint: #2b2114;
-    --st-ripe: #5fb87f;        --st-ripe-tint: #15251a;
-    --st-freed: #7aa5f0;       --st-freed-tint: #161e2c;
+    --st-seed: #94a3b8;        --st-seed-tint: #1e293b;
+    --st-building: #eab308;    --st-building-tint: #292212;
+    --st-ripe: #2dd4bf;        --st-ripe-tint: #042f2e;
+    --st-freed: #38bdf8;       --st-freed-tint: #0c243a;
   }
 }
 
@@ -62,7 +60,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* النص اللاتيني داخل سياق عربي: اتجاهه ثابت وخطه مستقل */
+/* النص اللاتيني داخل سياق عربي: اتجاهه ثابت */
 .mark {
   font-family: var(--font-mark);
   direction: ltr;
@@ -70,7 +68,8 @@ body {
 }
 
 ::selection {
-  background-color: color-mix(in oklab, var(--clay) 22%, transparent);
+  background-color: #99f6e4;
+  color: #134e4a;
 }
 
 /* حقول الإدخال لا تصغر عن ١٦ بكسل، وإلا كبّر Safari الصفحة تلقائياً */

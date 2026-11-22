@@ -49,7 +49,7 @@ export default async function LabPage({ params }: PageProps<"/lab/[slug]">) {
             href={idea.freedUrl}
             target="_blank"
             rel="noreferrer"
-            className="w-fit rounded-full bg-clay-soft px-4 py-2 text-sm font-medium text-clay transition-opacity hover:opacity-80"
+            className="w-fit rounded-full bg-brand-soft px-4 py-2 text-sm font-medium text-brand transition-opacity hover:opacity-80"
           >
             انتقلت إلى مشروع مستقل ↗
           </a>
