@@ -23,8 +23,8 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 const control =
-  "bg-ink border border-line rounded-lg px-3 py-2.5 text-paper outline-none " +
-  "transition-colors focus:border-gold/60 hover:border-line/80";
+  "bg-card border border-edge rounded-xl px-3 py-2.5 text-ink outline-none " +
+  "transition-colors focus:border-clay/60 hover:border-edge";
 
 export default function Taqwimayn() {
   const [mode, setMode] = useState<"g2h" | "h2g">("g2h");
@@ -60,7 +60,7 @@ export default function Taqwimayn() {
     return (
       <div
         aria-hidden
-        className="h-72 animate-pulse rounded-xl border border-line-soft bg-ink-raised"
+        className="h-72 animate-pulse rounded-xl border border-edge bg-card"
       />
     );
   }
@@ -71,7 +71,7 @@ export default function Taqwimayn() {
   return (
     <div className="flex flex-col gap-8">
       {/* مبدّل الاتجاه */}
-      <div className="inline-flex self-start rounded-lg border border-line bg-ink-raised p-1">
+      <div className="inline-flex self-start rounded-lg border border-edge bg-card p-1">
         {(
           [
             ["g2h", "ميلادي ← هجري"],
@@ -84,7 +84,7 @@ export default function Taqwimayn() {
             onClick={() => setMode(key)}
             aria-pressed={mode === key}
             className={`rounded-md px-4 py-2 text-sm transition-colors ${
-              mode === key ? "bg-line text-paper" : "text-mist hover:text-paper"
+              mode === key ? "bg-clay-soft text-clay font-medium" : "text-muted hover:text-ink"
             }`}
           >
             {label}
@@ -123,7 +123,7 @@ export default function Taqwimayn() {
               className={`${control} w-full`}
             >
               {HIJRI_MONTHS.map((name, i) => (
-                <option key={name} value={i + 1} className="bg-ink">
+                <option key={name} value={i + 1} className="bg-card">
                   {name}
                 </option>
               ))}
@@ -143,10 +143,10 @@ export default function Taqwimayn() {
       )}
 
       {/* النتيجة */}
-      <div className="rounded-xl border border-line bg-ink-raised p-6 sm:p-8">
+      <div className="rounded-2xl border border-edge bg-card p-6 sm:p-8">
         {result ? (
           <div className="flex flex-col gap-5">
-            <p className="text-sm text-gold">{dayName(result.date)}</p>
+            <p className="text-sm font-medium text-clay">{dayName(result.date)}</p>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <span className="text-xs tracking-wide text-faint">هجري</span>
@@ -154,7 +154,7 @@ export default function Taqwimayn() {
                   {hijriText(result.hijri)}
                 </span>
               </div>
-              <div className="flex flex-col gap-1.5 sm:border-s sm:border-line sm:ps-5">
+              <div className="flex flex-col gap-1.5 sm:border-s sm:border-edge sm:ps-5">
                 <span className="text-xs tracking-wide text-faint">ميلادي</span>
                 <span className="text-xl font-light sm:text-2xl">
                   {gregorianText(result.date)}
@@ -163,7 +163,7 @@ export default function Taqwimayn() {
             </div>
           </div>
         ) : (
-          <p className="text-mist">تاريخ غير موجود في التقويم.</p>
+          <p className="text-muted">تاريخ غير موجود في التقويم.</p>
         )}
       </div>
 

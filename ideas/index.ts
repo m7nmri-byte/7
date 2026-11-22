@@ -18,11 +18,14 @@ export type Idea = {
   freedUrl?: string;
 };
 
-export const STATUS: Record<Status, { label: string; color: string }> = {
-  seed: { label: "بذرة", color: "var(--color-seed)" },
-  building: { label: "قيد العمل", color: "var(--color-building)" },
-  ripe: { label: "ناضجة", color: "var(--color-ripe)" },
-  freed: { label: "معزولة", color: "var(--color-freed)" },
+export const STATUS: Record<
+  Status,
+  { label: string; color: string; tint: string }
+> = {
+  seed: { label: "بذرة", color: "var(--st-seed)", tint: "var(--st-seed-tint)" },
+  building: { label: "قيد العمل", color: "var(--st-building)", tint: "var(--st-building-tint)" },
+  ripe: { label: "ناضجة", color: "var(--st-ripe)", tint: "var(--st-ripe-tint)" },
+  freed: { label: "معزولة", color: "var(--st-freed)", tint: "var(--st-freed-tint)" },
 };
 
 /* ────────────────────────────────────────────────────────────

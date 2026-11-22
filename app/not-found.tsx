@@ -1,17 +1,15 @@
 import Link from "next/link";
-import { Wordmark } from "@/components/Wordmark";
 
 export default function NotFound() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-start justify-center gap-6 px-6 py-32 sm:px-8">
-      <Wordmark size="lg" />
-      <span className="h-px w-16 bg-gold/60" />
-      <p className="text-mist">لا يوجد شيء هنا.</p>
+    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-5 px-5 py-28 text-center sm:px-8">
+      <span className="mark text-5xl font-semibold text-faint">404</span>
+      <p className="text-muted">لا يوجد شيء هنا.</p>
       <Link
         href="/"
-        className="text-sm text-gold underline-offset-4 hover:underline"
+        className="rounded-full bg-clay px-5 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
       >
-        العودة إلى الفهرس
+        العودة للرئيسية
       </Link>
     </main>
   );

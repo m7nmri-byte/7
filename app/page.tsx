@@ -1,72 +1,55 @@
 import Link from "next/link";
 import { StatusChip } from "@/components/StatusChip";
-import { Wordmark } from "@/components/Wordmark";
 import { ideas } from "@/ideas";
-
-const SINCE = "2026";
 
 export default function Home() {
   const list = [...ideas].sort((a, b) => b.started.localeCompare(a.started));
 
   return (
-    <>
-      <main className="mx-auto w-full max-w-3xl flex-1 px-6 sm:px-8">
-        {/* الترويسة */}
-        <header className="flex flex-col gap-6 pt-24 pb-16 sm:pt-36 sm:pb-24">
-          <Wordmark size="lg" />
-          <span className="h-px w-16 bg-gold/60" />
-        </header>
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 pb-20 sm:px-8">
+      <section className="flex flex-col items-center gap-4 py-16 text-center sm:py-24">
+        <h1 className="mark text-4xl font-semibold tracking-tight sm:text-5xl">
+          m7nmri
+        </h1>
+        <span className="h-0.5 w-10 rounded-full bg-clay/70" />
+      </section>
 
-        {/* الفهرس */}
-        <section aria-label="الأفكار">
-          <ul className="border-t border-line-soft">
-            {list.map((idea, i) => (
-              <li key={idea.slug}>
-                <Link
-                  href={`/lab/${idea.slug}`}
-                  className="group grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 border-b border-line-soft py-7 transition-colors hover:bg-ink-raised sm:gap-x-8 sm:px-3"
-                >
-                  <span className="latin pt-1 text-xs text-faint transition-colors group-hover:text-gold">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-                      <h2 className="text-lg font-normal text-paper transition-colors group-hover:text-gold sm:text-xl">
-                        {idea.title}
-                      </h2>
-                      <StatusChip status={idea.status} />
-                    </div>
-
-                    <p className="max-w-prose text-sm leading-relaxed text-mist">
-                      {idea.summary}
-                    </p>
-
-                    <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-faint">
-                      <span className="latin">{idea.started}</span>
-                      {idea.tags.map((t) => (
-                        <span key={t} className="before:me-3 before:content-['·']">
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          {list.length === 0 && (
-            <p className="py-16 text-center text-sm text-faint">لا شيء بعد.</p>
-          )}
-        </section>
-      </main>
-
-      <footer className="mx-auto w-full max-w-3xl px-6 py-16 sm:px-8">
-        <p className="latin text-xs text-faint">
-          {SINCE}
+      {list.length === 0 ? (
+        <p className="rounded-2xl border border-dashed border-edge py-16 text-center text-sm text-muted">
+          لا توجد أدوات بعد.
         </p>
-      </footer>
-    </>
+      ) : (
+        <ul className="grid gap-4 sm:grid-cols-2">
+          {list.map((idea) => (
+            <li key={idea.slug}>
+              <Link
+                href={`/lab/${idea.slug}`}
+                className="group flex h-full flex-col gap-3 rounded-2xl border border-edge bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-clay/40 hover:shadow-lg hover:shadow-black/5 sm:p-6"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <h2 className="text-lg font-medium transition-colors group-hover:text-clay">
+                    {idea.title}
+                  </h2>
+                  <StatusChip status={idea.status} />
+                </div>
+
+                <p className="flex-1 text-sm leading-relaxed text-muted">
+                  {idea.summary}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-faint">
+                  <span className="mark">{idea.started}</span>
+                  {idea.tags.map((t) => (
+                    <span key={t} className="before:me-2 before:content-['·']">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </main>
   );
 }
