@@ -38,27 +38,19 @@ function NavLink({
   );
 }
 
-/** أيقونة المجموعة من تعريفها في السجل */
-function GroupMark({ slug }: { slug: string }) {
-  const g = groups.find((x) => x.slug === slug);
-  if (!g) return null;
+/** أيقونة خطّية ترث لون الصفّ، بلا خلفية */
+function Mark({ path }: { path: string }) {
   return (
-    <span
-      aria-hidden
-      className="grid size-5 shrink-0 place-items-center rounded-md"
-      style={{ backgroundColor: g.icon.bg }}
-    >
-      <svg viewBox="0 0 24 24" className="size-3.5">
-        <path
-          d={g.icon.path}
-          fill="none"
-          stroke={g.icon.fg}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </span>
+    <svg viewBox="0 0 24 24" aria-hidden className="size-4 shrink-0">
+      <path
+        d={path}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   );
 }
 
@@ -97,9 +89,9 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
               رجوع
             </button>
 
-            <div className="flex items-center gap-2.5 px-3 pb-1 pt-3">
-              <GroupMark slug={group.slug} />
-              <span className="text-sm font-semibold text-ink">{group.title}</span>
+            <div className="flex items-center gap-2.5 px-3 pb-1 pt-3 text-ink">
+              <Mark path={group.icon.path} />
+              <span className="text-sm font-semibold">{group.title}</span>
             </div>
 
             {groupIdeas(group.slug).map((i) => (
@@ -109,6 +101,7 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
                 active={pathname === `/lab/${i.slug}`}
                 onNavigate={onNavigate}
               >
+                <Mark path={i.icon.path} />
                 <span className="truncate">{i.title}</span>
               </NavLink>
             ))}
@@ -135,6 +128,7 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
                 active={pathname === `/lab/${i.slug}`}
                 onNavigate={onNavigate}
               >
+                <Mark path={i.icon.path} />
                 <span className="truncate">{i.title}</span>
               </NavLink>
             ))}
@@ -146,7 +140,7 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
                 className={`${rowBase} justify-between text-muted hover:bg-card hover:text-ink`}
               >
                 <span className="flex items-center gap-2.5">
-                  <GroupMark slug={g.slug} />
+                  <Mark path={g.icon.path} />
                   <span className="truncate">{g.title}</span>
                 </span>
                 <span aria-hidden className="text-faint">
