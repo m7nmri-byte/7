@@ -26,7 +26,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://7-lemon-tau.vercel.app"),
+  metadataBase: new URL("https://m7nmri.vercel.app"),
   title: { template: "%s | m7nmri", default: "m7nmri" },
   openGraph: { title: "m7nmri", locale: "ar", type: "website" },
 };
