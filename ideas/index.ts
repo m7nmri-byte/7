@@ -22,6 +22,8 @@ export type Group = {
 };
 
 export type Idea = {
+  /** خلفية شاشة الإقلاع — لون سطح الأداة لا بلاطة أيقونتها */
+  appBg?: string;
   /** إن كانت الأداة جزءًا من موقع مجمّع */
   group?: string;
   /** المعرّف في الرابط: ‎/lab/<slug> */
@@ -64,13 +66,14 @@ export const groups: Group[] = [
 export const ideas: Idea[] = [
   {
     slug: "nashat",
+    appBg: "#0f1419",
     title: "نشاط",
     summary: "سجلّ العمل اليومي: جلسات ومقاطعات وإحصاءات تركيز.",
     tags: ["إنتاجية", "وقت"],
     started: "2026-09",
     icon: {
-      bg: "#1a1a1a",
-      fg: "#6e8fb5",
+      bg: "#0f1419",
+      fg: "#4ea8de",
       // ساعة: دائرة وعقربان
       path: "M12 3.2a8.8 8.8 0 1 0 0 17.6 8.8 8.8 0 0 0 0-17.6ZM12 7.4V12l3.4 2.2",
       stroke: 1.8,
@@ -78,14 +81,15 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-customer",
+    appBg: "#f7f5f2",
     group: "matam",
     title: "العميل",
     summary: "تصفّح القائمة، اطلب، وتابع طلبك لحظة بلحظة.",
     tags: ["مطعم", "عميل"],
     started: "2026-11",
     icon: {
-      bg: "#121110",
-      fg: "#e0923c",
+      bg: "#d1492a",
+      fg: "#ffffff",
       // كيس طلبات
       path: "M5.5 8h13l-1 12.5h-11zM9 8V6a3 3 0 0 1 6 0v2",
       stroke: 1.7,
@@ -93,14 +97,15 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-kitchen",
+    appBg: "#f7f5f2",
     group: "matam",
     title: "المطبخ",
     summary: "الطلبات الواردة ومسارها حتى الجاهزية.",
     tags: ["مطعم", "مطبخ"],
     started: "2026-11",
     icon: {
-      bg: "#121110",
-      fg: "#5fae7f",
+      bg: "#2e7d57",
+      fg: "#ffffff",
       // قبّعة طاهٍ
       path: "M6 20h12v-6a4 4 0 1 0-2.6-7 4 4 0 0 0-6.8 0A4 4 0 1 0 6 14zM6 16.5h12",
       stroke: 1.7,
@@ -108,14 +113,15 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-admin",
+    appBg: "#f7f5f2",
     group: "matam",
     title: "الإدارة",
     summary: "القائمة والطلبات والمندوبون والتقارير والإعدادات.",
     tags: ["مطعم", "إدارة"],
     started: "2026-11",
     icon: {
-      bg: "#121110",
-      fg: "#6e9bc4",
+      bg: "#2f6fa8",
+      fg: "#ffffff",
       // أعمدة بيانية
       path: "M5 20V11M12 20V5M19 20v-6",
       stroke: 2.2,
@@ -123,14 +129,15 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-driver",
+    appBg: "#f7f5f2",
     group: "matam",
     title: "المندوب",
     summary: "الطلبات الجاهزة، استلامها، وتسليمها.",
     tags: ["مطعم", "توصيل"],
     started: "2026-11",
     icon: {
-      bg: "#121110",
-      fg: "#d9a84a",
+      bg: "#b8791a",
+      fg: "#ffffff",
       // دبّوس موقع
       path: "M12 21s6.5-5.6 6.5-11a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21Z M12 10.2v.1",
       stroke: 1.7,

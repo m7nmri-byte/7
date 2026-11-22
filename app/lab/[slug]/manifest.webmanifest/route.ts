@@ -32,8 +32,8 @@ export async function GET(
     orientation: "portrait",
     dir: "rtl",
     lang: "ar",
-    background_color: idea.icon.bg,
-    theme_color: idea.icon.bg,
+    background_color: idea.appBg ?? idea.icon.bg,
+    theme_color: idea.appBg ?? idea.icon.bg,
     icons: [
       {
         src: `${base}/icon-192.png`,
