@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans_Arabic, Inter } from "next/font/google";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
+import { AppShell } from "@/components/AppShell";
 import "./globals.css";
 
 const arabic = IBM_Plex_Sans_Arabic({
@@ -34,10 +33,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="ar" dir="rtl" className={`${arabic.variable} ${mark.variable}`}>
-      <body className="flex min-h-dvh flex-col bg-paper font-sans text-ink">
-        <SiteHeader />
-        <div className="flex flex-1 flex-col">{children}</div>
-        <SiteFooter />
+      <body className="bg-paper font-sans text-ink">
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

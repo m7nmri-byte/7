@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StatusChip } from "@/components/StatusChip";
 import { getIdea, ideas, views } from "@/ideas";
@@ -28,15 +27,6 @@ export default async function LabPage({ params }: PageProps<"/lab/[slug]">) {
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10 sm:px-8 sm:py-14">
-      <nav className="mb-8">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-clay"
-        >
-          <span aria-hidden>←</span> الأدوات
-        </Link>
-      </nav>
-
       <header className="mb-10 flex flex-col gap-4 border-b border-edge pb-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className="text-2xl font-semibold sm:text-3xl">{idea.title}</h1>

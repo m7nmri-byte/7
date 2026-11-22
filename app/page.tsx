@@ -6,18 +6,19 @@ export default function Home() {
   const list = [...ideas].sort((a, b) => b.started.localeCompare(a.started));
 
   return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-5 pb-20 sm:px-8">
-      <section className="flex flex-col items-center gap-4 py-16 text-center sm:py-24">
-        <h1 className="mark text-4xl font-semibold tracking-tight sm:text-5xl">
-          m7nmri
-        </h1>
-        <span className="h-0.5 w-10 rounded-full bg-clay/70" />
-      </section>
+    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10 sm:px-8 sm:py-12">
+      <header className="mb-8 flex items-end justify-between gap-4 border-b border-edge pb-5">
+        <h1 className="text-xl font-semibold sm:text-2xl">الأدوات</h1>
+        <span className="mark text-sm text-faint">
+          {list.length.toString().padStart(2, "0")}
+        </span>
+      </header>
 
       {list.length === 0 ? (
-        <p className="rounded-2xl border border-dashed border-edge py-16 text-center text-sm text-muted">
-          لا توجد أدوات بعد.
-        </p>
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-edge py-20 text-center">
+          <p className="text-sm text-muted">لا توجد أدوات بعد.</p>
+          <p className="text-xs text-faint">تظهر هنا فور إضافتها.</p>
+        </div>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
           {list.map((idea) => (
