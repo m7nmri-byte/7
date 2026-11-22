@@ -10,6 +10,20 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
 
+  --color-m-bg: var(--m-bg);
+  --color-m-surface: var(--m-surface);
+  --color-m-raised: var(--m-raised);
+  --color-m-line: var(--m-line);
+  --color-m-text: var(--m-text);
+  --color-m-dim: var(--m-dim);
+  --color-m-faint: var(--m-faint);
+  --color-m-accent: var(--m-accent);
+  --color-m-accent-soft: var(--m-accent-soft);
+  --color-m-ok: var(--m-ok);
+  --color-m-warn: var(--m-warn);
+  --color-m-info: var(--m-info);
+  --color-m-danger: var(--m-danger);
+
   --font-sans: var(--ui-font);
   --font-mark: var(--font-inter), system-ui, sans-serif;
 }
@@ -94,3 +108,45 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ======================================================================
+   نظام المطعم — هوية بصرية خاصة، محصورة داخل [data-matam]
+   فلا تمسّ بقية الموقع. فحم دافئ مع كهرماني: ألْيق بالطعام من رمادي
+   الموقع الأزرق، وأوضح في مطبخ تُقرأ شاشته من بعيد.
+   ====================================================================== */
+[data-matam] {
+  --m-bg: #121110;
+  --m-surface: #1b1917;
+  --m-raised: #232120;
+  --m-line: #322e2b;
+  --m-text: #f0ece7;
+  --m-dim: #a39c94;
+  --m-faint: #6f6861;
+
+  --m-accent: #e0923c;
+  --m-accent-soft: #2a2117;
+  --m-ok: #5fae7f;
+  --m-warn: #d9a84a;
+  --m-info: #6e9bc4;
+  --m-danger: #d9685c;
+
+  background-color: var(--m-bg);
+  color: var(--m-text);
+  font-family: var(--font-sans);
+}
+
+[data-matam] ::selection {
+  background-color: color-mix(in oklab, var(--m-accent) 32%, transparent);
+}
+
+/* شريط تمرير يناسب السطح الداكن */
+[data-matam] ::-webkit-scrollbar { width: 8px; height: 8px; }
+[data-matam] ::-webkit-scrollbar-track { background: transparent; }
+[data-matam] ::-webkit-scrollbar-thumb {
+  background: var(--m-line);
+  border-radius: 999px;
+}
+
+/* إخفاء الشريط حيث يكون التمرير أفقيًا ومقصودًا */
+.m-noscroll::-webkit-scrollbar { display: none; }
+.m-noscroll { scrollbar-width: none; -ms-overflow-style: none; }

@@ -51,10 +51,70 @@ export const ideas: Idea[] = [
       stroke: 1.8,
     },
   },
+  {
+    slug: "matam-customer",
+    title: "مطعم · العميل",
+    summary: "تصفّح القائمة، اطلب، وتابع طلبك لحظة بلحظة.",
+    tags: ["مطعم", "عميل"],
+    started: "2026-11",
+    icon: {
+      bg: "#121110",
+      fg: "#e0923c",
+      // كيس طلبات
+      path: "M5.5 8h13l-1 12.5h-11zM9 8V6a3 3 0 0 1 6 0v2",
+      stroke: 1.7,
+    },
+  },
+  {
+    slug: "matam-kitchen",
+    title: "مطعم · المطبخ",
+    summary: "الطلبات الواردة ومسارها حتى الجاهزية.",
+    tags: ["مطعم", "مطبخ"],
+    started: "2026-11",
+    icon: {
+      bg: "#121110",
+      fg: "#5fae7f",
+      // قبّعة طاهٍ
+      path: "M6 20h12v-6a4 4 0 1 0-2.6-7 4 4 0 0 0-6.8 0A4 4 0 1 0 6 14zM6 16.5h12",
+      stroke: 1.7,
+    },
+  },
+  {
+    slug: "matam-admin",
+    title: "مطعم · الإدارة",
+    summary: "القائمة والطلبات والمندوبون والتقارير والإعدادات.",
+    tags: ["مطعم", "إدارة"],
+    started: "2026-11",
+    icon: {
+      bg: "#121110",
+      fg: "#6e9bc4",
+      // أعمدة بيانية
+      path: "M5 20V11M12 20V5M19 20v-6",
+      stroke: 2.2,
+    },
+  },
+  {
+    slug: "matam-driver",
+    title: "مطعم · المندوب",
+    summary: "الطلبات الجاهزة، استلامها، وتسليمها.",
+    tags: ["مطعم", "توصيل"],
+    started: "2026-11",
+    icon: {
+      bg: "#121110",
+      fg: "#d9a84a",
+      // دبّوس موقع
+      path: "M12 21s6.5-5.6 6.5-11a6.5 6.5 0 1 0-13 0C5.5 15.4 12 21 12 21Z M12 10.2v.1",
+      stroke: 1.7,
+    },
+  },
 ];
 
 export const views: Record<string, ComponentType> = {
   nashat: dynamic(() => import("./nashat/view")),
+  "matam-customer": dynamic(() => import("./matam-customer/view")),
+  "matam-kitchen": dynamic(() => import("./matam-kitchen/view")),
+  "matam-admin": dynamic(() => import("./matam-admin/view")),
+  "matam-driver": dynamic(() => import("./matam-driver/view")),
 };
 
 export function getIdea(slug: string): Idea | undefined {
