@@ -1,0 +1,26 @@
+# ===== الأسرار — لا تُرفع أبداً =====
+.env
+.env.local
+.env.*.local
+*.pem
+
+# ===== الاعتماديات =====
+/node_modules
+/.pnp
+.pnp.*
+
+# ===== البناء =====
+/.next/
+/out/
+/build
+/dist
+
+# ===== ربط الخدمات =====
+.vercel
+
+# ===== متفرقات =====
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+/coverage
