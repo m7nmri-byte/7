@@ -30,16 +30,7 @@ export default function Home() {
                   {idea.title}
                 </h2>
 
-                <p className="flex-1 text-sm leading-relaxed text-muted">{idea.summary}</p>
-
-                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-faint">
-                  <span className="mark">{idea.started}</span>
-                  {idea.tags.map((t) => (
-                    <span key={t} className="before:me-2 before:content-['·']">
-                      {t}
-                    </span>
-                  ))}
-                </div>
+                <p className="text-sm leading-relaxed text-muted">{idea.summary}</p>
               </Link>
             </li>
           ))}

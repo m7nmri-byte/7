@@ -85,12 +85,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
         <div className="flex flex-1 flex-col">{children}</div>
 
-        <footer className="border-t border-edge">
-          <div className="flex items-center justify-between px-5 py-5 text-xs text-faint sm:px-8">
-            <span className="mark">m7nmri</span>
-            <span className="mark">2026</span>
-          </div>
-        </footer>
       </div>
     </div>
   );
