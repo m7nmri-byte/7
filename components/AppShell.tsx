@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SidebarContent } from "@/components/Sidebar";
+import { StandaloneGuard } from "@/components/StandaloneGuard";
+import { useStandalone } from "@/lib/standalone";
 import { getIdea } from "@/ideas";
 
 function useTitle(): string {
@@ -15,6 +17,7 @@ function useTitle(): string {
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const title = useTitle();
+  const standalone = useStandalone();
 
   // يُمنع تمرير الصفحة خلف الدرج وهو مفتوح
   useEffect(() => {
@@ -30,6 +33,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [open]);
 
   const close = () => setOpen(false);
+
+  /* تطبيق مثبَّت: لا قائمة ولا شريط ولا أي منفذ إلى بقية الموقع */
+  if (standalone) {
+    return (
+      <div className="flex min-h-dvh flex-col">
+        <StandaloneGuard />
+        {children}
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-dvh">
