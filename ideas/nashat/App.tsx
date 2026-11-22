@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
 import type { Category, Task } from "./types";
 import { MAX_PARALLEL } from "./types";
 import * as A from "./actions";
@@ -289,7 +288,6 @@ export function NashatApp({ session }: { session: Session }) {
               run: () => update(() => A.clearAll()),
             })
           }
-          onLogout={() => void supabase.auth.signOut()}
         />
       )}
 

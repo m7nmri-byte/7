@@ -42,7 +42,6 @@ export function MenuSheet({
   onImport,
   onClearDay,
   onClearAll,
-  onLogout,
 }: {
   onClose: () => void;
   onPrint: () => void;
@@ -50,7 +49,6 @@ export function MenuSheet({
   onImport: () => void;
   onClearDay: () => void;
   onClearAll: () => void;
-  onLogout: () => void;
 }) {
   const act = (fn: () => void) => () => {
     onClose();
@@ -63,7 +61,6 @@ export function MenuSheet({
       <OptionButton icon="↑" title="تصدير" onClick={act(onExport)} />
       <OptionButton icon="✕" title="مسح سجل هذا اليوم" danger onClick={act(onClearDay)} />
       <OptionButton icon="✕" title="مسح جميع السجلات" danger onClick={act(onClearAll)} />
-      <OptionButton icon="→" title="تسجيل الخروج" onClick={act(onLogout)} />
     </Sheet>
   );
 }

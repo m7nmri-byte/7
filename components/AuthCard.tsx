@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { Session } from "@supabase/supabase-js";
+import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { btnPrimary, field } from "./ui";
+import { btnPrimary, field } from "@/components/styles";
 
 /** ترجمة أخطاء Supabase إلى عربية مفهومة */
 function friendlyError(message: string): string {
@@ -21,22 +20,6 @@ function friendlyError(message: string): string {
   if (m.includes("rate limit") || m.includes("too many"))
     return "محاولات كثيرة متتابعة — انتظر قليلًا ثم أعد المحاولة";
   return "حدث خطأ غير متوقع، حاول مرة أخرى";
-}
-
-export function useSession() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [checking, setChecking] = useState(true);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setChecking(false);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
-  return { session, checking };
 }
 
 export function AuthCard() {

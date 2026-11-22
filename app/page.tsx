@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { StatusChip } from "@/components/StatusChip";
 import { ideas } from "@/ideas";
 
 export default function Home() {
@@ -7,11 +6,11 @@ export default function Home() {
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10 sm:px-8 sm:py-12">
-      <header className="mb-8 flex items-end justify-between gap-4 border-b border-edge pb-5">
-        <h1 className="text-xl font-semibold sm:text-2xl">الأدوات</h1>
-        <span className="mark text-sm text-faint">
-          {list.length.toString().padStart(2, "0")}
-        </span>
+      <header className="mb-10 flex flex-col items-center gap-5 py-10 sm:mb-14 sm:py-16">
+        <h1 className="mark text-center text-3xl font-extralight tracking-[0.35em] text-ink sm:text-5xl sm:tracking-[0.45em]">
+          M7NMRI
+        </h1>
+        <span className="h-px w-16 bg-brand/50" />
       </header>
 
       {list.length === 0 ? (
@@ -25,18 +24,13 @@ export default function Home() {
             <li key={idea.slug}>
               <Link
                 href={`/lab/${idea.slug}`}
-                className="group flex h-full flex-col gap-3 rounded-2xl border border-edge bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-lg hover:shadow-black/5 sm:p-6"
+                className="group flex h-full flex-col gap-3 rounded-2xl border border-edge bg-card p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand/40 hover:shadow-lg hover:shadow-black/20 sm:p-6"
               >
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="text-lg font-medium transition-colors group-hover:text-brand">
-                    {idea.title}
-                  </h2>
-                  <StatusChip status={idea.status} />
-                </div>
+                <h2 className="text-lg font-medium transition-colors group-hover:text-brand">
+                  {idea.title}
+                </h2>
 
-                <p className="flex-1 text-sm leading-relaxed text-muted">
-                  {idea.summary}
-                </p>
+                <p className="flex-1 text-sm leading-relaxed text-muted">{idea.summary}</p>
 
                 <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-faint">
                   <span className="mark">{idea.started}</span>
