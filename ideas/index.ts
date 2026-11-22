@@ -22,6 +22,8 @@ export type Group = {
 };
 
 export type Idea = {
+  /** لا تظهر في القائمة ولا الفهرس — صفحة موقع مجمّع أو ما شابه */
+  hidden?: boolean;
   /** خلفية شاشة الإقلاع — لون سطح الأداة لا بلاطة أيقونتها */
   appBg?: string;
   /** إن كانت الأداة جزءًا من موقع مجمّع */
@@ -80,19 +82,18 @@ export const ideas: Idea[] = [
     },
   },
   {
-    slug: "matam-bench",
+    slug: "matam",
+    hidden: true,
     appBg: "#15110f",
-    group: "matam",
-    title: "المنصّة",
-    summary: "شغّل واجهات المطعم معًا على شاشة واحدة وتابع الطلب بينها.",
-    tags: ["مطعم", "عرض"],
+    title: "مطعم",
+    summary: "نظام المطعم: العميل والمطبخ والإدارة والمندوب في شاشة واحدة.",
+    tags: ["مطعم"],
     started: "2026-11",
     icon: {
-      bg: "#15110f",
-      fg: "#e8dfd6",
-      // جهازان متجاوران
-      path: "M4 5h6v14H4zM14 5h6v14h-6z",
-      stroke: 1.7,
+      bg: "#d1492a",
+      fg: "#ffffff",
+      path: "M8 3v7a2 2 0 0 0 4 0V3M10 10v11M16 3c-1.4 2-2 4-2 7h4c0-3-.6-5-2-7zM16 10v11",
+      stroke: 1.8,
     },
   },
   {
@@ -163,7 +164,7 @@ export const ideas: Idea[] = [
 
 export const views: Record<string, ComponentType> = {
   nashat: dynamic(() => import("./nashat/view")),
-  "matam-bench": dynamic(() => import("./matam-bench/view")),
+  matam: dynamic(() => import("./matam-bench/view")),
   "matam-customer": dynamic(() => import("./matam-customer/view")),
   "matam-kitchen": dynamic(() => import("./matam-kitchen/view")),
   "matam-admin": dynamic(() => import("./matam-admin/view")),
@@ -198,4 +199,5 @@ export const groupIdeas = (slug: string): Idea[] =>
   ideas.filter((i) => i.group === slug);
 
 /** الأدوات المستقلة — ما لا ينتمي إلى مجموعة */
-export const soloIdeas = (): Idea[] => ideas.filter((i) => !i.group);
+export const soloIdeas = (): Idea[] =>
+  ideas.filter((i) => !i.group && !i.hidden);

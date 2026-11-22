@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { useSession } from "@/components/SessionProvider";
 import { ServiceLinks } from "@/components/ServiceLinks";
-import { getIdea, groupIdeas, groups, soloIdeas } from "@/ideas";
+import { getIdea, groups, soloIdeas } from "@/ideas";
+import { DEVICES, toggleDevice, useDevices } from "@/ideas/matam-bench/devices";
 
 const rowBase =
   "flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm transition-colors";
@@ -54,6 +55,52 @@ function Mark({ path }: { path: string }) {
   );
 }
 
+/**
+ * مفاتيح أجهزة المطعم: تُشغّل الواجهة وتُطفئها داخل المنصّة نفسها.
+ * الضغط لا ينقلك إلى صفحة أخرى — يضيف الجهاز بجوار ما يعمل.
+ */
+function DeviceToggles({ onNavigate }: { onNavigate: () => void }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const active = useDevices();
+  const onBench = pathname === "/lab/matam";
+
+  return (
+    <>
+      {DEVICES.map((d) => {
+        const on = onBench && active.includes(d.key);
+        return (
+          <button
+            key={d.key}
+            aria-pressed={on}
+            onClick={() => {
+              if (!onBench) {
+                if (!active.includes(d.key)) toggleDevice(d.key);
+                router.push("/lab/matam");
+              } else {
+                toggleDevice(d.key);
+              }
+              onNavigate();
+            }}
+            className={`${rowBase} justify-between ${
+              on
+                ? "bg-brand-soft font-medium text-brand"
+                : "text-muted hover:bg-card hover:text-ink"
+            }`}
+          >
+            <span className="truncate">{d.label}</span>
+            <span
+              aria-hidden
+              className="size-2 shrink-0 rounded-full transition-opacity"
+              style={{ backgroundColor: d.tint, opacity: on ? 1 : 0.3 }}
+            />
+          </button>
+        );
+      })}
+    </>
+  );
+}
+
 export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
   const { session, checking } = useSession();
@@ -94,17 +141,7 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
               {group.title}
             </h2>
 
-            {groupIdeas(group.slug).map((i) => (
-              <NavLink
-                key={i.slug}
-                href={`/lab/${i.slug}`}
-                active={pathname === `/lab/${i.slug}`}
-                onNavigate={onNavigate}
-              >
-                <Mark path={i.icon.path} />
-                <span className="truncate">{i.title}</span>
-              </NavLink>
-            ))}
+            <DeviceToggles onNavigate={onNavigate} />
           </>
         ) : (
           <>
