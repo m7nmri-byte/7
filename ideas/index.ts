@@ -1,35 +1,21 @@
 import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
-/** حالة الفكرة في دورة حياتها */
-export type Status = "seed" | "building" | "ripe" | "freed";
-
 export type Idea = {
   /** المعرّف في الرابط: ‎/lab/<slug> */
   slug: string;
   title: string;
   /** سطر واحد يظهر في الفهرس */
   summary: string;
-  status: Status;
   tags: string[];
   /** متى بدأت — بصيغة YYYY-MM */
   started: string;
-  /** يُملأ حين تُعزل الفكرة إلى مشروع مستقل */
-  freedUrl?: string;
-};
-
-export const STATUS: Record<
-  Status,
-  { label: string; color: string; tint: string }
-> = {
-  seed: { label: "بذرة", color: "var(--st-seed)", tint: "var(--st-seed-tint)" },
-  building: { label: "قيد العمل", color: "var(--st-building)", tint: "var(--st-building-tint)" },
-  ripe: { label: "ناضجة", color: "var(--st-ripe)", tint: "var(--st-ripe-tint)" },
-  freed: { label: "معزولة", color: "var(--st-freed)", tint: "var(--st-freed-tint)" },
+  /** يُملأ حين تنتقل الفكرة إلى مشروع مستقل */
+  movedUrl?: string;
 };
 
 /* ────────────────────────────────────────────────────────────
-   لإضافة فكرة:
+   لإضافة أداة:
      ١. أنشئ  ideas/<slug>/view.tsx  يُصدّر مكوّناً افتراضياً
      ٢. أضف سطراً في ideas أدناه
      ٣. أضف سطراً في views أدناه
@@ -41,7 +27,6 @@ export const ideas: Idea[] = [
     slug: "nashat",
     title: "نشاط",
     summary: "سجلّ العمل اليومي: جلسات ومقاطعات وإحصاءات تركيز.",
-    status: "ripe",
     tags: ["إنتاجية", "وقت"],
     started: "2026-09",
   },

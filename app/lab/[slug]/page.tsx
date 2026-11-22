@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { StatusChip } from "@/components/StatusChip";
 import { getIdea, ideas, views } from "@/ideas";
 
 /** لا تُقبل إلا الأفكار المعرّفة في السجل — أي مسار آخر 404 */
@@ -28,10 +27,7 @@ export default async function LabPage({ params }: PageProps<"/lab/[slug]">) {
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10 sm:px-8 sm:py-14">
       <header className="mb-10 flex flex-col gap-4 border-b border-edge pb-8">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold sm:text-3xl">{idea.title}</h1>
-          <StatusChip status={idea.status} />
-        </div>
+        <h1 className="text-2xl font-semibold sm:text-3xl">{idea.title}</h1>
 
         <p className="max-w-prose leading-relaxed text-muted">{idea.summary}</p>
 
@@ -44,9 +40,9 @@ export default async function LabPage({ params }: PageProps<"/lab/[slug]">) {
           ))}
         </div>
 
-        {idea.freedUrl && (
+        {idea.movedUrl && (
           <a
-            href={idea.freedUrl}
+            href={idea.movedUrl}
             target="_blank"
             rel="noreferrer"
             className="w-fit rounded-full bg-brand-soft px-4 py-2 text-sm font-medium text-brand transition-opacity hover:opacity-80"

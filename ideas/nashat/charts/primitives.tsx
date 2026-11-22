@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 /** إطار موحّد لكل رسم */
 export function Card({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-3 rounded-2xl border border-edge bg-card p-4 sm:p-5">
-      <h3 className="text-xs font-medium text-muted">{title}</h3>
+    <section className="flex flex-col gap-4 rounded-3xl border border-edge bg-card p-5 sm:p-6">
+      <h3 className="text-sm font-medium text-muted">{title}</h3>
       {children}
     </section>
   );
@@ -19,7 +19,7 @@ export function Empty({ msg = "لا توجد بيانات بعد" }: { msg?: str
 /** جملة استبصار فوق الرسم */
 export function Take({ children }: { children: ReactNode }) {
   if (!children) return null;
-  return <p className="text-xs leading-relaxed text-ink">{children}</p>;
+  return <p className="text-sm leading-relaxed text-ink">{children}</p>;
 }
 
 export type Stat = { n: ReactNode; l: string; word?: boolean };
@@ -30,10 +30,10 @@ export function StatRow({ items, caption }: { items: Stat[]; caption?: string })
       <div className="flex flex-wrap gap-x-6 gap-y-3">
         {items.map((i, k) => (
           <div key={k} className="flex flex-col gap-0.5">
-            <span className={`text-lg text-ink ${i.word ? "" : "mark tabular-nums"}`}>
+            <span className={`text-2xl text-ink ${i.word ? "" : "mark tabular-nums"}`}>
               {i.n}
             </span>
-            <span className="text-[11px] text-faint">{i.l}</span>
+            <span className="text-xs text-faint">{i.l}</span>
           </div>
         ))}
       </div>
@@ -51,7 +51,7 @@ export function Stack({
   const shown = parts.filter((p) => p.value > 0);
   if (!shown.length) return null;
   return (
-    <div className="flex h-2.5 overflow-hidden rounded-full bg-paper">
+    <div className="flex h-3.5 overflow-hidden rounded-full bg-paper">
       {shown.map((p) => (
         <span
           key={p.key}
@@ -71,7 +71,7 @@ export function Legend({
   return (
     <ul className="flex flex-col gap-1.5">
       {items.map((i) => (
-        <li key={i.key} className="flex items-center gap-2 text-[11px]">
+        <li key={i.key} className="flex items-center gap-2.5 text-xs">
           <span
             aria-hidden
             className="size-2 shrink-0 rounded-full"

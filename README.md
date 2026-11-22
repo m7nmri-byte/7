@@ -47,7 +47,7 @@ export const views: Record<string, ComponentType> = {
 |---|---|
 | `seed` | بذرة — مجرد بداية |
 | `building` | قيد العمل |
-| `ripe` | ناضجة |
+
 | `freed` | معزولة إلى مشروع مستقل — أضف `freedUrl` |
 
 ## نزع فكرة

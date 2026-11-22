@@ -20,7 +20,7 @@ export function DayNav({
   onToday: () => void;
   onMenu: () => void;
 }) {
-  const arrow = "rounded-lg px-2.5 py-1.5 text-muted transition-colors hover:bg-card hover:text-ink disabled:opacity-30";
+  const arrow = "rounded-xl px-3 py-2 text-lg text-muted transition-colors hover:bg-card hover:text-ink disabled:opacity-30";
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="flex items-center gap-1">
@@ -29,7 +29,7 @@ export function DayNav({
         </button>
         <button
           onClick={onToday}
-          className="rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-card"
+          className="rounded-xl px-4 py-2 text-base font-medium transition-colors hover:bg-card"
         >
           {shortDayLabel(day)}
         </button>
@@ -56,24 +56,24 @@ export function DayNav({
 /** ملخّص اليوم: الوقت والمنجَز والمقاطعات */
 export function Summary({ stats }: { stats: DayStats }) {
   return (
-    <div className="grid grid-cols-3 gap-3 rounded-2xl border border-edge bg-card p-4">
+    <div className="grid grid-cols-3 gap-3 rounded-3xl border border-edge bg-card p-5 sm:p-6">
       <div className="flex flex-col items-center gap-1">
-        <span className="mark text-lg tabular-nums">{fmtHM(stats.totalMs)}</span>
-        <span className="text-[11px] text-faint">إجمالي الوقت</span>
+        <span className="mark text-2xl tabular-nums sm:text-3xl">{fmtHM(stats.totalMs)}</span>
+        <span className="text-xs text-faint">إجمالي الوقت</span>
       </div>
       <div className="flex flex-col items-center gap-1">
-        <span className="flex items-center gap-1.5 text-lg">
-          <StatusGlyph status="done" size={15} />
+        <span className="flex items-center gap-2 text-2xl sm:text-3xl">
+          <StatusGlyph status="done" size={20} />
           <span className="mark tabular-nums">{stats.completed}</span>
         </span>
-        <span className="text-[11px] text-faint">أُنجزت</span>
+        <span className="text-xs text-faint">أُنجزت</span>
       </div>
       <div className="flex flex-col items-center gap-1">
-        <span className="flex items-center gap-1.5 text-lg">
-          <StatusGlyph status="interrupted" size={15} />
+        <span className="flex items-center gap-2 text-2xl sm:text-3xl">
+          <StatusGlyph status="interrupted" size={20} />
           <span className="mark tabular-nums">{stats.interruptedEvents}</span>
         </span>
-        <span className="text-[11px] text-faint">مقاطعات</span>
+        <span className="text-xs text-faint">مقاطعات</span>
       </div>
     </div>
   );
@@ -98,7 +98,7 @@ export function ViewTabs({
         <button
           key={k}
           onClick={() => onChange(k)}
-          className={`flex-1 rounded-lg px-3 py-2 text-xs transition-colors ${
+          className={`flex-1 rounded-xl px-4 py-2.5 text-sm transition-colors ${
             view === k ? "bg-brand-soft font-medium text-brand" : "text-muted hover:text-ink"
           }`}
         >

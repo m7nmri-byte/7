@@ -95,21 +95,21 @@ export function Timeline({
         const ms = row.b - row.a;
         return (
           <div key={`${row.task.id}:${row.idx}`}>
-            <div className="flex gap-3 rounded-xl px-2 py-3 transition-colors hover:bg-card">
-              <StatusGlyph status={row.status} />
+            <div className="flex gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-card">
+              <StatusGlyph status={row.status} size={18} />
 
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <div className="flex items-start justify-between gap-3">
                   <button
                     onClick={() => onEdit(row.task.id, row.idx)}
-                    className="truncate text-start text-sm transition-colors hover:text-brand"
+                    className="truncate text-start text-[15px] transition-colors hover:text-brand"
                   >
                     {row.task.name}
                     {!row.isFirstSeg && (
                       <span className="ms-2 text-[10px] text-faint">استكمال</span>
                     )}
                   </button>
-                  <span className="mark shrink-0 text-xs tabular-nums text-muted">
+                  <span className="mark shrink-0 text-sm tabular-nums text-muted">
                     {fmtDur(ms)}
                   </span>
                 </div>
@@ -173,7 +173,7 @@ export function PendingStack({
   return (
     <div className="flex flex-col gap-2 rounded-2xl border border-edge bg-card p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-medium text-muted">
+        <h3 className="text-sm font-medium text-muted">
           معلّقة ({tasks.length})
         </h3>
         {tasks.length > 2 && (
@@ -195,7 +195,7 @@ export function PendingStack({
                 onClick={() => onResume(t.id)}
                 className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-lg border border-edge bg-paper px-3 py-2 text-start transition-colors hover:border-brand/40"
               >
-                <span className="truncate text-sm">{t.name}</span>
+                <span className="truncate text-[15px]">{t.name}</span>
                 <span className="mark shrink-0 text-[11px] text-faint">
                   {ageText(age)} · {fmtDur(taskTotalMs(t, now))}
                 </span>
