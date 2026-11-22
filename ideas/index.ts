@@ -1,4 +1,3 @@
-import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
 /** حالة الفكرة في دورة حياتها */
@@ -36,20 +35,9 @@ export const STATUS: Record<
    لنزعها: احذف الثلاثة.
    ──────────────────────────────────────────────────────────── */
 
-export const ideas: Idea[] = [
-  {
-    slug: "taqwimayn",
-    title: "التقويمان",
-    summary: "تحويل بين الهجري والميلادي، في الاتجاهين، بلا مكتبات.",
-    status: "building",
-    tags: ["تاريخ", "أدوات"],
-    started: "2026-11",
-  },
-];
+export const ideas: Idea[] = [];
 
-export const views: Record<string, ComponentType> = {
-  taqwimayn: dynamic(() => import("./taqwimayn/view")),
-};
+export const views: Record<string, ComponentType> = {};
 
 export function getIdea(slug: string): Idea | undefined {
   return ideas.find((i) => i.slug === slug);
