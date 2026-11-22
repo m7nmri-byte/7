@@ -78,12 +78,21 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
         )}
       </nav>
 
-      <div className="flex flex-col gap-1 border-t border-edge pt-3">
+      <div className="flex flex-col gap-2 border-t border-edge pt-4">
         {checking ? (
-          <span aria-hidden className="mx-3 h-7 animate-pulse rounded-lg bg-card" />
+          <span aria-hidden className="mx-1 h-9 animate-pulse rounded-xl bg-card" />
         ) : session ? (
-          <>
-            <span className="mark truncate px-3 text-[11px] text-faint" title={session.user.email}>
+          <div className="flex items-center gap-2.5 rounded-xl px-2 py-1.5">
+            <span
+              aria-hidden
+              className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-soft text-xs font-medium text-brand"
+            >
+              {(session.user.email ?? "?").charAt(0).toUpperCase()}
+            </span>
+            <span
+              className="mark min-w-0 flex-1 truncate text-xs text-muted"
+              title={session.user.email}
+            >
               {session.user.email}
             </span>
             <button
@@ -91,11 +100,22 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
                 onNavigate();
                 void supabase.auth.signOut();
               }}
-              className="rounded-xl px-3 py-2 text-start text-xs text-muted transition-colors hover:bg-card hover:text-ink"
+              title="تسجيل الخروج"
+              aria-label="تسجيل الخروج"
+              className="shrink-0 rounded-lg p-1.5 text-faint transition-colors hover:bg-card hover:text-ink"
             >
-              تسجيل الخروج
+              <svg viewBox="0 0 16 16" aria-hidden className="size-4">
+                <path
+                  d="M6.5 14h-3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h3M10.5 11 13.5 8l-3-3M13.5 8h-7"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
-          </>
+          </div>
         ) : (
           <NavLink href="/login" active={pathname === "/login"} onNavigate={onNavigate}>
             <svg viewBox="0 0 16 16" aria-hidden className="size-4 shrink-0">
@@ -111,9 +131,9 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
             تسجيل الدخول
           </NavLink>
         )}
-      </div>
 
-      <ServiceLinks />
+        <ServiceLinks />
+      </div>
     </div>
   );
 }

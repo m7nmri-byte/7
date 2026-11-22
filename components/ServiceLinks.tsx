@@ -29,7 +29,7 @@ const SERVICES: Service[] = [
 
 export function ServiceLinks() {
   return (
-    <div className="flex items-center gap-1 px-2">
+    <div className="flex items-center justify-between px-1">
       {SERVICES.map((s) => (
         <a
           key={s.name}
