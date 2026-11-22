@@ -49,6 +49,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* اسم الموقع: أرفع وزن متاح. خطوط النظام تقف عند ٣٠٠ تقريبًا،
+   فيُحمَّل Inter بوزن ١٠٠ لهذا الغرض وحده. */
+.wordmark {
+  font-family: var(--font-wordmark), system-ui, sans-serif;
+  font-weight: 100;
+  font-synthesis-weight: none;
+}
+
 /* النص اللاتيني داخل سياق عربي: خط أحادي واتجاه ثابت */
 .mark {
   font-family: var(--font-mark);
