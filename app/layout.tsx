@@ -4,11 +4,11 @@ import { AppShell } from "@/components/AppShell";
 import { SessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
-/** يُستعمل لاسم الموقع فقط: خطوط النظام لا تنزل إلى وزن ١٠٠ */
-const wordmark = Inter({
-  variable: "--font-wordmark",
+/** للاسم وللأرقام: خطوط النظام لا تنزل إلى وزن ١٠٠، وأرقام المونو قاسية */
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["100", "200"],
+  weight: ["100", "200", "300", "400", "500"],
   display: "swap",
 });
 
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ar" dir="rtl" className={wordmark.variable}>
+    <html lang="ar" dir="rtl" className={inter.variable}>
       <body className="bg-paper font-sans text-ink">
         <SessionProvider>
           <AppShell>{children}</AppShell>

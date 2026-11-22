@@ -11,15 +11,13 @@
   --color-brand-soft: var(--brand-soft);
 
   --font-sans: var(--ui-font);
-  --font-mark: var(--mono-font);
+  --font-mark: var(--font-inter), system-ui, sans-serif;
 }
 
 :root {
   /* خط الواجهة: خط النظام نفسه، فيطابق ما تراه في المحرّر */
   --ui-font: system-ui, "Segoe UI", "Segoe UI Arabic", Tahoma,
     -apple-system, BlinkMacSystemFont, "Noto Sans Arabic", sans-serif;
-  --mono-font: ui-monospace, "Cascadia Code", "Cascadia Mono", Consolas,
-    "SF Mono", "Liberation Mono", monospace;
 
   /* رمادي صافٍ — بلا ميل لأي صبغة */
   --paper: #1a1a1a;
@@ -52,7 +50,7 @@ body {
 /* اسم الموقع: أرفع وزن متاح. خطوط النظام تقف عند ٣٠٠ تقريبًا،
    فيُحمَّل Inter بوزن ١٠٠ لهذا الغرض وحده. */
 .wordmark {
-  font-family: var(--font-wordmark), system-ui, sans-serif;
+  font-family: var(--font-inter), system-ui, sans-serif;
   font-weight: 100;
   font-synthesis-weight: none;
 }
