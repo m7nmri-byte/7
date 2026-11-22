@@ -89,10 +89,10 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
               رجوع
             </button>
 
-            <div className="flex items-center gap-2.5 px-3 pb-1 pt-3 text-ink">
-              <Mark path={group.icon.path} />
-              <span className="text-sm font-semibold">{group.title}</span>
-            </div>
+            {/* عنوان قسم لا صفّ تنقّل: بلا أيقونة، ويفصله خطّ عمّا تحته */}
+            <h2 className="mt-3 border-b border-edge px-3 pb-2 text-[11px] font-medium tracking-[0.15em] text-faint">
+              {group.title}
+            </h2>
 
             {groupIdeas(group.slug).map((i) => (
               <NavLink
