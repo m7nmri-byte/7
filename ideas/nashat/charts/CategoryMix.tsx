@@ -5,8 +5,8 @@ import { fmtHM } from "../time";
 import { Empty, Legend, Stack } from "./primitives";
 
 const PARTS: { key: Category; label: string; color: string }[] = [
-  { key: "work", label: "عمل", color: "var(--brand)" },
-  { key: "rest", label: "راحة", color: "var(--st-ripe)" },
+  { key: "work", label: "عمل", color: "var(--n-accent)" },
+  { key: "rest", label: "راحة", color: "var(--n-ok)" },
   { key: "waste", label: "هدر", color: "#e08a7a" },
 ];
 

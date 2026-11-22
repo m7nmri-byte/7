@@ -13,7 +13,17 @@ export type AppIcon = {
   stroke?: number | "fill";
 };
 
+/** موقع مجمّع: عدة أدوات تحت مظلّة واحدة في القائمة الجانبية */
+export type Group = {
+  slug: string;
+  title: string;
+  summary: string;
+  icon: AppIcon;
+};
+
 export type Idea = {
+  /** إن كانت الأداة جزءًا من موقع مجمّع */
+  group?: string;
   /** المعرّف في الرابط: ‎/lab/<slug> */
   slug: string;
   title: string;
@@ -36,6 +46,21 @@ export type Idea = {
    لنزعها: احذف الثلاثة.
    ──────────────────────────────────────────────────────────── */
 
+export const groups: Group[] = [
+  {
+    slug: "matam",
+    title: "مطعم",
+    summary: "نظام متكامل: العميل والمطبخ والإدارة والمندوب.",
+    icon: {
+      bg: "#d1492a",
+      fg: "#ffffff",
+      // شوكة وسكين
+      path: "M8 3v7a2 2 0 0 0 4 0V3M10 10v11M16 3c-1.4 2-2 4-2 7h4c0-3-.6-5-2-7zM16 10v11",
+      stroke: 1.8,
+    },
+  },
+];
+
 export const ideas: Idea[] = [
   {
     slug: "nashat",
@@ -53,7 +78,8 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-customer",
-    title: "مطعم · العميل",
+    group: "matam",
+    title: "العميل",
     summary: "تصفّح القائمة، اطلب، وتابع طلبك لحظة بلحظة.",
     tags: ["مطعم", "عميل"],
     started: "2026-11",
@@ -67,7 +93,8 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-kitchen",
-    title: "مطعم · المطبخ",
+    group: "matam",
+    title: "المطبخ",
     summary: "الطلبات الواردة ومسارها حتى الجاهزية.",
     tags: ["مطعم", "مطبخ"],
     started: "2026-11",
@@ -81,7 +108,8 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-admin",
-    title: "مطعم · الإدارة",
+    group: "matam",
+    title: "الإدارة",
     summary: "القائمة والطلبات والمندوبون والتقارير والإعدادات.",
     tags: ["مطعم", "إدارة"],
     started: "2026-11",
@@ -95,7 +123,8 @@ export const ideas: Idea[] = [
   },
   {
     slug: "matam-driver",
-    title: "مطعم · المندوب",
+    group: "matam",
+    title: "المندوب",
     summary: "الطلبات الجاهزة، استلامها، وتسليمها.",
     tags: ["مطعم", "توصيل"],
     started: "2026-11",
@@ -136,3 +165,13 @@ export function iconSvg(icon: AppIcon, size = 512): string {
   <g transform="translate(${inset} ${inset}) scale(${scale})">${draw}</g>
 </svg>`;
 }
+
+export const getGroup = (slug: string): Group | undefined =>
+  groups.find((g) => g.slug === slug);
+
+/** أدوات موقع مجمّع */
+export const groupIdeas = (slug: string): Idea[] =>
+  ideas.filter((i) => i.group === slug);
+
+/** الأدوات المستقلة — ما لا ينتمي إلى مجموعة */
+export const soloIdeas = (): Idea[] => ideas.filter((i) => !i.group);

@@ -116,7 +116,7 @@ export function PeakHours({
                 y={y + ch / 2 + 3.5}
                 textAnchor="middle"
                 fontSize="9"
-                fill={isSel ? "var(--ink)" : "var(--faint)"}
+                fill={isSel ? "var(--n-text)" : "var(--n-faint)"}
               >
                 {r.wd}
               </text>
@@ -131,7 +131,7 @@ export function PeakHours({
                     width={cw - gap}
                     height={ch}
                     rx={3}
-                    fill={m > 0 ? "var(--brand)" : "var(--paper)"}
+                    fill={m > 0 ? "var(--n-accent)" : "var(--n-bg)"}
                     fillOpacity={m > 0 ? 0.18 + 0.82 * Math.min(1, m / 60) : 1}
                   >
                     <title>{`${r.wd} ${fmt12(h)} — ${Math.round(m)} دقيقة تركيز`}</title>
@@ -148,13 +148,13 @@ export function PeakHours({
             y={H - 3}
             textAnchor="middle"
             fontSize="9"
-            fill="var(--faint)"
+            fill="var(--n-faint)"
           >
             {h % 12 || 12}
           </text>
         ))}
       </svg>
-      <p className="text-[11px] text-faint">كلما اشتدّ اللون زادت دقائق التركيز في تلك الساعة</p>
+      <p className="text-[11px] text-n-faint">كلما اشتدّ اللون زادت دقائق التركيز في تلك الساعة</p>
     </div>
   );
 }

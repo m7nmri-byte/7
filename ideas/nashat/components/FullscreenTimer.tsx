@@ -36,18 +36,18 @@ export function FullscreenTimer({
   const seg = lastSegment(task);
 
   return (
-    <div className="fixed inset-0 z-[70] flex flex-col items-center justify-center gap-6 bg-paper">
+    <div className="fixed inset-0 z-[70] flex flex-col items-center justify-center gap-6 bg-n-bg">
       <button
         onClick={onClose}
         aria-label="إغلاق"
-        className="absolute end-4 top-4 rounded-lg px-3 py-2 text-lg text-muted transition-colors hover:text-ink"
+        className="absolute end-4 top-4 rounded-lg px-3 py-2 text-lg text-n-dim transition-colors hover:text-n-text"
       >
         ✕
       </button>
       <button
         onClick={() => setRotated(!rotated)}
         aria-label="تدوير أفقي"
-        className="absolute start-4 top-4 rounded-lg px-3 py-2 text-lg text-muted transition-colors hover:text-ink"
+        className="absolute start-4 top-4 rounded-lg px-3 py-2 text-lg text-n-dim transition-colors hover:text-n-text"
       >
         ⟳
       </button>
@@ -56,11 +56,11 @@ export function FullscreenTimer({
         className="flex flex-col items-center gap-5 transition-transform duration-300"
         style={rotated ? { transform: "rotate(90deg)" } : undefined}
       >
-        <p className="max-w-xs truncate text-center text-sm text-muted">{task.name}</p>
-        <p className="mark text-5xl font-light tabular-nums text-brand sm:text-8xl">
+        <p className="max-w-xs truncate text-center text-sm text-n-dim">{task.name}</p>
+        <p className="mark text-5xl font-light tabular-nums text-n-accent sm:text-8xl">
           {fmtDurLong(tick - +new Date(seg.start))}
         </p>
-        <p className="text-xs text-faint">
+        <p className="text-xs text-n-faint">
           بدأت {fmtTime(seg.start)} {fmtPeriod(seg.start)}
         </p>
       </div>

@@ -10,7 +10,7 @@ const ageLabel = (h: number) =>
   h < 1 ? `${Math.max(1, Math.round(h * 60))}د` : h < 24 ? `${Math.round(h)}س` : `${Math.round(h / 24)}ي`;
 
 const ageColor = (h: number) =>
-  h >= 72 ? "#e08a7a" : h >= 24 ? "#d0975c" : "var(--st-building)";
+  h >= 72 ? "#e08a7a" : h >= 24 ? "#d0975c" : "var(--n-warn)";
 
 /** الحلقات المفتوحة: ما يزال معلّقاً وينتظر */
 export function OpenLoops({
@@ -85,10 +85,10 @@ export function OpenLoops({
             <button
               onClick={() => onResume(x.t.id)}
               title={`اضغط للاستكمال — معلّقة منذ ${ageText(x.age)}`}
-              className="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-start transition-colors hover:bg-paper"
+              className="flex w-full items-center gap-3 rounded-lg px-2 py-1.5 text-start transition-colors hover:bg-n-bg"
             >
               <span className="w-28 shrink-0 truncate text-xs">{x.t.name}</span>
-              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-paper">
+              <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-n-bg">
                 <span
                   className="block h-full rounded-full"
                   style={{
@@ -109,9 +109,9 @@ export function OpenLoops({
       </ul>
 
       {n > shown.length && (
-        <p className="text-[11px] text-faint">و{n - shown.length} أخرى أحدث</p>
+        <p className="text-[11px] text-n-faint">و{n - shown.length} أخرى أحدث</p>
       )}
-      <p className="text-[11px] text-faint">
+      <p className="text-[11px] text-n-faint">
         طول الشريط = مدة الانتظار · اضغط على أي مهمة لاستكمالها
       </p>
     </div>

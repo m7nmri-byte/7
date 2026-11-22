@@ -52,10 +52,10 @@ export function FocusMix({ day, segs }: { day: string; segs: DaySeg[] }) {
 
   const parts = (
     [
-      { key: "deep", label: "تركيز عميق", sub: `${FOCUS_DEEP}د فأكثر`, color: "var(--st-building)" },
-      { key: "mid", label: "متوسط", sub: `${FOCUS_MID}–${FOCUS_DEEP}د`, color: "var(--brand)" },
+      { key: "deep", label: "تركيز عميق", sub: `${FOCUS_DEEP}د فأكثر`, color: "var(--n-warn)" },
+      { key: "mid", label: "متوسط", sub: `${FOCUS_MID}–${FOCUS_DEEP}د`, color: "var(--n-accent)" },
       { key: "frag", label: "متقطع", sub: `أقل من ${FOCUS_MID}د`, color: "#e08a7a" },
-      { key: "live", label: "جارية", sub: "لم تُحسم بعد", color: "var(--edge)" },
+      { key: "live", label: "جارية", sub: "لم تُحسم بعد", color: "var(--n-line)" },
     ] as const
   ).filter((p) => p.key !== "live" || count.live > 0);
 

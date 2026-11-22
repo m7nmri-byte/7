@@ -63,7 +63,7 @@ export function Closure({ tasks, day }: { tasks: Task[]; day: string }) {
     <div className="flex flex-col gap-3">
       <Take>
         {msg}
-        {activeDays === 1 && total >= 3 && <span className="text-faint"> (من يوم واحد فقط)</span>}
+        {activeDays === 1 && total >= 3 && <span className="text-n-faint"> (من يوم واحد فقط)</span>}
         {compare && (
           <>
             <br />
@@ -73,7 +73,7 @@ export function Closure({ tasks, day }: { tasks: Task[]; day: string }) {
       </Take>
 
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full">
-        <line x1={padX} x2={W - padX} y1={mid} y2={mid} stroke="var(--edge)" />
+        <line x1={padX} x2={W - padX} y1={mid} y2={mid} stroke="var(--n-line)" />
         {data.map((x, i) => {
           const cx = W - padX - slot * (i + 0.5);
           const isSel = x.d === day;
@@ -89,12 +89,12 @@ export function Closure({ tasks, day }: { tasks: Task[]; day: string }) {
                     width={bw}
                     height={hu}
                     rx={3}
-                    fill="var(--st-ripe)"
+                    fill="var(--n-ok)"
                     opacity={isSel ? 1 : 0.55}
                   >
                     <title>{`${x.wd}: ${x.done} منجزة`}</title>
                   </rect>
-                  <text x={cx} y={mid - hu - 4} textAnchor="middle" fontSize="9" fill="var(--muted)">
+                  <text x={cx} y={mid - hu - 4} textAnchor="middle" fontSize="9" fill="var(--n-dim)">
                     {x.done}
                   </text>
                 </>
@@ -112,7 +112,7 @@ export function Closure({ tasks, day }: { tasks: Task[]; day: string }) {
                   >
                     <title>{`${x.wd}: ${x.intr} مقاطعة`}</title>
                   </rect>
-                  <text x={cx} y={mid + hd + 11} textAnchor="middle" fontSize="9" fill="var(--muted)">
+                  <text x={cx} y={mid + hd + 11} textAnchor="middle" fontSize="9" fill="var(--n-dim)">
                     {x.intr}
                   </text>
                 </>
@@ -122,7 +122,7 @@ export function Closure({ tasks, day }: { tasks: Task[]; day: string }) {
                 y={H - 2}
                 textAnchor="middle"
                 fontSize="9"
-                fill={isSel ? "var(--ink)" : "var(--faint)"}
+                fill={isSel ? "var(--n-text)" : "var(--n-faint)"}
               >
                 {x.wd}
               </text>
@@ -131,9 +131,9 @@ export function Closure({ tasks, day }: { tasks: Task[]; day: string }) {
         })}
       </svg>
 
-      <div className="flex gap-4 text-[11px] text-faint">
+      <div className="flex gap-4 text-[11px] text-n-faint">
         <span className="flex items-center gap-1.5">
-          <i className="size-2 rounded-full" style={{ background: "var(--st-ripe)" }} />
+          <i className="size-2 rounded-full" style={{ background: "var(--n-ok)" }} />
           أُنجزت (فوق)
         </span>
         <span className="flex items-center gap-1.5">

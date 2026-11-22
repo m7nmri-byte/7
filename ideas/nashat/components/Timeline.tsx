@@ -9,9 +9,9 @@ import { fmtDur, fmtPeriod, fmtTime } from "../time";
 import { useNow } from "./ui";
 
 const STATUS_COLOR: Record<SegStatus, string> = {
-  done: "var(--st-ripe)",
-  interrupted: "var(--st-building)",
-  ongoing: "var(--brand)",
+  done: "var(--n-ok)",
+  interrupted: "var(--n-warn)",
+  ongoing: "var(--n-accent)",
 };
 
 export function StatusGlyph({ status, size = 16 }: { status: SegStatus; size?: number }) {
@@ -47,13 +47,13 @@ function InsertRow({ onClick }: { onClick: () => void }) {
   return (
     <button
       onClick={onClick}
-      className="group flex w-full items-center gap-2 py-1 text-[11px] text-faint transition-colors hover:text-brand"
+      className="group flex w-full items-center gap-2 py-1 text-[11px] text-n-faint transition-colors hover:text-n-accent"
     >
-      <span className="h-px flex-1 bg-edge transition-colors group-hover:bg-brand/40" />
-      <span className="rounded-full border border-edge px-2 py-0.5 transition-colors group-hover:border-brand/40">
+      <span className="h-px flex-1 bg-n-line transition-colors group-hover:bg-n-accent/40" />
+      <span className="rounded-full border border-n-line px-2 py-0.5 transition-colors group-hover:border-n-accent/40">
         + إضافة هنا
       </span>
-      <span className="h-px flex-1 bg-edge transition-colors group-hover:bg-brand/40" />
+      <span className="h-px flex-1 bg-n-line transition-colors group-hover:bg-n-accent/40" />
     </button>
   );
 }
@@ -77,7 +77,7 @@ export function Timeline({
   if (!ordered.length) {
     return (
       <div className="flex flex-col gap-3">
-        <p className="rounded-2xl border border-dashed border-edge py-10 text-center text-sm text-muted">
+        <p className="rounded-2xl border border-dashed border-n-line py-10 text-center text-sm text-n-dim">
           لا توجد مهام مسجّلة في هذا اليوم
         </p>
         <InsertRow onClick={() => onInsert(null, null)} />
@@ -95,26 +95,26 @@ export function Timeline({
         const ms = row.b - row.a;
         return (
           <div key={`${row.task.id}:${row.idx}`}>
-            <div className="flex gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-card">
+            <div className="flex gap-3 rounded-xl px-3 py-4 transition-colors hover:bg-n-surface">
               <StatusGlyph status={row.status} size={18} />
 
               <div className="flex min-w-0 flex-1 flex-col gap-1.5">
                 <div className="flex items-start justify-between gap-3">
                   <button
                     onClick={() => onEdit(row.task.id, row.idx)}
-                    className="truncate text-start text-[15px] transition-colors hover:text-brand"
+                    className="truncate text-start text-[15px] transition-colors hover:text-n-accent"
                   >
                     {row.task.name}
                     {!row.isFirstSeg && (
-                      <span className="ms-2 text-[10px] text-faint">استكمال</span>
+                      <span className="ms-2 text-[10px] text-n-faint">استكمال</span>
                     )}
                   </button>
-                  <span className="mark shrink-0 text-sm tabular-nums text-muted">
+                  <span className="mark shrink-0 text-sm tabular-nums text-n-dim">
                     {fmtDur(ms)}
                   </span>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-x-2 text-[11px] text-faint">
+                <div className="flex flex-wrap items-center gap-x-2 text-[11px] text-n-faint">
                   <span>
                     {fmtTime(row.seg.start)} {fmtPeriod(row.seg.start)}
                   </span>
@@ -125,7 +125,7 @@ export function Timeline({
                 </div>
 
                 {row.steps.length > 0 && (
-                  <ul className="flex flex-col gap-1 border-s-2 border-edge ps-3 text-xs text-muted">
+                  <ul className="flex flex-col gap-1 border-s-2 border-n-line ps-3 text-xs text-n-dim">
                     {row.steps.map((s) => (
                       <li key={s.i} className="group/step flex items-center gap-2">
                         <span className="flex-1">• {s.text}</span>
@@ -171,15 +171,15 @@ export function PendingStack({
   const shown = open ? tasks : tasks.slice(0, 2);
 
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border border-edge bg-card p-4">
+    <div className="flex flex-col gap-2 rounded-2xl border border-n-line bg-n-surface p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-muted">
+        <h3 className="text-sm font-medium text-n-dim">
           معلّقة ({tasks.length})
         </h3>
         {tasks.length > 2 && (
           <button
             onClick={() => setOpen(!open)}
-            className="text-[11px] text-faint transition-colors hover:text-ink"
+            className="text-[11px] text-n-faint transition-colors hover:text-n-text"
           >
             {open ? "إخفاء" : "عرض الكل"}
           </button>
@@ -193,10 +193,10 @@ export function PendingStack({
             <li key={t.id} className="flex items-center gap-2">
               <button
                 onClick={() => onResume(t.id)}
-                className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-lg border border-edge bg-paper px-3 py-2 text-start transition-colors hover:border-brand/40"
+                className="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-lg border border-n-line bg-n-bg px-3 py-2 text-start transition-colors hover:border-n-accent/40"
               >
                 <span className="truncate text-[15px]">{t.name}</span>
-                <span className="mark shrink-0 text-[11px] text-faint">
+                <span className="mark shrink-0 text-[11px] text-n-faint">
                   {ageText(age)} · {fmtDur(taskTotalMs(t, now))}
                 </span>
               </button>
@@ -204,7 +204,7 @@ export function PendingStack({
                 onClick={() => onDismiss(t.id)}
                 aria-label="صرف"
                 title="أزلها من المعلّقة"
-                className="rounded-lg px-2 py-2 text-faint transition-colors hover:text-ink"
+                className="rounded-lg px-2 py-2 text-n-faint transition-colors hover:text-n-text"
               >
                 ✕
               </button>

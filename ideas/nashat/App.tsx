@@ -178,13 +178,13 @@ export function NashatApp({ session }: { session: Session }) {
         </>
       ) : (
         <>
-          <div className="flex gap-1 overflow-x-auto rounded-xl border border-edge p-1">
+          <div className="flex gap-1 overflow-x-auto rounded-xl border border-n-line p-1">
             {PERIODS.map(([k, l]) => (
               <button
                 key={k}
                 onClick={() => setPeriod(k)}
                 className={`flex-1 rounded-lg px-3 py-2 text-xs whitespace-nowrap transition-colors ${
-                  period === k ? "bg-brand-soft font-medium text-brand" : "text-muted hover:text-ink"
+                  period === k ? "bg-n-accent-soft font-medium text-n-accent" : "text-n-dim hover:text-n-text"
                 }`}
               >
                 {l}
@@ -205,7 +205,7 @@ export function NashatApp({ session }: { session: Session }) {
         </>
       )}
 
-      <p className="pb-2 text-center text-[11px] text-faint">{SYNC_LABEL[sync]}</p>
+      <p className="pb-2 text-center text-[11px] text-n-faint">{SYNC_LABEL[sync]}</p>
 
       {/* ---------- النوافذ ---------- */}
 

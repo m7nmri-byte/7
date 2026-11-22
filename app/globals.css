@@ -10,6 +10,18 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
 
+  --color-n-bg: var(--n-bg);
+  --color-n-surface: var(--n-surface);
+  --color-n-raised: var(--n-raised);
+  --color-n-line: var(--n-line);
+  --color-n-text: var(--n-text);
+  --color-n-dim: var(--n-dim);
+  --color-n-faint: var(--n-faint);
+  --color-n-accent: var(--n-accent);
+  --color-n-accent-soft: var(--n-accent-soft);
+  --color-n-ok: var(--n-ok);
+  --color-n-warn: var(--n-warn);
+  --color-n-danger: var(--n-danger);
   --color-m-bg: var(--m-bg);
   --color-m-surface: var(--m-surface);
   --color-m-raised: var(--m-raised);
@@ -159,3 +171,32 @@ body {
 /* إخفاء الشريط حيث يكون التمرير أفقيًا ومقصودًا */
 .m-noscroll::-webkit-scrollbar { display: none; }
 .m-noscroll { scrollbar-width: none; -ms-overflow-style: none; }
+
+/* ======================================================================
+   نشاط — هوية مستقلة: ليل هادئ بأزرق فولاذي.
+   أداة تُفتح طوال اليوم ويُنظر إلى مؤقّتها طويلًا، فالعين تستريح
+   للداكن هنا بخلاف تطبيق الطعام.
+   ====================================================================== */
+[data-nashat] {
+  --n-bg: #0f1419;
+  --n-surface: #161d24;
+  --n-raised: #1d262f;
+  --n-line: #27333d;
+  --n-text: #e3e9ee;
+  --n-dim: #93a1ad;
+  --n-faint: #63707c;
+
+  --n-accent: #4ea8de;
+  --n-accent-soft: #15242f;
+  --n-ok: #5bbf8f;
+  --n-warn: #d9a441;
+  --n-danger: #e0776a;
+
+  background-color: var(--n-bg);
+  color: var(--n-text);
+  color-scheme: dark;
+}
+
+[data-nashat] ::selection {
+  background-color: color-mix(in oklab, var(--n-accent) 30%, transparent);
+}

@@ -41,7 +41,7 @@ export function NextSheet({
   return (
     <Sheet open onClose={onClose} title={title} desc="اختر ماذا تريد أن تبدأ الآن">
       {current && startIso && (
-        <div className="flex flex-col gap-2 border-b border-dashed border-edge pb-4">
+        <div className="flex flex-col gap-2 border-b border-dashed border-n-line pb-4">
           <Field label="انتهت الساعة — عدّلها إذا احتجت">
             <input
               type="datetime-local"
@@ -65,14 +65,14 @@ export function NextSheet({
         </div>
       )}
 
-      <div className="flex gap-1 rounded-xl border border-edge p-1">
+      <div className="flex gap-1 rounded-xl border border-n-line p-1">
         {([["new", "مهمة جديدة"], ["resume", "استكمال معلّقة"]] as const).map(([k, l]) => (
           <button
             key={k}
             onClick={() => setMode(k)}
             disabled={k === "resume" && pending.length === 0}
             className={`flex-1 rounded-lg px-3 py-2 text-xs transition-colors disabled:opacity-40 ${
-              mode === k ? "bg-brand-soft font-medium text-brand" : "text-muted hover:text-ink"
+              mode === k ? "bg-n-accent-soft font-medium text-n-accent" : "text-n-dim hover:text-n-text"
             }`}
           >
             {l}
@@ -110,10 +110,10 @@ export function NextSheet({
             <li key={t.id}>
               <button
                 onClick={() => proceed({ type: "resume", id: t.id })}
-                className="flex w-full items-center justify-between gap-3 rounded-lg border border-edge bg-paper px-3 py-2.5 text-start transition-colors hover:border-brand/40"
+                className="flex w-full items-center justify-between gap-3 rounded-lg border border-n-line bg-n-bg px-3 py-2.5 text-start transition-colors hover:border-n-accent/40"
               >
                 <span className="truncate text-sm">{t.name}</span>
-                <span className="mark shrink-0 text-[11px] text-faint">
+                <span className="mark shrink-0 text-[11px] text-n-faint">
                   {fmtTime(lastSegment(t).end!)} {fmtPeriod(lastSegment(t).end!)}
                 </span>
               </button>
@@ -124,7 +124,7 @@ export function NextSheet({
 
       <button
         onClick={() => proceed({ type: "stop" })}
-        className={`${btnGhost} mt-2 w-full text-muted`}
+        className={`${btnGhost} mt-2 w-full text-n-dim`}
       >
         توقفت عن التسجيل
       </button>

@@ -114,7 +114,7 @@ export function ImportSheet({
         type="file"
         accept="application/json,.json"
         onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        className="text-xs text-muted file:me-3 file:rounded-lg file:border file:border-edge file:bg-paper file:px-3 file:py-2 file:text-xs file:text-ink"
+        className="text-xs text-n-dim file:me-3 file:rounded-lg file:border file:border-n-line file:bg-n-bg file:px-3 file:py-2 file:text-xs file:text-n-text"
       />
       <button
         disabled={!file}

@@ -26,8 +26,8 @@ export function CategoryPicker({
           aria-pressed={value === c.key}
           className={`rounded-full px-4 py-2 text-sm transition-colors ${
             value === c.key
-              ? "bg-brand-soft font-medium text-brand"
-              : "border border-edge text-muted hover:text-ink"
+              ? "bg-n-accent-soft font-medium text-n-accent"
+              : "border border-n-line text-n-dim hover:text-n-text"
           }`}
         >
           {c.label}
@@ -47,7 +47,7 @@ export function BackMinutes({
   onChange: (n: number) => void;
 }) {
   return (
-    <label className="flex items-center gap-2 text-sm text-muted">
+    <label className="flex items-center gap-2 text-sm text-n-dim">
       <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
         <circle cx="12" cy="12" r="9" />
         <polyline points="12 7 12 12 15.5 14" />
@@ -60,7 +60,7 @@ export function BackMinutes({
         value={value || ""}
         placeholder="0"
         onChange={(e) => onChange(Math.max(0, Number(e.target.value.replace(/\D/g, "")) || 0))}
-        className="w-14 rounded-lg border border-edge bg-paper px-2 py-1.5 text-center text-sm text-ink outline-none focus:border-brand/60"
+        className="w-14 rounded-lg border border-n-line bg-n-bg px-2 py-1.5 text-center text-sm text-n-text outline-none focus:border-n-accent/60"
       />
       دقيقة
     </label>
@@ -98,11 +98,11 @@ export function NowCard({
   const resumed = task.segments.length > 1;
 
   return (
-    <section className="flex flex-col gap-6 rounded-3xl border border-brand/25 bg-card p-6 sm:p-8">
+    <section className="flex flex-col gap-6 rounded-3xl border border-n-accent/25 bg-n-surface p-6 sm:p-8">
       <div className="flex flex-col items-center gap-3 text-center">
         <button
           onClick={onEdit}
-          className="max-w-full truncate text-xl font-medium transition-colors hover:text-brand sm:text-2xl"
+          className="max-w-full truncate text-xl font-medium transition-colors hover:text-n-accent sm:text-2xl"
         >
           {task.name}
         </button>
@@ -110,17 +110,17 @@ export function NowCard({
         <button
           onClick={onFullscreen}
           title="ملء الشاشة"
-          className="mark text-5xl font-light tabular-nums text-brand transition-opacity hover:opacity-80 sm:text-7xl"
+          className="mark text-5xl font-light tabular-nums text-n-accent transition-opacity hover:opacity-80 sm:text-7xl"
         >
           {fmtDur(elapsed)}
         </button>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-faint">
+        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-xs text-n-faint">
           <span>
             بدأت {fmtTime(seg.start)} {fmtPeriod(seg.start)}
           </span>
           {resumed && (
-            <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-brand">
+            <span className="rounded-full bg-n-accent-soft px-2.5 py-0.5 text-n-accent">
               جلسة {task.segments.length} · المجموع {fmtDur(total)}
             </span>
           )}
@@ -128,7 +128,7 @@ export function NowCard({
       </div>
 
       {task.steps.length > 0 && (
-        <ul className="flex flex-col gap-1.5 border-s-2 border-edge ps-4 text-sm text-muted">
+        <ul className="flex flex-col gap-1.5 border-s-2 border-n-line ps-4 text-sm text-n-dim">
           {task.steps.map((s, i) => (
             <li key={i}>{s.text}</li>
           ))}
@@ -138,23 +138,23 @@ export function NowCard({
       <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:justify-center">
         <button
           onClick={onFinish}
-          className={`${action} bg-[var(--st-ripe)] text-[#15251b] hover:brightness-110`}
+          className={`${action} bg-[var(--n-ok)] text-[#15251b] hover:brightness-110`}
         >
           أنهيتها
         </button>
         <button
           onClick={onInterrupt}
-          className={`${action} bg-[var(--st-building)] text-[#2a2115] hover:brightness-110`}
+          className={`${action} bg-[var(--n-warn)] text-[#2a2115] hover:brightness-110`}
         >
           علّقها
         </button>
-        <button onClick={onStep} className={`${action} border border-edge text-ink hover:bg-paper`}>
+        <button onClick={onStep} className={`${action} border border-n-line text-n-text hover:bg-n-bg`}>
           + خطوة
         </button>
         {canAddParallel && (
           <button
             onClick={onParallel}
-            className={`${action} border border-edge text-muted hover:bg-paper hover:text-ink`}
+            className={`${action} border border-n-line text-n-dim hover:bg-n-bg hover:text-n-text`}
           >
             بالتوازي
           </button>
@@ -183,8 +183,8 @@ export function EmptyNow({
   };
 
   return (
-    <section className="flex flex-col gap-5 rounded-3xl border border-dashed border-edge bg-card p-6 sm:p-8">
-      <p className="text-center text-base text-muted">ما الذي تعمل عليه الآن؟</p>
+    <section className="flex flex-col gap-5 rounded-3xl border border-dashed border-n-line bg-n-surface p-6 sm:p-8">
+      <p className="text-center text-base text-n-dim">ما الذي تعمل عليه الآن؟</p>
 
       <input
         className={`${field} py-3.5 text-center text-base`}
@@ -203,7 +203,7 @@ export function EmptyNow({
         <button
           onClick={go}
           disabled={!name.trim()}
-          className="rounded-xl bg-brand px-7 py-3 text-sm font-medium text-[#15202b] transition-colors hover:brightness-110 disabled:opacity-40"
+          className="rounded-xl bg-n-accent px-7 py-3 text-sm font-medium text-[#15202b] transition-colors hover:brightness-110 disabled:opacity-40"
         >
           ابدأ
         </button>

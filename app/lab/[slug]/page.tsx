@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getIdea, ideas, views } from "@/ideas";
 
-/** لا تُقبل إلا الأفكار المعرّفة في السجل — أي مسار آخر 404 */
+/** لا تُقبل إلا الأدوات المعرّفة في السجل — أي مسار آخر 404 */
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -15,6 +15,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const idea = getIdea(slug);
   if (!idea) return {};
+
   const base = `/lab/${slug}`;
   return {
     title: idea.title,
@@ -33,41 +34,15 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * الأداة تملأ الصفحة وحدها.
+ * لا عنوان ولا وصف من الموقع فوقها: كل أداة موقع مستقل، وما يعرّف
+ * بها يكون داخلها لا في إطار يسبقها.
+ */
 export default async function LabPage({ params }: PageProps<"/lab/[slug]">) {
   const { slug } = await params;
-  const idea = getIdea(slug);
   const View = views[slug];
-  if (!idea || !View) notFound();
+  if (!getIdea(slug) || !View) notFound();
 
-  return (
-    <main className="mx-auto w-full max-w-4xl flex-1 px-5 py-10 sm:px-8 sm:py-14">
-      <header className="mb-10 flex flex-col gap-4 border-b border-edge pb-8">
-        <h1 className="text-2xl font-semibold sm:text-3xl">{idea.title}</h1>
-
-        <p className="max-w-prose leading-relaxed text-muted">{idea.summary}</p>
-
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-faint">
-          <span className="mark">{idea.started}</span>
-          {idea.tags.map((t) => (
-            <span key={t} className="before:me-2 before:content-['·']">
-              {t}
-            </span>
-          ))}
-        </div>
-
-        {idea.movedUrl && (
-          <a
-            href={idea.movedUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="w-fit rounded-full bg-brand-soft px-4 py-2 text-sm font-medium text-brand transition-opacity hover:opacity-80"
-          >
-            انتقلت إلى مشروع مستقل ↗
-          </a>
-        )}
-      </header>
-
-      <View />
-    </main>
-  );
+  return <View />;
 }

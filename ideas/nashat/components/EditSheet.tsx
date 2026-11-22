@@ -103,7 +103,7 @@ export function EditSheet({
         حفظ
       </button>
 
-      <div className="mt-2 flex flex-col gap-2 border-t border-edge pt-3">
+      <div className="mt-2 flex flex-col gap-2 border-t border-n-line pt-3">
         {task.status !== "completed" && (
           <button onClick={act(() => onSetStatus("completed"))} className={btnGhost}>
             علّمها مُنجزة

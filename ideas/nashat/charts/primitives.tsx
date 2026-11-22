@@ -5,21 +5,21 @@ import type { ReactNode } from "react";
 /** إطار موحّد لكل رسم */
 export function Card({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="flex flex-col gap-4 rounded-3xl border border-edge bg-card p-5 sm:p-6">
-      <h3 className="text-sm font-medium text-muted">{title}</h3>
+    <section className="flex flex-col gap-4 rounded-3xl border border-n-line bg-n-surface p-5 sm:p-6">
+      <h3 className="text-sm font-medium text-n-dim">{title}</h3>
       {children}
     </section>
   );
 }
 
 export function Empty({ msg = "لا توجد بيانات بعد" }: { msg?: string }) {
-  return <p className="py-6 text-center text-xs text-faint">{msg}</p>;
+  return <p className="py-6 text-center text-xs text-n-faint">{msg}</p>;
 }
 
 /** جملة استبصار فوق الرسم */
 export function Take({ children }: { children: ReactNode }) {
   if (!children) return null;
-  return <p className="text-sm leading-relaxed text-ink">{children}</p>;
+  return <p className="text-sm leading-relaxed text-n-text">{children}</p>;
 }
 
 export type Stat = { n: ReactNode; l: string; word?: boolean };
@@ -30,14 +30,14 @@ export function StatRow({ items, caption }: { items: Stat[]; caption?: string })
       <div className="flex flex-wrap gap-x-6 gap-y-3">
         {items.map((i, k) => (
           <div key={k} className="flex flex-col gap-0.5">
-            <span className={`text-2xl text-ink ${i.word ? "" : "mark tabular-nums"}`}>
+            <span className={`text-2xl text-n-text ${i.word ? "" : "mark tabular-nums"}`}>
               {i.n}
             </span>
-            <span className="text-xs text-faint">{i.l}</span>
+            <span className="text-xs text-n-faint">{i.l}</span>
           </div>
         ))}
       </div>
-      {caption && <p className="truncate text-[11px] text-muted">{caption}</p>}
+      {caption && <p className="truncate text-[11px] text-n-dim">{caption}</p>}
     </div>
   );
 }
@@ -51,7 +51,7 @@ export function Stack({
   const shown = parts.filter((p) => p.value > 0);
   if (!shown.length) return null;
   return (
-    <div className="flex h-3.5 overflow-hidden rounded-full bg-paper">
+    <div className="flex h-3.5 overflow-hidden rounded-full bg-n-bg">
       {shown.map((p) => (
         <span
           key={p.key}
@@ -77,12 +77,12 @@ export function Legend({
             className="size-2 shrink-0 rounded-full"
             style={{ backgroundColor: i.color }}
           />
-          <span className="flex-1 text-muted">
+          <span className="flex-1 text-n-dim">
             {i.label}
-            {i.sub && <span className="ms-1.5 text-faint">{i.sub}</span>}
+            {i.sub && <span className="ms-1.5 text-n-faint">{i.sub}</span>}
           </span>
-          {i.value && <b className="mark font-medium tabular-nums text-ink">{i.value}</b>}
-          {i.count && <span className="w-20 text-end text-faint">{i.count}</span>}
+          {i.value && <b className="mark font-medium tabular-nums text-n-text">{i.value}</b>}
+          {i.count && <span className="w-20 text-end text-n-faint">{i.count}</span>}
         </li>
       ))}
     </ul>

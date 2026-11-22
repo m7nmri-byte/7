@@ -182,7 +182,7 @@ export function RangeCharts({
                   width={bw}
                   height={h}
                   rx={2}
-                  fill="var(--brand)"
+                  fill="var(--n-accent)"
                   fillOpacity={0.8}
                 >
                   <title>{`${b.label} ${fmtHM(b.ms)}`}</title>
@@ -193,7 +193,7 @@ export function RangeCharts({
                     y={H - 4}
                     textAnchor="middle"
                     fontSize="9"
-                    fill="var(--faint)"
+                    fill="var(--n-faint)"
                   >
                     {b.label}
                   </text>
@@ -217,7 +217,7 @@ export function RangeCharts({
           <ul className="flex flex-col gap-2">
             {top5.map((x) => (
               <li key={x.task.id} className="flex items-center justify-between gap-3 text-xs">
-                <span className="truncate text-muted">{x.task.name}</span>
+                <span className="truncate text-n-dim">{x.task.name}</span>
                 <b className="mark shrink-0 font-medium tabular-nums">{fmtHM(x.ms)}</b>
               </li>
             ))}

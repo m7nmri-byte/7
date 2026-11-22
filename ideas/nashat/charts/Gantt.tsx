@@ -5,9 +5,9 @@ import { dayBounds, minsLabel, todayStr } from "../time";
 import { Empty } from "./primitives";
 
 const COLOR = {
-  done: "var(--st-ripe)",
-  interrupted: "var(--st-building)",
-  ongoing: "var(--brand)",
+  done: "var(--n-ok)",
+  interrupted: "var(--n-warn)",
+  ongoing: "var(--n-accent)",
 } as const;
 
 /** نافذة الساعات المعروضة — ستّ ساعات على الأقل، وتبدأ على رأس ساعة */
@@ -76,7 +76,7 @@ export function Gantt({
                 x2={x}
                 y1={top - 2}
                 y2={H - 18}
-                stroke="var(--edge)"
+                stroke="var(--n-line)"
                 strokeWidth="1"
               />
               <text
@@ -84,7 +84,7 @@ export function Gantt({
                 y={H - 5}
                 textAnchor="middle"
                 fontSize="9"
-                fill="var(--faint)"
+                fill="var(--n-faint)"
                 className="mark"
               >
                 {h % 24}
@@ -118,14 +118,14 @@ export function Gantt({
             x2={X(now)}
             y1={top - 4}
             y2={H - 18}
-            stroke="var(--brand)"
+            stroke="var(--n-accent)"
             strokeWidth="1.5"
             strokeDasharray="3 3"
           />
         )}
       </svg>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-faint">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-n-faint">
         {(
           [
             ["done", "أُنجزت"],
