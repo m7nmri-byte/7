@@ -21,7 +21,7 @@
   --mono-font: ui-monospace, "Cascadia Code", "Cascadia Mono", Consolas,
     "SF Mono", "Liberation Mono", monospace;
 
-  /* رمادي داكن محايد */
+  /* رمادي صافٍ — بلا ميل لأي صبغة */
   --paper: #1a1a1a;
   --card: #242424;
   --edge: #353535;
@@ -29,15 +29,15 @@
   --muted: #9a9a9a;
   --faint: #6e6e6e;
 
-  /* التمييز بالإضاءة لا باللون */
-  --brand: #ededed;
-  --brand-soft: #2e2e2e;
+  /* اللون المرافق: أزرق هادئ غير متشبّع */
+  --brand: #6e8fb5;
+  --brand-soft: #232a33;
 
   /* حالات الأفكار — ألوان خافتة تناسب الداكن */
   --st-seed: #9a9a9a;        --st-seed-tint: #2b2b2b;
-  --st-building: #d4a35e;    --st-building-tint: #2e2619;
-  --st-ripe: #74bd91;        --st-ripe-tint: #1c2a21;
-  --st-freed: #74a6db;       --st-freed-tint: #1d2632;
+  --st-building: #c9a473;    --st-building-tint: #2d2820;
+  --st-ripe: #7fae8c;        --st-ripe-tint: #232d26;
+  --st-freed: #6e8fb5;       --st-freed-tint: #232a33;
 }
 
 html {
@@ -57,7 +57,7 @@ body {
 }
 
 ::selection {
-  background-color: #3a4a5e;
+  background-color: #34445a;
   color: #ffffff;
 }
 
