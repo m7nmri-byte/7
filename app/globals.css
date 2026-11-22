@@ -10,57 +10,46 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
 
-  --font-sans: var(--font-inter), var(--font-cairo), system-ui, sans-serif;
-  --font-mark: var(--font-inter), system-ui, sans-serif;
+  --font-sans: var(--ui-font);
+  --font-mark: var(--mono-font);
 }
 
 :root {
-  --paper: #f8fafc;   /* slate-50  */
-  --card: #ffffff;
-  --edge: #e2e8f0;    /* slate-200 */
-  --ink: #1e293b;     /* slate-800 */
-  --muted: #64748b;   /* slate-500 */
-  --faint: #94a3b8;   /* slate-400 */
+  /* خط الواجهة: خط النظام نفسه، فيطابق ما تراه في المحرّر */
+  --ui-font: system-ui, "Segoe UI", "Segoe UI Arabic", Tahoma,
+    -apple-system, BlinkMacSystemFont, "Noto Sans Arabic", sans-serif;
+  --mono-font: ui-monospace, "Cascadia Code", "Cascadia Mono", Consolas,
+    "SF Mono", "Liberation Mono", monospace;
 
-  --brand: #0f766e;        /* teal-700 */
-  --brand-soft: #f0fdfa;   /* teal-50  */
+  /* رمادي داكن محايد */
+  --paper: #1a1a1a;
+  --card: #242424;
+  --edge: #353535;
+  --ink: #d4d4d4;
+  --muted: #9a9a9a;
+  --faint: #6e6e6e;
 
-  /* حالات الأفكار */
-  --st-seed: #64748b;        --st-seed-tint: #f1f5f9;
-  --st-building: #ca8a04;    --st-building-tint: #fefce8;
-  --st-ripe: #0f766e;        --st-ripe-tint: #f0fdfa;
-  --st-freed: #0369a1;       --st-freed-tint: #f0f9ff;
-}
+  /* التمييز بالإضاءة لا باللون */
+  --brand: #ededed;
+  --brand-soft: #2e2e2e;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #020617;   /* slate-950 */
-    --card: #0f172a;    /* slate-900 */
-    --edge: #1e293b;    /* slate-800 */
-    --ink: #f1f5f9;     /* slate-100 */
-    --muted: #94a3b8;
-    --faint: #64748b;
-
-    --brand: #2dd4bf;        /* teal-400 */
-    --brand-soft: #042f2e;   /* teal-950 */
-
-    --st-seed: #94a3b8;        --st-seed-tint: #1e293b;
-    --st-building: #eab308;    --st-building-tint: #292212;
-    --st-ripe: #2dd4bf;        --st-ripe-tint: #042f2e;
-    --st-freed: #38bdf8;       --st-freed-tint: #0c243a;
-  }
+  /* حالات الأفكار — ألوان خافتة تناسب الداكن */
+  --st-seed: #9a9a9a;        --st-seed-tint: #2b2b2b;
+  --st-building: #d4a35e;    --st-building-tint: #2e2619;
+  --st-ripe: #74bd91;        --st-ripe-tint: #1c2a21;
+  --st-freed: #74a6db;       --st-freed-tint: #1d2632;
 }
 
 html {
   scroll-behavior: smooth;
-  color-scheme: light dark;
+  color-scheme: dark;
 }
 
 body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* النص اللاتيني داخل سياق عربي: اتجاهه ثابت */
+/* النص اللاتيني داخل سياق عربي: خط أحادي واتجاه ثابت */
 .mark {
   font-family: var(--font-mark);
   direction: ltr;
@@ -68,9 +57,20 @@ body {
 }
 
 ::selection {
-  background-color: #99f6e4;
-  color: #134e4a;
+  background-color: #3a4a5e;
+  color: #ffffff;
 }
+
+/* شريط التمرير بلون الواجهة لا بلون النظام الفاتح */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #3f3f3f;
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover { background: #525252; background-clip: content-box; }
 
 /* حقول الإدخال لا تصغر عن ١٦ بكسل، وإلا كبّر Safari الصفحة تلقائياً */
 @media (max-width: 640px) {
