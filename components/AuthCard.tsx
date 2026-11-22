@@ -8,7 +8,7 @@ import { btnPrimary, field } from "@/components/styles";
 function friendlyError(message: string): string {
   const m = message.toLowerCase();
   if (m.includes("invalid login") || m.includes("invalid credentials"))
-    return "البريد الإلكتروني أو كلمة المرور غير صحيحة";
+    return "البريد الإلكتروني أو كلمة المرور غير صحيحة — وإن لم تنشئ حسابًا بعد، أنشئه من الأسفل";
   if (m.includes("already registered") || m.includes("already been registered"))
     return "هذا البريد مسجّل مسبقًا — سجّل الدخول بدلًا من إنشاء حساب";
   if (m.includes("password") && m.includes("6"))
@@ -16,7 +16,7 @@ function friendlyError(message: string): string {
   if (m.includes("valid email") || m.includes("invalid email"))
     return "صيغة البريد الإلكتروني غير صحيحة";
   if (m.includes("email not confirmed"))
-    return "لم يُفعّل هذا البريد بعد — افتح رسالة التفعيل في بريدك";
+    return "لم يُفعّل هذا البريد بعد — افتح رسالة التفعيل في بريدك، أو أوقف شرط التأكيد من إعدادات المشروع";
   if (m.includes("rate limit") || m.includes("too many"))
     return "محاولات كثيرة متتابعة — انتظر قليلًا ثم أعد المحاولة";
   return "حدث خطأ غير متوقع، حاول مرة أخرى";
@@ -54,7 +54,9 @@ export function AuthCard() {
       return;
     }
     if (mode === "signup" && !res.data.session) {
-      setNote("أُنشئ الحساب — افتح بريدك وفعّل الرابط ثم سجّل الدخول");
+      setNote(
+        "أُنشئ الحساب — أُرسلت رسالة تفعيل إلى بريدك. افتح الرابط فيها ثم سجّل الدخول.",
+      );
       setMode("login");
     }
   };
