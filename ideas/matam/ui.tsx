@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+
+/**
+ * وضع الإطار: صفحة كاملة، أو جهاز ضمن منصّة تعرض عدة أجهزة.
+ * الأداة لا تعرف أيّهما — الإطار وحده يتصرّف حسب السياق.
+ */
+const PhoneMode = createContext<"page" | "embedded">("page");
+export const PhoneBench = PhoneMode.Provider;
 
 /* ===================== إطار الجوال ===================== */
 
@@ -16,11 +23,14 @@ export function Phone({
   children: React.ReactNode;
   bar?: React.ReactNode;
 }) {
+  const mode = useContext(PhoneMode);
+  const frame =
+    mode === "embedded"
+      ? "h-full w-full rounded-[1.75rem] border border-m-line shadow-xl shadow-black/30"
+      : "mx-auto h-dvh w-full max-w-[26rem] sm:my-[2.5dvh] sm:h-[min(44rem,95dvh)] sm:rounded-[2rem] sm:border sm:border-m-line sm:shadow-2xl sm:shadow-black/40";
+
   return (
-    <div
-      data-matam
-      className="mx-auto flex h-dvh w-full max-w-[26rem] flex-col overflow-hidden bg-m-bg sm:h-[min(44rem,95dvh)] sm:my-[2.5dvh] sm:rounded-[2rem] sm:border sm:border-m-line sm:shadow-2xl sm:shadow-black/40"
-    >
+    <div data-matam className={`flex flex-col overflow-hidden bg-m-bg ${frame}`}>
       {children}
       {bar}
     </div>
@@ -139,7 +149,7 @@ export function Chip({
 
 export function Empty({ title, hint }: { title: string; hint?: string }) {
   return (
-    <div className="flex flex-col items-center gap-2 px-6 py-16 text-center">
+    <div className="my-auto flex flex-col items-center gap-2 px-6 py-10 text-center">
       <p className="text-sm text-m-dim">{title}</p>
       {hint && <p className="text-xs text-m-faint">{hint}</p>}
     </div>

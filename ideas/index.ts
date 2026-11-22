@@ -80,6 +80,22 @@ export const ideas: Idea[] = [
     },
   },
   {
+    slug: "matam-bench",
+    appBg: "#15110f",
+    group: "matam",
+    title: "المنصّة",
+    summary: "شغّل واجهات المطعم معًا على شاشة واحدة وتابع الطلب بينها.",
+    tags: ["مطعم", "عرض"],
+    started: "2026-11",
+    icon: {
+      bg: "#15110f",
+      fg: "#e8dfd6",
+      // جهازان متجاوران
+      path: "M4 5h6v14H4zM14 5h6v14h-6z",
+      stroke: 1.7,
+    },
+  },
+  {
     slug: "matam-customer",
     appBg: "#f7f5f2",
     group: "matam",
@@ -147,6 +163,7 @@ export const ideas: Idea[] = [
 
 export const views: Record<string, ComponentType> = {
   nashat: dynamic(() => import("./nashat/view")),
+  "matam-bench": dynamic(() => import("./matam-bench/view")),
   "matam-customer": dynamic(() => import("./matam-customer/view")),
   "matam-kitchen": dynamic(() => import("./matam-kitchen/view")),
   "matam-admin": dynamic(() => import("./matam-admin/view")),
