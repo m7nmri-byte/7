@@ -23,6 +23,7 @@ import { Combos } from "./Combos";
 import { Categories } from "./Categories";
 import { Drivers, Zones } from "./Fleet";
 import { Banners } from "./Banners";
+import { Ads } from "./Ads";
 import { Reports } from "./Reports";
 import { SupportDesk } from "./SupportDesk";
 import { SettingsScreen } from "./Settings";
@@ -35,6 +36,7 @@ type MorePage =
   | "drivers"
   | "zones"
   | "banners"
+  | "ads"
   | "reports"
   | "support"
   | "settings";
@@ -71,6 +73,7 @@ const MORE_ITEMS: { key: Exclude<MorePage, null>; label: string; hint: string }[
   { key: "drivers", label: "المندوبون", hint: "من يوصّل الطلبات" },
   { key: "zones", label: "مناطق التوصيل", hint: "الرسوم حسب المنطقة" },
   { key: "banners", label: "اللافتات", hint: "صور أعلى قائمة الزبون" },
+  { key: "ads", label: "الإعلانات المنبثقة", hint: "تظهر مرة عند فتح التطبيق" },
   { key: "reports", label: "التقارير", hint: "الإيرادات والأكثر مبيعًا" },
   { key: "support", label: "الدعم", hint: "رسائل الزبائن" },
   { key: "settings", label: "الإعدادات", hint: "المطعم وساعات العمل" },
@@ -92,7 +95,7 @@ export default function AdminApp() {
   const { data: combos, refresh: refreshCombos } = useLive("matam_combos", fetchCombos);
   const loadTickets = useCallback(() => fetchTickets(), []);
   const { data: tickets, refresh: refreshTickets } = useLive("matam_tickets", loadTickets);
-  useLive("matam_popup_ads", fetchAds);
+  const { data: ads, refresh: refreshAds } = useLive("matam_popup_ads", fetchAds);
 
   const all = orders ?? [];
   const waiting = all.filter((o) => o.status === "pending").length;
@@ -108,6 +111,7 @@ export default function AdminApp() {
     if (page === "drivers") return <Drivers drivers={drivers ?? []} onChanged={refreshDrivers} />;
     if (page === "zones") return <Zones zones={zones ?? []} onChanged={refreshZones} />;
     if (page === "banners") return <Banners banners={banners ?? []} onChanged={refreshBanners} />;
+    if (page === "ads") return <Ads ads={ads ?? []} onChanged={refreshAds} />;
     if (page === "reports") return <Reports orders={all} now={now} />;
     if (page === "support")
       return <SupportDesk tickets={tickets ?? []} onChanged={refreshTickets} />;

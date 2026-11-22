@@ -87,7 +87,7 @@ export function Home({
       {waiting.length > 0 && (
         <button
           onClick={onGoOrders}
-          className="rounded-2xl bg-m-accent px-4 py-3 text-sm font-semibold text-[#1a1204]"
+          className="rounded-2xl bg-m-accent px-4 py-3 text-sm font-semibold text-[#ffffff]"
         >
           {waiting.length} طلب بانتظار القبول
         </button>

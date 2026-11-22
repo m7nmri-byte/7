@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import type { Combo, Item, Order } from "../matam/types";
 import {
+  fetchAds,
   fetchBanners,
   fetchCategories,
   fetchCombos,
@@ -19,6 +20,7 @@ import { Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
 import { Menu } from "./Menu";
 import { ItemSheet } from "./ItemSheet";
 import { ComboSheet } from "./ComboSheet";
+import { PopupAds } from "./PopupAds";
 import { Cart } from "./Cart";
 import { Checkout } from "./Checkout";
 import { OrderDetail, OrdersList } from "./Tracking";
@@ -69,6 +71,7 @@ export default function CustomerApp() {
   const { data: combos } = useLive("matam_combos", fetchCombos);
   const { data: zones } = useLive("matam_zones", fetchZones);
   const { data: banners } = useLive("matam_banners", fetchBanners);
+  const { data: ads } = useLive("matam_popup_ads", fetchAds);
 
   const loadOrders = useCallback(
     () => (deviceId ? fetchOrders({ deviceId, limit: 60 }) : Promise.resolve([])),
@@ -195,6 +198,8 @@ export default function CustomerApp() {
           }, 400);
         }}
       />
+
+      <PopupAds ads={ads ?? []} />
 
       {node}
     </Phone>

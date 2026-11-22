@@ -112,7 +112,7 @@ export function Menu({
             onClick={() => setActive("all")}
             className={`shrink-0 rounded-full px-4 py-2 text-xs transition-colors ${
               active === "all"
-                ? "bg-m-accent font-semibold text-[#1a1204]"
+                ? "bg-m-accent font-semibold text-[#ffffff]"
                 : "border border-m-line text-m-dim"
             }`}
           >
@@ -124,7 +124,7 @@ export function Menu({
               onClick={() => setActive(c.id)}
               className={`shrink-0 rounded-full px-4 py-2 text-xs transition-colors ${
                 active === c.id
-                  ? "bg-m-accent font-semibold text-[#1a1204]"
+                  ? "bg-m-accent font-semibold text-[#ffffff]"
                   : "border border-m-line text-m-dim"
               }`}
             >

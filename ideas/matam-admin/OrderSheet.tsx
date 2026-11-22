@@ -10,6 +10,7 @@ import {
   nextStatus,
 } from "../matam/status";
 import { MSheet, mField, mGhost, mPrimary } from "../matam/ui";
+import { OrderTimeline } from "./Timeline";
 
 /** تفاصيل الطلب وكل ما يمكن للإدارة تغييره فيه */
 export function OrderSheet({
@@ -137,6 +138,8 @@ export function OrderSheet({
             ))}
           </select>
         </label>
+
+        <OrderTimeline orderId={order.id} />
 
         <dl className="flex flex-col gap-1.5 rounded-xl bg-m-raised p-3 text-xs">
           <div className="flex justify-between">

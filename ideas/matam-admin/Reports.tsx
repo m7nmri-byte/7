@@ -69,7 +69,7 @@ export function Reports({ orders, now }: { orders: Order[]; now: number }) {
             onClick={() => setRange(r.key)}
             className={`flex-1 rounded-full px-2 py-1.5 text-xs transition-colors ${
               range === r.key
-                ? "bg-m-accent font-semibold text-[#1a1204]"
+                ? "bg-m-accent font-semibold text-[#ffffff]"
                 : "border border-m-line text-m-dim"
             }`}
           >

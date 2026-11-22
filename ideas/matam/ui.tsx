@@ -109,7 +109,7 @@ export function TabBar<T extends string>({
 
 export const mBtn =
   "rounded-xl px-4 py-3 text-sm font-semibold transition-colors disabled:opacity-40";
-export const mPrimary = `${mBtn} bg-m-accent text-[#1a1204] hover:brightness-110`;
+export const mPrimary = `${mBtn} bg-m-accent text-[#ffffff] hover:brightness-110`;
 export const mGhost = `${mBtn} border border-m-line text-m-text hover:bg-m-raised`;
 export const mDanger = `${mBtn} bg-m-danger/15 text-m-danger hover:bg-m-danger/25`;
 export const mField =

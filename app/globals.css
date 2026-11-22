@@ -115,24 +115,26 @@ body {
    الموقع الأزرق، وأوضح في مطبخ تُقرأ شاشته من بعيد.
    ====================================================================== */
 [data-matam] {
-  --m-bg: #121110;
-  --m-surface: #1b1917;
-  --m-raised: #232120;
-  --m-line: #322e2b;
-  --m-text: #f0ece7;
-  --m-dim: #a39c94;
-  --m-faint: #6f6861;
+  /* فاتح ودافئ: الطعام يحتاج ضوءًا، وكل تطبيقات التوصيل الجادّة فاتحة */
+  --m-bg: #f7f5f2;
+  --m-surface: #ffffff;
+  --m-raised: #f1ece6;
+  --m-line: #e4ddd4;
+  --m-text: #1d1a17;
+  --m-dim: #6d655e;
+  --m-faint: #9c948c;
 
-  --m-accent: #e0923c;
-  --m-accent-soft: #2a2117;
-  --m-ok: #5fae7f;
-  --m-warn: #d9a84a;
-  --m-info: #6e9bc4;
-  --m-danger: #d9685c;
+  --m-accent: #d1492a;
+  --m-accent-soft: #fdf0ec;
+  --m-ok: #2e7d57;
+  --m-warn: #b8791a;
+  --m-info: #2f6fa8;
+  --m-danger: #c0392b;
 
   background-color: var(--m-bg);
   color: var(--m-text);
   font-family: var(--font-sans);
+  color-scheme: light;
 }
 
 [data-matam] ::selection {
@@ -145,6 +147,13 @@ body {
 [data-matam] ::-webkit-scrollbar-thumb {
   background: var(--m-line);
   border-radius: 999px;
+}
+
+/* حقول الإدخال داخل سطح فاتح لا ترث لون النظام الداكن */
+[data-matam] input,
+[data-matam] textarea,
+[data-matam] select {
+  color-scheme: light;
 }
 
 /* إخفاء الشريط حيث يكون التمرير أفقيًا ومقصودًا */

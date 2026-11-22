@@ -137,7 +137,7 @@ export function Checkout({
               onClick={() => setType(k)}
               disabled={k === "delivery" && !deliveryOn}
               className={`flex-1 rounded-lg px-3 py-2 text-xs transition-colors disabled:opacity-40 ${
-                type === k ? "bg-m-accent font-semibold text-[#1a1204]" : "text-m-dim"
+                type === k ? "bg-m-accent font-semibold text-[#ffffff]" : "text-m-dim"
               }`}
             >
               {l}
