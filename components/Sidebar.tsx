@@ -43,7 +43,7 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
       <Link
         href="/"
         onClick={onNavigate}
-        className="mark px-3 text-sm font-extralight tracking-[0.35em] text-ink transition-colors hover:text-brand"
+        className="wordmark px-3 text-sm tracking-[0.4em] text-ink transition-colors hover:text-brand"
       >
         M7NMRI
       </Link>
@@ -64,7 +64,6 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
 
         {ideas.length > 0 && (
           <div className="flex flex-col gap-1">
-            <h2 className="px-3 pb-1 text-[11px] text-faint">الأدوات</h2>
             {ideas.map((idea) => (
               <NavLink
                 key={idea.slug}

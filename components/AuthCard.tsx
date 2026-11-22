@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
-import { btnPrimary, field } from "@/components/styles";
+import { supabase, supabaseConfigured } from "@/lib/supabase";
+import { btnGhost, btnPrimary, field } from "@/components/styles";
 
 /**
  * ترجمة أخطاء Supabase إلى عربية مفهومة.
@@ -32,6 +32,15 @@ function friendlyError(err: { message: string; code?: string }): string {
 
   return err.message;
 }
+
+const GoogleMark = (
+  <svg viewBox="0 0 18 18" aria-hidden className="size-4 shrink-0">
+    <path fill="#4285F4" d="M17.6 9.2c0-.6-.1-1.3-.2-1.9H9v3.5h4.8a4.1 4.1 0 0 1-1.8 2.7v2.3h2.9c1.7-1.6 2.7-3.9 2.7-6.6Z" />
+    <path fill="#34A853" d="M9 18c2.4 0 4.5-.8 6-2.2l-2.9-2.3c-.8.6-1.9.9-3.1.9-2.4 0-4.4-1.6-5.1-3.8H.9v2.4A9 9 0 0 0 9 18Z" />
+    <path fill="#FBBC05" d="M3.9 10.6a5.4 5.4 0 0 1 0-3.4V4.8H.9a9 9 0 0 0 0 8.1l3-2.3Z" />
+    <path fill="#EA4335" d="M9 3.6c1.3 0 2.5.5 3.4 1.3l2.6-2.6A9 9 0 0 0 .9 4.8l3 2.4C4.6 5 6.6 3.6 9 3.6Z" />
+  </svg>
+);
 
 export function AuthCard() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -74,12 +83,39 @@ export function AuthCard() {
 
   return (
     <div className="mx-auto flex w-full max-w-sm flex-col gap-3 rounded-2xl border border-edge bg-card p-6">
-      <h2 className="text-lg font-semibold">نشاط</h2>
+      <h2 className="text-lg font-semibold">تسجيل الدخول</h2>
+
+      {!supabaseConfigured && (
+        <p className="rounded-lg bg-[#2b1f1d] px-3 py-2 text-xs leading-relaxed text-[#e08a7a]">
+          إعدادات الاتصال بقاعدة البيانات مفقودة في هذا النشر — راجع متغيّرات
+          البيئة في Vercel. الدخول لن يعمل حتى تُضبط.
+        </p>
+      )}
       <p className="mb-2 text-xs leading-relaxed text-muted">
         {mode === "login"
           ? "سجّل الدخول لمزامنة مهامك عبر أجهزتك"
           : "أنشئ حسابًا لحفظ مهامك ومزامنتها"}
       </p>
+
+      <button
+        onClick={() => {
+          setError(null);
+          void supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: { redirectTo: `${window.location.origin}/login` },
+          });
+        }}
+        className={`${btnGhost} flex w-full items-center justify-center gap-2.5`}
+      >
+        {GoogleMark}
+        المتابعة بحساب Google
+      </button>
+
+      <div className="my-1 flex items-center gap-3 text-[11px] text-faint">
+        <span className="h-px flex-1 bg-edge" />
+        أو بالبريد
+        <span className="h-px flex-1 bg-edge" />
+      </div>
 
       <input
         type="email"
