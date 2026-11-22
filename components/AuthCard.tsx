@@ -4,22 +4,33 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { btnPrimary, field } from "@/components/styles";
 
-/** ترجمة أخطاء Supabase إلى عربية مفهومة */
-function friendlyError(message: string): string {
-  const m = message.toLowerCase();
-  if (m.includes("invalid login") || m.includes("invalid credentials"))
+/**
+ * ترجمة أخطاء Supabase إلى عربية مفهومة.
+ * ما لا نعرفه يُعرض كما جاء من الخادم بدل إخفائه خلف رسالة عامة —
+ * الرسالة المبهمة تمنع معرفة السبب أصلاً.
+ */
+function friendlyError(err: { message: string; code?: string }): string {
+  const code = err.code ?? "";
+  const m = err.message.toLowerCase();
+
+  if (code === "invalid_credentials" || m.includes("invalid login") || m.includes("invalid credentials"))
     return "البريد الإلكتروني أو كلمة المرور غير صحيحة — وإن لم تنشئ حسابًا بعد، أنشئه من الأسفل";
-  if (m.includes("already registered") || m.includes("already been registered"))
+  if (code === "user_already_exists" || m.includes("already registered"))
     return "هذا البريد مسجّل مسبقًا — سجّل الدخول بدلًا من إنشاء حساب";
-  if (m.includes("password") && m.includes("6"))
+  if (code === "weak_password" || (m.includes("password") && m.includes("6")))
     return "كلمة المرور قصيرة — استخدم 6 أحرف على الأقل";
-  if (m.includes("valid email") || m.includes("invalid email"))
-    return "صيغة البريد الإلكتروني غير صحيحة";
-  if (m.includes("email not confirmed"))
-    return "لم يُفعّل هذا البريد بعد — افتح رسالة التفعيل في بريدك، أو أوقف شرط التأكيد من إعدادات المشروع";
-  if (m.includes("rate limit") || m.includes("too many"))
+  if (code === "email_address_invalid" || m.includes("is invalid"))
+    return "هذا البريد غير مقبول — جرّب بريدًا حقيقيًا (نطاقات مثل example.com مرفوضة)";
+  if (code === "email_not_confirmed" || m.includes("not confirmed"))
+    return "لم يُفعّل هذا البريد بعد — افتح رسالة التفعيل، أو أوقف شرط التأكيد من إعدادات المشروع";
+  if (code === "signup_disabled" || m.includes("signups not allowed"))
+    return "إنشاء الحسابات موقوف في إعدادات المشروع";
+  if (code === "over_email_send_rate_limit" || m.includes("rate limit") || m.includes("too many"))
     return "محاولات كثيرة متتابعة — انتظر قليلًا ثم أعد المحاولة";
-  return "حدث خطأ غير متوقع، حاول مرة أخرى";
+  if (m.includes("failed to fetch") || m.includes("network"))
+    return "تعذّر الوصول إلى الخادم — تحقّق من اتصالك";
+
+  return err.message;
 }
 
 export function AuthCard() {
@@ -50,7 +61,7 @@ export function AuthCard() {
     setBusy(false);
 
     if (res.error) {
-      setError(friendlyError(res.error.message));
+      setError(friendlyError(res.error));
       return;
     }
     if (mode === "signup" && !res.data.session) {
