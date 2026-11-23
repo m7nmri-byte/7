@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import type { Member, Settings } from "./types";
 import { ROLE_LABEL } from "./types";
 import { setMe } from "./hooks";
@@ -91,19 +91,59 @@ function Who({ members, me }: { members: Member[]; me: string | null }) {
   );
 }
 
-const FOLD_KEY = "jam.nav.folded";
+const OPEN_KEY = "jam.nav.open";
 
-/** الأقسام المطويّة — تُقرأ مرّة عند التركيب وتُحفظ عند كل طيّ */
-function readFolded(): string[] {
-  try {
-    const raw = localStorage.getItem(FOLD_KEY);
-    if (raw) return JSON.parse(raw) as string[];
-  } catch {
-    /* التخزين ممنوع */
+/**
+ * القسم المفتوح — واحدٌ لا أكثر.
+ *
+ * مخزنٌ خارجي لا حالةُ مكوّن: قراءة التخزين المحلي في مُهيّئ الحالة
+ * تجري على الخادم أيضًا فتعود فارغة، ثم يقرأ المتصفّح غيرها —
+ * فتختلف الصفحة المبنيّة مسبقًا عمّا يُرسم بعد الترطيب.
+ * و"" تعني «طويتُ الكلّ عمدًا»، تمييزًا لها عن «لم أختر بعد».
+ */
+let cached: string | null = null;
+let loaded = false;
+const openListeners = new Set<() => void>();
+
+function readOpen(): string | null {
+  if (!loaded) {
+    try {
+      cached = localStorage.getItem(OPEN_KEY);
+    } catch {
+      cached = null;
+    }
+    loaded = true;
   }
-  /** الافتراضي: الكلّ مطويّ عدا ما يُفتح بالقسم الحالي */
-  return NAV.filter((g) => g.label).map((g) => g.label);
+  return cached;
 }
+
+function writeOpen(next: string | null) {
+  cached = next;
+  loaded = true;
+  try {
+    if (next === null) localStorage.removeItem(OPEN_KEY);
+    else localStorage.setItem(OPEN_KEY, next);
+  } catch {
+    /* لا بأس */
+  }
+  for (const fn of openListeners) fn();
+}
+
+const useStoredOpen = () =>
+  useSyncExternalStore(
+    (fn) => {
+      openListeners.add(fn);
+      return () => {
+        openListeners.delete(fn);
+      };
+    },
+    readOpen,
+    () => null,
+  );
+
+/** القسم الذي تنتمي إليه شاشةٌ بعينها */
+const groupOf = (key: string): string | null =>
+  NAV.find((g) => g.label && g.items.some((i) => i.key === key))?.label ?? null;
 
 export function Sidebar({
   section,
@@ -122,18 +162,15 @@ export function Sidebar({
   badges: Partial<Record<SectionKey, number>>;
 }) {
   const [open, setOpen] = useState(false);
-  const [folded, setFolded] = useState<string[]>(readFolded);
+  /**
+   * أكورديون: فتح عنوانٍ يطوي البقية.
+   * وقبل أي اختيار يُفتح القسم الذي فيه الشاشة الحالية، فيعرف
+   * المستخدم أين هو من غير أن يبحث.
+   */
+  const stored = useStoredOpen();
+  const openGroup = stored === null ? groupOf(section) : stored === "" ? null : stored;
 
-  const toggleFold = (label: string) =>
-    setFolded((cur) => {
-      const next = cur.includes(label) ? cur.filter((x) => x !== label) : [...cur, label];
-      try {
-        localStorage.setItem(FOLD_KEY, JSON.stringify(next));
-      } catch {
-        /* لا بأس */
-      }
-      return next;
-    });
+  const toggleFold = (label: string) => writeOpen(openGroup === label ? "" : label);
 
   const list = (
     <>
@@ -158,12 +195,7 @@ export function Sidebar({
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">
         {NAV.map((g) => {
-          /**
-           * القسم الذي فيه الشاشة المفتوحة يُعرض وإن كان مطويًّا،
-           * فلا تختفي من تحت المستخدم حين ينتقل إليها من لوحة الرئيسة.
-           */
-          const holdsCurrent = g.items.some((it) => it.key === section);
-          const shut = Boolean(g.label) && folded.includes(g.label) && !holdsCurrent;
+          const shut = Boolean(g.label) && g.label !== openGroup;
           /** ما ينتظرك في قسمٍ مطويّ يظهر على عنوانه، فلا يُخفيه الطيّ */
           const hidden = shut
             ? g.items.reduce((n, it) => n + (badges[it.key] ?? 0), 0)
