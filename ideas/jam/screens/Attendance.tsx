@@ -45,7 +45,12 @@ export function AttendanceScreen({
   const onLeaveIds = new Set(
     leaves.filter((l) => l.approved && l.start_date <= day && l.end_date >= day).map((l) => l.member_id),
   );
-  const sum = summarize(records, active.length, onLeaveIds.size);
+  /**
+   * المقام أعضاء مفعَّلون، فليُحصَ منهم من في إجازة لا من الكلّ —
+   * وإلّا نقص الغائبون بقدر كل عضوٍ موقوف صادف أن له إجازة.
+   */
+  const onLeaveActive = active.filter((m) => onLeaveIds.has(m.id)).length;
+  const sum = summarize(records, active.length, onLeaveActive);
 
   const myRecord = records.find((r) => r.member_id === me) ?? null;
   const myShift = shifts.find((s) => s.id === members.find((m) => m.id === me)?.shift_id) ?? null;

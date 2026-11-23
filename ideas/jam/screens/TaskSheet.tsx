@@ -7,7 +7,7 @@ import { fetchTaskUpdates, patch, save } from "../db";
 import { fmtDate, fmtTime, sinceText } from "../format";
 import { Modal, Tag, jField, jGhost, jPrimary } from "../ui";
 import { FileField } from "../FileField";
-import { PRIORITY } from "./task-core";
+import { PRIORITY, hasNext, nextOccurrence } from "./task-core";
 
 const TONE: Record<string, string> = {
   todo: "var(--j-faint)",
@@ -22,6 +22,7 @@ export function TaskSheet({
   members,
   departments,
   subtasks,
+  siblings,
   me,
   onClose,
   onChanged,
@@ -33,6 +34,8 @@ export function TaskSheet({
   members: Member[];
   departments: Department[];
   subtasks: Task[];
+  /** بقية المهام — لمنع تكرارٍ مزدوج لنسخة متكرّرة */
+  siblings: Task[];
   me: string | null;
   onClose: () => void;
   onChanged: () => void;
@@ -85,6 +88,12 @@ export function TaskSheet({
         done_note: doneNote.trim() || null,
         proof_url: proof,
       });
+
+      /** المتكرّرة تُنجب تاليتها عند إغلاقها، مرّة واحدة */
+      const row = nextOccurrence(task);
+      const due = typeof row?.due_date === "string" ? row.due_date : null;
+      if (row && due && !hasNext(siblings, task, due)) await save("jam_tasks", row);
+
       setClosing(false);
       onChanged();
       onClose();
@@ -100,6 +109,11 @@ export function TaskSheet({
         status,
         done_at: status === "done" ? new Date().toISOString() : null,
       });
+      if (status === "done") {
+        const row = nextOccurrence(task);
+        const due = typeof row?.due_date === "string" ? row.due_date : null;
+        if (row && due && !hasNext(siblings, task, due)) await save("jam_tasks", row);
+      }
       onChanged();
     } catch (e) {
       setError(e instanceof Error ? e.message : "تعذّر التغيير");

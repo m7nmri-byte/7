@@ -3,11 +3,19 @@
 import { useMemo, useState } from "react";
 import type { Department, Meeting, Member, Task, TaskStatus } from "../types";
 import { TASK_STATUS } from "../types";
-import { patch } from "../db";
+import { patch, save } from "../db";
 import { fmtDate } from "../format";
 import { useMe } from "../hooks";
 import { Empty, Tag, jPrimary } from "../ui";
-import { PRIORITY, STATUS_TONE, dueTone, nextStatus, sortTasks } from "./task-core";
+import {
+  PRIORITY,
+  STATUS_TONE,
+  dueTone,
+  hasNext,
+  nextOccurrence,
+  nextStatus,
+  sortTasks,
+} from "./task-core";
 import { TaskForm } from "./TaskForm";
 import { TaskSheet } from "./TaskSheet";
 
@@ -70,6 +78,14 @@ export function Tasks({
       status: next,
       done_at: next === "done" ? new Date().toISOString() : null,
     });
+
+    /** إنجاز المتكرّرة يُنشئ تاليتها، وإلّا انتهت «اليومية» إلى الأبد */
+    if (next === "done") {
+      const row = nextOccurrence(t);
+      const due = typeof row?.due_date === "string" ? row.due_date : null;
+      if (row && due && !hasNext(tasks, t, due)) await save("jam_tasks", row);
+    }
+
     onChanged();
   };
 
@@ -173,6 +189,7 @@ export function Tasks({
           members={members}
           departments={departments}
           subtasks={tasks.filter((t) => t.parent_id === open.id)}
+          siblings={tasks}
           me={me}
           onClose={() => setOpen(null)}
           onChanged={onChanged}

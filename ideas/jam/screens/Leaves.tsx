@@ -60,6 +60,17 @@ export function Leaves({
     return m;
   }, [leaves, today]);
 
+  /**
+   * الرصيد المتبقّي من السنوية هذا العام.
+   * `annual_leave_days` كان حقلًا يُحدَّد في نموذج العضو ولا يُقابله
+   * شيء: لا متبقٍّ يُعرض ولا تجاوز يُنبَّه عليه.
+   */
+  const remaining = (memberId: string) => {
+    const member = members.find((m) => m.id === memberId);
+    if (!member) return null;
+    return Number(member.annual_leave_days ?? 0) - (usedAnnual.get(memberId) ?? 0);
+  };
+
   const submit = async () => {
     if (!draft?.member_id || !draft.start_date || !draft.end_date) return;
     if (draft.end_date < draft.start_date) {
@@ -159,7 +170,12 @@ export function Leaves({
                 <span className="mark block text-[11px] text-j-faint">
                   {fmtDate(l.start_date)} ← {fmtDate(l.end_date)} · {days(l.start_date, l.end_date)}{" "}
                   يوم
-                  {l.type === "annual" ? " · استهلك " + (usedAnnual.get(l.member_id) ?? 0) : ""}
+                  {l.type === "annual"
+                    ? " · استهلك " +
+                      (usedAnnual.get(l.member_id) ?? 0) +
+                      " من " +
+                      (members.find((m) => m.id === l.member_id)?.annual_leave_days ?? 0)
+                    : ""}
                 </span>
               </button>
 
@@ -284,6 +300,31 @@ export function Leaves({
                 المدّة {days(draft.start_date, draft.end_date)} يوم
               </p>
             )}
+
+            {/* الرصيد يُعرض ويُنبَّه تجاوزه، ولا يُمنع: للإدارة أن تأذن فوقه */}
+            {draft.type === "annual" &&
+              draft.member_id &&
+              (() => {
+                const left = remaining(draft.member_id);
+                if (left === null) return null;
+                const asking =
+                  draft.start_date && draft.end_date && draft.end_date >= draft.start_date
+                    ? days(draft.start_date, draft.end_date)
+                    : 0;
+                const over = asking > left;
+                return (
+                  <p
+                    className="mark rounded-lg px-3 py-2 text-xs"
+                    style={{
+                      color: over ? "var(--j-danger)" : "var(--j-dim)",
+                      backgroundColor: over ? "color-mix(in oklab, var(--j-danger) 10%, transparent)" : "var(--j-raised)",
+                    }}
+                  >
+                    المتبقّي من السنوية {left} يوم
+                    {over ? ` — والطلب ${asking} يومًا، أي تجاوزٌ بـ${asking - left}` : ""}
+                  </p>
+                );
+              })()}
 
             <textarea
               className={jField + " min-h-20 resize-none"}
