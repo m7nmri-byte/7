@@ -50,10 +50,10 @@ export function TopBar({
   end?: React.ReactNode;
 }) {
   return (
-    <header className="flex shrink-0 items-center gap-3 border-b border-m-line bg-m-surface px-4 py-3">
+    <header className="z-20 flex shrink-0 items-center gap-3 border-b border-m-line-soft bg-m-surface px-4 py-3.5 shadow-m-sm">
       {start}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="truncate text-base font-semibold text-m-text">{title}</h1>
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <h1 className="truncate text-[17px] font-bold leading-tight text-m-text">{title}</h1>
         {subtitle && <p className="truncate text-xs text-m-dim">{subtitle}</p>}
       </div>
       {end}
@@ -87,7 +87,7 @@ export function TabBar<T extends string>({
   onChange: (t: T) => void;
 }) {
   return (
-    <nav className="flex shrink-0 items-stretch border-t border-m-line bg-m-surface pb-[env(safe-area-inset-bottom)]">
+    <nav className="z-20 flex shrink-0 items-stretch border-t border-m-line-soft bg-m-surface pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_-8px_rgba(74,48,30,0.18)]">
       {tabs.map((t) => {
         const on = t.key === value;
         return (
@@ -95,10 +95,16 @@ export function TabBar<T extends string>({
             key={t.key}
             onClick={() => onChange(t.key)}
             aria-current={on ? "page" : undefined}
-            className={`relative flex flex-1 flex-col items-center gap-1 py-2.5 text-[11px] transition-colors ${
+            className={`relative flex flex-1 flex-col items-center gap-1 pb-2.5 pt-3 text-[11px] font-medium transition-colors ${
               on ? "text-m-accent" : "text-m-faint hover:text-m-dim"
             }`}
           >
+            {on && (
+              <span
+                aria-hidden
+                className="absolute inset-x-5 top-0 h-0.5 rounded-full bg-m-accent"
+              />
+            )}
             <span className="relative">
               {t.icon}
               {t.badge ? (
@@ -118,12 +124,12 @@ export function TabBar<T extends string>({
 /* ===================== عناصر ===================== */
 
 export const mBtn =
-  "rounded-xl px-4 py-3 text-sm font-semibold transition-colors disabled:opacity-40";
-export const mPrimary = `${mBtn} bg-m-accent text-[#ffffff] hover:brightness-110`;
-export const mGhost = `${mBtn} border border-m-line text-m-text hover:bg-m-raised`;
+  "rounded-2xl px-4 py-3 text-sm font-bold transition-all active:scale-[0.98] disabled:opacity-40";
+export const mPrimary = `${mBtn} bg-m-accent text-white shadow-m hover:bg-m-accent-deep disabled:shadow-none`;
+export const mGhost = `${mBtn} bg-m-raised text-m-text hover:bg-m-line`;
 export const mDanger = `${mBtn} bg-m-danger/15 text-m-danger hover:bg-m-danger/25`;
 export const mField =
-  "w-full rounded-xl border border-m-line bg-m-raised px-3 py-3 text-sm text-m-text outline-none transition-colors placeholder:text-m-faint focus:border-m-accent/60";
+  "w-full rounded-2xl border border-m-line bg-m-surface px-3.5 py-3 text-sm text-m-text shadow-m-sm outline-none transition-shadow placeholder:text-m-faint focus:border-m-accent/50 focus:shadow-m";
 
 export function Chip({
   color,
@@ -193,10 +199,10 @@ export function MSheet({
   return (
     <div data-matam className="absolute inset-0 z-50 flex items-end overflow-hidden rounded-[inherit]">
       <button aria-label="إغلاق" onClick={onClose} className="absolute inset-0 bg-black/60" />
-      <div className="relative flex max-h-[85%] w-full flex-col rounded-t-3xl border-t border-m-line bg-m-surface">
+      <div className="relative flex max-h-[88%] w-full flex-col rounded-t-[1.75rem] bg-m-surface shadow-m-lg">
         {title && (
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-m-line px-4 py-3">
-            <h2 className="text-sm font-semibold">{title}</h2>
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-m-line-soft px-4 py-3.5">
+            <h2 className="text-[15px] font-bold">{title}</h2>
             <button onClick={onClose} aria-label="إغلاق" className="p-1 text-m-faint hover:text-m-text">
               ✕
             </button>

@@ -4,35 +4,8 @@ import { useMemo, useState } from "react";
 import type { Banner, Category, Combo, Item, Settings } from "../matam/types";
 import { discounted } from "../matam/cart";
 import { money } from "../matam/format";
-import { Chip, Empty } from "../matam/ui";
-
-function Price({ item }: { item: Item }) {
-  const off = (item.discount_percent ?? 0) > 0;
-  return (
-    <span className="flex items-baseline gap-2">
-      <span className="text-sm font-semibold text-m-accent">{money(discounted(item))}</span>
-      {off && (
-        <span className="text-xs text-m-faint line-through">{money(item.price)}</span>
-      )}
-    </span>
-  );
-}
-
-function Thumb({ src, alt }: { src: string | null; alt: string }) {
-  if (!src)
-    return (
-      <div className="grid size-20 shrink-0 place-items-center rounded-xl bg-m-raised text-m-faint">
-        <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="1.3">
-          <path d="M4 7h16v12H4z" />
-          <path d="M4 15l4-4 3 3 3-3 6 6" />
-        </svg>
-      </div>
-    );
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} loading="lazy" className="size-20 shrink-0 rounded-xl object-cover" />
-  );
-}
+import { Empty } from "../matam/ui";
+import { Badge, Photo, SearchField } from "./visuals";
 
 export function Menu({
   settings,
@@ -51,10 +24,13 @@ export function Menu({
   onOpenItem: (item: Item) => void;
   onOpenCombo: (combo: Combo) => void;
 }) {
-  const [active, setActive] = useState<string>("all");
+  const [active, setActive] = useState("all");
   const [query, setQuery] = useState("");
 
   const cats = categories.filter((c) => c.is_active);
+  const shownBanners = banners.filter((b) => b.is_active);
+  const activeCombos = combos.filter((c) => c.is_active);
+  const featured = items.filter((i) => i.is_best_seller && i.is_available).slice(0, 6);
 
   const visible = useMemo(() => {
     const q = query.trim();
@@ -65,124 +41,153 @@ export function Menu({
     });
   }, [items, active, query]);
 
-  const activeCombos = combos.filter((c) => c.is_active);
   const closed = settings && (!settings.is_open || !settings.allow_orders);
+  const plain = !query && active === "all";
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pb-8">
       {closed && (
-        <div className="bg-m-danger/15 px-4 py-2.5 text-center text-xs text-m-danger">
+        <p className="bg-m-danger px-4 py-2.5 text-center text-xs font-medium text-white">
           المطعم مغلق الآن — يمكنك التصفّح دون طلب
-        </div>
+        </p>
       )}
 
-      {banners.filter((b) => b.is_active).length > 0 && (
-        <div className="m-noscroll flex gap-3 overflow-x-auto px-4 pt-4">
-          {banners
-            .filter((b) => b.is_active)
-            .map((b) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={b.id}
-                src={b.image_url}
-                alt=""
-                loading="lazy"
-                className="h-32 w-72 shrink-0 rounded-2xl object-cover"
-              />
-            ))}
-        </div>
-      )}
-
-      {settings?.welcome_message && (
-        <p className="px-4 pt-4 text-sm text-m-dim">{settings.welcome_message}</p>
-      )}
-
-      <div className="px-4 pt-4">
-        <input
-          className="w-full rounded-xl border border-m-line bg-m-raised px-3 py-2.5 text-sm text-m-text outline-none placeholder:text-m-faint focus:border-m-accent/60"
-          placeholder="ابحث في القائمة"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
+      <div className="sticky top-0 z-10 bg-m-bg/95 px-4 pb-3 pt-4 backdrop-blur">
+        <SearchField value={query} onChange={setQuery} />
       </div>
 
-      {cats.length > 0 && (
-        <div className="m-noscroll mt-4 flex gap-2 overflow-x-auto px-4">
-          <button
-            onClick={() => setActive("all")}
-            className={`shrink-0 rounded-full px-4 py-2 text-xs transition-colors ${
-              active === "all"
-                ? "bg-m-accent font-semibold text-[#ffffff]"
-                : "border border-m-line text-m-dim"
-            }`}
-          >
-            الكل
-          </button>
-          {cats.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActive(c.id)}
-              className={`shrink-0 rounded-full px-4 py-2 text-xs transition-colors ${
-                active === c.id
-                  ? "bg-m-accent font-semibold text-[#ffffff]"
-                  : "border border-m-line text-m-dim"
-              }`}
-            >
-              {c.name}
-            </button>
+      {plain && shownBanners.length > 0 && (
+        <div className="m-noscroll flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1">
+          {shownBanners.map((b) => (
+            <Photo
+              key={b.id}
+              src={b.image_url}
+              alt=""
+              className="h-40 w-[19rem] snap-center rounded-3xl shadow-m"
+            />
           ))}
         </div>
       )}
 
-      {active === "all" && activeCombos.length > 0 && !query && (
-        <section className="mt-5">
-          <h2 className="px-4 pb-2 text-xs font-semibold text-m-dim">وجبات مركّبة</h2>
-          <div className="m-noscroll flex gap-3 overflow-x-auto px-4 pb-1">
-            {activeCombos.map((c) => (
+      {cats.length > 0 && (
+        <div className="m-noscroll mt-5 flex gap-2 overflow-x-auto px-4">
+          {[{ id: "all", name: "الكل" }, ...cats].map((c) => {
+            const on = active === c.id;
+            return (
               <button
                 key={c.id}
-                onClick={() => onOpenCombo(c)}
-                className="flex w-44 shrink-0 flex-col gap-2 rounded-2xl border border-m-line bg-m-surface p-3 text-start"
+                onClick={() => setActive(c.id)}
+                className={`shrink-0 rounded-full px-4 py-2 text-[13px] transition-all ${
+                  on
+                    ? "bg-m-accent font-bold text-white shadow-m"
+                    : "bg-m-surface font-medium text-m-dim shadow-m-sm hover:text-m-text"
+                }`}
               >
-                <Thumb src={c.image_url} alt={c.name} />
-                <span className="truncate text-sm font-medium">{c.name}</span>
-                <span className="text-sm font-semibold text-m-accent">{money(c.price)}</span>
+                {c.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {plain && featured.length > 0 && (
+        <section className="mt-7">
+          <h2 className="px-4 pb-3 text-[17px] font-bold">الأكثر طلبًا</h2>
+          <div className="m-noscroll flex gap-3 overflow-x-auto px-4 pb-2">
+            {featured.map((it) => (
+              <button
+                key={it.id}
+                onClick={() => onOpenItem(it)}
+                className="w-44 shrink-0 overflow-hidden rounded-3xl bg-m-surface text-start shadow-m transition-transform active:scale-[0.98]"
+              >
+                <Photo src={it.image_url} alt={it.name} className="h-32 w-full" />
+                <div className="flex flex-col gap-1 p-3">
+                  <span className="truncate text-[13px] font-semibold">{it.name}</span>
+                  <span className="text-[15px] font-bold text-m-accent">
+                    {money(discounted(it))}
+                  </span>
+                </div>
               </button>
             ))}
           </div>
         </section>
       )}
 
-      <section className="mt-5 flex flex-col gap-2 px-4 pb-6">
+      {plain && activeCombos.length > 0 && (
+        <section className="mt-7">
+          <h2 className="px-4 pb-3 text-[17px] font-bold">وجبات مركّبة</h2>
+          <div className="flex flex-col gap-3 px-4">
+            {activeCombos.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => onOpenCombo(c)}
+                className="relative overflow-hidden rounded-3xl bg-m-surface text-start shadow-m transition-transform active:scale-[0.99]"
+              >
+                <Photo src={c.image_url} alt={c.name} className="h-36 w-full" />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 bg-gradient-to-t from-black/75 to-transparent p-4">
+                  <span className="text-[15px] font-bold text-white">{c.name}</span>
+                  <span className="rounded-full bg-white/95 px-3 py-1 text-[13px] font-bold text-m-accent-deep">
+                    {money(Number(c.price))}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="mt-7 flex flex-col gap-3 px-4">
+        {plain && visible.length > 0 && <h2 className="text-[17px] font-bold">كل الأصناف</h2>}
+
         {visible.length === 0 ? (
-          <Empty title="لا توجد أصناف" hint={query ? "جرّب كلمة أخرى" : "ستظهر هنا فور إضافتها"} />
+          <Empty
+            title="لا توجد أصناف"
+            hint={query ? "جرّب كلمة أخرى" : "ستظهر هنا فور إضافتها"}
+          />
         ) : (
-          visible.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => onOpenItem(item)}
-              disabled={!item.is_available}
-              className="flex items-center gap-3 rounded-2xl border border-m-line bg-m-surface p-3 text-start transition-colors enabled:hover:border-m-accent/40 disabled:opacity-50"
-            >
-              <Thumb src={item.image_url} alt={item.name} />
-              <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-medium">{item.name}</span>
-                  {item.is_new && <Chip color="var(--m-info)">جديد</Chip>}
-                  {item.is_best_seller && <Chip color="var(--m-accent)">الأكثر طلبًا</Chip>}
+          visible.map((item) => {
+            const off = (item.discount_percent ?? 0) > 0;
+            return (
+              <button
+                key={item.id}
+                onClick={() => onOpenItem(item)}
+                disabled={!item.is_available}
+                className="flex gap-3.5 rounded-3xl bg-m-surface p-3 text-start shadow-m-sm transition-all enabled:hover:shadow-m enabled:active:scale-[0.99] disabled:opacity-55"
+              >
+                <Photo src={item.image_url} alt={item.name} className="size-24 rounded-2xl" />
+
+                <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-start gap-2">
+                      <span className="line-clamp-1 flex-1 text-[15px] font-semibold leading-snug">
+                        {item.name}
+                      </span>
+                      {item.is_new && <Badge tone="var(--m-info)">جديد</Badge>}
+                    </div>
+                    {item.description && (
+                      <p className="line-clamp-2 text-xs leading-relaxed text-m-dim">
+                        {item.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-[17px] font-bold text-m-accent">
+                      {money(discounted(item))}
+                    </span>
+                    {off && (
+                      <span className="text-xs text-m-faint line-through">{money(item.price)}</span>
+                    )}
+                    {!item.is_available && (
+                      <span className="ms-auto text-[11px] font-medium text-m-danger">
+                        غير متوفر
+                      </span>
+                    )}
+                  </div>
                 </div>
-                {item.description && (
-                  <p className="line-clamp-2 text-xs leading-relaxed text-m-dim">
-                    {item.description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between gap-2">
-                  <Price item={item} />
-                  {!item.is_available && <span className="text-[11px] text-m-danger">غير متوفر</span>}
-                </div>
-              </div>
-            </button>
-          ))
+              </button>
+            );
+          })
         )}
       </section>
     </div>
