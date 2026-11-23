@@ -91,6 +91,20 @@ function Who({ members, me }: { members: Member[]; me: string | null }) {
   );
 }
 
+const FOLD_KEY = "jam.nav.folded";
+
+/** الأقسام المطويّة — تُقرأ مرّة عند التركيب وتُحفظ عند كل طيّ */
+function readFolded(): string[] {
+  try {
+    const raw = localStorage.getItem(FOLD_KEY);
+    if (raw) return JSON.parse(raw) as string[];
+  } catch {
+    /* التخزين ممنوع */
+  }
+  /** الافتراضي: الكلّ مطويّ عدا ما يُفتح بالقسم الحالي */
+  return NAV.filter((g) => g.label).map((g) => g.label);
+}
+
 export function Sidebar({
   section,
   onGo,
@@ -108,6 +122,18 @@ export function Sidebar({
   badges: Partial<Record<SectionKey, number>>;
 }) {
   const [open, setOpen] = useState(false);
+  const [folded, setFolded] = useState<string[]>(readFolded);
+
+  const toggleFold = (label: string) =>
+    setFolded((cur) => {
+      const next = cur.includes(label) ? cur.filter((x) => x !== label) : [...cur, label];
+      try {
+        localStorage.setItem(FOLD_KEY, JSON.stringify(next));
+      } catch {
+        /* لا بأس */
+      }
+      return next;
+    });
 
   const list = (
     <>
@@ -131,14 +157,48 @@ export function Sidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3">
-        {NAV.map((g) => (
+        {NAV.map((g) => {
+          /**
+           * القسم الذي فيه الشاشة المفتوحة يُعرض وإن كان مطويًّا،
+           * فلا تختفي من تحت المستخدم حين ينتقل إليها من لوحة الرئيسة.
+           */
+          const holdsCurrent = g.items.some((it) => it.key === section);
+          const shut = Boolean(g.label) && folded.includes(g.label) && !holdsCurrent;
+          /** ما ينتظرك في قسمٍ مطويّ يظهر على عنوانه، فلا يُخفيه الطيّ */
+          const hidden = shut
+            ? g.items.reduce((n, it) => n + (badges[it.key] ?? 0), 0)
+            : 0;
+
+          return (
           <div key={g.label || "top"} className="mb-1">
             {g.label && (
-              <span className="block px-3 pb-1 pt-3 text-[10px] font-semibold tracking-wide text-j-faint">
-                {g.label}
-              </span>
+              <button
+                onClick={() => toggleFold(g.label)}
+                aria-expanded={!shut}
+                className="flex w-full items-center gap-1.5 rounded-lg px-3 pb-1 pt-3 text-start text-[10px] font-semibold tracking-wide text-j-faint hover:text-j-dim"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden
+                  className={"size-3 shrink-0 transition-transform " + (shut ? "-rotate-90" : "")}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+                <span className="flex-1">{g.label}</span>
+                {hidden > 0 && (
+                  <span className="mark rounded-full bg-j-warn/15 px-1.5 text-[10px] font-bold text-j-warn">
+                    {hidden}
+                  </span>
+                )}
+              </button>
             )}
-            {g.items.map((it) => {
+            {!shut &&
+            g.items.map((it) => {
               const on = section === it.key;
               const n = badges[it.key] ?? 0;
               return (
@@ -166,7 +226,8 @@ export function Sidebar({
               );
             })}
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       <Who members={members} me={me} />
