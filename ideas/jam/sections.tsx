@@ -10,6 +10,7 @@ import {
   fetchChains,
   fetchIndicators,
   fetchObjectives,
+  fetchPlans,
   fetchPerspectives,
   fetchDocs,
   fetchDonors,
@@ -48,6 +49,7 @@ import { OrgSettings } from "./screens/OrgSettings";
 import { Policies } from "./screens/Policies";
 import { Programs } from "./screens/Programs";
 import { Requests } from "./screens/Requests";
+import { Operational } from "./screens/Operational";
 import { Strategy } from "./screens/Strategy";
 import { Structure } from "./screens/Structure";
 import { Tracking } from "./screens/Tracking";
@@ -416,6 +418,21 @@ export function StrategySection() {
         objectives={t.objectives}
         indicators={t.indicators}
         onChanged={t.refresh}
+      />
+    </Shown>
+  );
+}
+
+export function OperationalSection({ core }: { core: Core }) {
+  const plans = useLive("jam_plans", fetchPlans);
+  const objectives = useLive("jam_objectives", fetchObjectives);
+  return (
+    <Shown error={plans.error ?? objectives.error} loading={plans.loading || objectives.loading}>
+      <Operational
+        plans={plans.data ?? []}
+        objectives={objectives.data ?? []}
+        members={core.members}
+        onChanged={plans.refresh}
       />
     </Shown>
   );

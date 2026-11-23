@@ -37,6 +37,7 @@ import {
   PoliciesSection,
   ProgramsSection,
   RequestsSection,
+  OperationalSection,
   StrategySection,
   StructureSection,
   TrackingSection,
@@ -212,6 +213,7 @@ export default function JamView() {
             {section === "attendance" && <AttendanceSection core={core} />}
             {section === "leaves" && <LeavesSection core={core} />}
             {section === "strategy" && <StrategySection />}
+            {section === "operational" && <OperationalSection core={core} />}
             {section === "tracking" && <TrackingSection />}
             {section === "beneficiaries" && <BeneficiariesSection core={core} />}
             {section === "programs" && <ProgramsSection core={core} />}

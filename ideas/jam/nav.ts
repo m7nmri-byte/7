@@ -8,6 +8,7 @@ export type SectionKey =
   | "leaves"
   | "strategy"
   | "tracking"
+  | "operational"
   | "beneficiaries"
   | "programs"
   | "donors"
@@ -108,6 +109,13 @@ export const NAV: NavGroup[] = [
         title: "الخطة الاستراتيجية",
         subtitle: "منظورات، وأهداف، ومؤشّرات تقيسها",
         icon: "M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.4 9.9l6-.9z",
+      },
+      {
+        key: "operational",
+        label: "الخطة التشغيلية",
+        title: "الخطة التشغيلية",
+        subtitle: "مبادرات بخطواتٍ وأسابيع وموازنة",
+        icon: "M4 6.5h16M4 12h16M4 17.5h10M7 4.5v4M13 10v4M10 15.5v4",
       },
       {
         key: "tracking",
