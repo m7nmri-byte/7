@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useFailures } from "@/lib/failures";
 import type { Session } from "@supabase/supabase-js";
 import type { Category, Task } from "./types";
 import { MAX_PARALLEL } from "./types";
@@ -65,6 +66,7 @@ const PERIODS = [
 
 export function NashatApp({ session }: { session: Session }) {
   const { state, update, sync } = useNashat(session);
+  const failure = useFailures("nashat");
   const { message, toast } = useToast();
   const now = useNow();
 
@@ -269,7 +271,12 @@ export function NashatApp({ session }: { session: Session }) {
         </>
       )}
 
-      <p className="pb-2 text-center text-[11px] text-n-faint">{SYNC_LABEL[sync]}</p>
+      <p className="pb-2 text-center text-[11px] text-n-faint">
+        {SYNC_LABEL[sync]}
+        {sync === "error" && failure.write && (
+          <span className="block text-[10px] text-n-danger">{failure.write}</span>
+        )}
+      </p>
 
       {/* ---------- النوافذ ---------- */}
 

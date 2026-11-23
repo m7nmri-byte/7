@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { clearWrite, useFailures } from "@/lib/failures";
 
 /* ===================== إطار النظام ===================== */
 
@@ -19,6 +20,40 @@ export function Shell({
     <div data-jam className="flex min-h-dvh bg-j-bg text-j-text">
       {nav}
       <main className="flex min-w-0 flex-1 flex-col">{children}</main>
+    </div>
+  );
+}
+
+/** شريط يعترف بما تعذّر — فلا تظهر شاشةٌ ممنوعة كشاشةٍ فارغة */
+export function FailureBar() {
+  const { reads, write } = useFailures("jam");
+  if (reads.length === 0 && !write) return null;
+  return (
+    <div className="shrink-0 border-b border-j-danger/30 bg-j-danger/10 px-5 py-2">
+      {write && (
+        <button
+          onClick={() => clearWrite("jam")}
+          className="flex w-full items-start gap-2 text-start"
+        >
+          <span className="flex-1 text-xs font-semibold text-j-danger">
+            تعذّر الحفظ — {write}
+          </span>
+          <span className="shrink-0 text-xs text-j-danger/70">×</span>
+        </button>
+      )}
+
+      {reads.length > 0 && (
+        <>
+          <p className="text-xs font-semibold text-j-danger">
+            تعذّر جلب {reads.length === 1 ? "جدول" : reads.length + " جداول"}
+          </p>
+          {reads.map((r) => (
+            <p key={r.key} className="truncate text-[10px] text-j-danger/80">
+              <span className="mark">{r.key}</span> — {r.message}
+            </p>
+          ))}
+        </>
+      )}
     </div>
   );
 }

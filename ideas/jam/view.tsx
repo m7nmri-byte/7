@@ -13,7 +13,7 @@ import {
   fetchTasks,
 } from "./db";
 import { today as todayOf, useLive, useMe } from "./hooks";
-import { Body, PageHead, Shell } from "./ui";
+import { Body, FailureBar, PageHead, Shell } from "./ui";
 import { Sidebar } from "./Sidebar";
 import { navItem, type SectionKey } from "./nav";
 import { Home } from "./screens/Home";
@@ -116,6 +116,7 @@ export default function JamView() {
       }
     >
       <PageHead title={item.title} subtitle={item.subtitle} />
+      <FailureBar />
 
       <Body>
         {coreError ? (

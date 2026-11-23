@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { reportWrite } from "@/lib/failures";
 import type { State } from "./types";
 import { metric, normalizeState } from "./storage";
 import { getServerSnapshot, getSnapshot, readState, setState, subscribe, updateState } from "./store";
@@ -29,6 +30,7 @@ export function useNashat(session: Session | null) {
       const { error } = await supabase
         .from(TABLE)
         .upsert({ user_id: session.user.id, tasks: next.tasks, memo: next.memo });
+      if (error) reportWrite("nashat", error.message);
       setPushState(error ? "error" : "synced");
     },
     [session],
@@ -58,6 +60,7 @@ export function useNashat(session: Session | null) {
       if (cancelled) return;
 
       if (error) {
+        reportWrite("nashat", error.message);
         setPushState("error");
         return;
       }

@@ -18,7 +18,7 @@ import { useDeviceId, useLive, useTick } from "../matam/hooks";
 import { useQueue, useQueueFlusher } from "../matam/queue";
 import { isOpenOrder } from "../matam/status";
 import { closedText, openState } from "../matam/hours";
-import { Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
+import { DataErrorBar, Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
 import { Menu } from "./Menu";
 import { ItemSheet } from "./ItemSheet";
 import { ComboSheet } from "./ComboSheet";
@@ -157,6 +157,7 @@ export default function CustomerApp() {
         }
       />
 
+      <DataErrorBar />
       <Body>
         {shown ? (
           <>

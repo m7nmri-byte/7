@@ -4,6 +4,7 @@ import type { Order, Settings } from "../matam/types";
 import { money } from "../matam/format";
 import { isOpenOrder } from "../matam/status";
 import { saveSettings } from "../matam/db";
+import { useSaver } from "../matam/hooks";
 
 function Tile({
   label,
@@ -48,13 +49,21 @@ export function Home({
   const live = orders.filter((o) => isOpenOrder(o.status));
   const waiting = orders.filter((o) => o.status === "pending");
 
-  const toggle = async (patch: Partial<Settings>) => {
-    await saveSettings(patch);
-    onChanged();
-  };
+  const saveState = useSaver();
+
+  const toggle = (patch: Partial<Settings>) =>
+    saveState.run(async () => {
+      await saveSettings(patch);
+      onChanged();
+    });
 
   return (
     <div className="flex flex-col gap-4 p-4">
+      {saveState.error && (
+        <p className="rounded-xl bg-m-danger/15 px-3 py-2.5 text-xs text-m-danger">
+          {saveState.error}
+        </p>
+      )}
       <section className="flex flex-col gap-3 rounded-2xl border border-m-line bg-m-surface p-4">
         <div className="flex items-center justify-between">
           <span className="text-sm font-semibold">

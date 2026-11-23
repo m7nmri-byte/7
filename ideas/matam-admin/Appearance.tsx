@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useSaver } from "../matam/hooks";
 import { mGhost, mPrimary } from "../matam/ui";
 import { COLOR_FIELDS, DEFAULT_THEME, PRESETS, type Theme } from "./theme-core";
 
@@ -13,18 +14,19 @@ export function Appearance({
   onChanged: () => void;
 }) {
   const [draft, setDraft] = useState<Theme>(theme ?? DEFAULT_THEME);
-  const [saved, setSaved] = useState(false);
+  const saveState = useSaver();
 
   const set = (p: Partial<Theme>) => {
     setDraft({ ...draft, ...p });
-    setSaved(false);
+    saveState.touch();
   };
 
-  const save = async () => {
-    await supabase.from("matam_theme").update(draft).eq("id", true);
-    setSaved(true);
-    onChanged();
-  };
+  const save = () =>
+    saveState.run(async () => {
+      const { error } = await supabase.from("matam_theme").update(draft).eq("id", true);
+      if (error) throw new Error(error.message);
+      onChanged();
+    });
 
   return (
     <div className="flex flex-col gap-6 p-4">
@@ -118,9 +120,16 @@ export function Appearance({
         </div>
       </section>
 
-      <button onClick={() => void save()} className={mPrimary}>
-        {saved ? "حُفظ ✓" : "حفظ المظهر"}
-      </button>
+      <div className="flex flex-col gap-2">
+        {saveState.error && (
+          <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">
+            {saveState.error}
+          </p>
+        )}
+        <button onClick={() => void save()} disabled={saveState.busy} className={mPrimary}>
+          {saveState.busy ? "جارٍ الحفظ…" : saveState.saved ? "حُفظ ✓" : "حفظ المظهر"}
+        </button>
+      </div>
     </div>
   );
 }

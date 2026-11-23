@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { supabase } from "@/lib/supabase";
+import { reportRead } from "@/lib/failures";
 
 /** جلب مع إعادة جلب عند تغيّر الجدول */
 export function useLive<T>(table: string, load: () => Promise<T>) {
@@ -13,12 +14,15 @@ export function useLive<T>(table: string, load: () => Promise<T>) {
     try {
       setData(await load());
       setError(null);
+      reportRead("jam", table, null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "تعذّر الجلب");
+      const msg = e instanceof Error ? e.message : "تعذّر الجلب";
+      setError(msg);
+      reportRead("jam", table, msg);
     } finally {
       setLoading(false);
     }
-  }, [load]);
+  }, [load, table]);
 
   useEffect(() => {
     let alive = true;
@@ -28,9 +32,12 @@ export function useLive<T>(table: string, load: () => Promise<T>) {
         if (alive) {
           setData(next);
           setError(null);
+          reportRead("jam", table, null);
         }
       } catch (e) {
-        if (alive) setError(e instanceof Error ? e.message : "تعذّر الجلب");
+        const msg = e instanceof Error ? e.message : "تعذّر الجلب";
+        if (alive) setError(msg);
+        reportRead("jam", table, msg);
       } finally {
         if (alive) setLoading(false);
       }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { DayHours, Settings, Shift } from "../matam/types";
 import { saveSettings } from "../matam/db";
+import { useSaver } from "../matam/hooks";
 import { DAY_NAMES } from "../matam/format";
 import { mField, mGhost, mPrimary } from "../matam/ui";
 
@@ -28,11 +29,11 @@ export function Hours({
   const [hours, setHours] = useState<DayHours[]>(
     settings?.work_hours?.length ? settings.work_hours : defaults(),
   );
-  const [saved, setSaved] = useState(false);
+  const saveState = useSaver();
 
   const patch = (day: number, p: Partial<DayHours>) => {
     setHours((h) => h.map((d) => (d.day === day ? { ...d, ...p } : d)));
-    setSaved(false);
+    saveState.touch();
   };
 
   const setShift = (day: number, i: number, s: Partial<Shift>) =>
@@ -55,14 +56,14 @@ export function Hours({
   const copyToAll = (day: number) => {
     const src = hours.find((d) => d.day === day)!;
     setHours((h) => h.map((d) => ({ ...d, closed: src.closed, shifts: [...src.shifts] })));
-    setSaved(false);
+    saveState.touch();
   };
 
-  const save = async () => {
-    await saveSettings({ work_hours: hours });
-    setSaved(true);
-    onChanged();
-  };
+  const save = () =>
+    saveState.run(async () => {
+      await saveSettings({ work_hours: hours });
+      onChanged();
+    });
 
   return (
     <div className="flex flex-col gap-3 p-4">
@@ -125,14 +126,21 @@ export function Hours({
         </section>
       ))}
 
-      <button onClick={() => void save()} className={mPrimary}>
-        {saved ? "حُفظ ✓" : "حفظ ساعات العمل"}
-      </button>
+      <div className="flex flex-col gap-2">
+        {saveState.error && (
+          <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">
+            {saveState.error}
+          </p>
+        )}
+        <button onClick={() => void save()} disabled={saveState.busy} className={mPrimary}>
+          {saveState.busy ? "جارٍ الحفظ…" : saveState.saved ? "حُفظ ✓" : "حفظ ساعات العمل"}
+        </button>
+      </div>
 
       <button
         onClick={() => {
           setHours(defaults());
-          setSaved(false);
+          saveState.touch();
         }}
         className={`${mGhost} text-xs`}
       >

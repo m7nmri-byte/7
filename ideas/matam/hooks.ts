@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import { supabase } from "@/lib/supabase";
+import { reportRead } from "@/lib/failures";
 
 /* ===================== جلب مع تحديث لحظي ===================== */
 
@@ -13,20 +14,42 @@ import { supabase } from "@/lib/supabase";
 export function useLive<T>(table: string, load: () => Promise<T>) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(true);
+  /**
+   * الفشل يُحفظ ويُعرض. كان يُسقَط فيبدو الجدول الممنوع
+   * كجدول فارغ — وشاشةٌ معطوبة تظهر سليمة أسوأ من شاشة تعترف.
+   */
+  const [error, setError] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
-    const next = await load();
-    setData(next);
-    setLoading(false);
-  }, [load]);
+    try {
+      setData(await load());
+      setError(null);
+      reportRead("matam", table, null);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "تعذّر الجلب";
+      setError(msg);
+      reportRead("matam", table, msg);
+    } finally {
+      setLoading(false);
+    }
+  }, [load, table]);
 
   useEffect(() => {
     let alive = true;
     void (async () => {
-      const next = await load();
-      if (!alive) return;
-      setData(next);
-      setLoading(false);
+      try {
+        const next = await load();
+        if (!alive) return;
+        setData(next);
+        setError(null);
+        reportRead("matam", table, null);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : "تعذّر الجلب";
+        if (alive) setError(msg);
+        reportRead("matam", table, msg);
+      } finally {
+        if (alive) setLoading(false);
+      }
     })();
 
     const channel = supabase
@@ -42,7 +65,7 @@ export function useLive<T>(table: string, load: () => Promise<T>) {
     };
   }, [table, load, refresh]);
 
-  return { data, loading, refresh };
+  return { data, loading, error, refresh };
 }
 
 /* ===================== معرّف الجهاز ===================== */
@@ -86,4 +109,41 @@ export function useTick(intervalMs = 30_000) {
     return () => clearInterval(id);
   }, [intervalMs]);
   return now;
+}
+
+/* ===================== الحفظ مع الاعتراف بالفشل ===================== */
+
+/**
+ * يلفّ عملية حفظ: ينتظرها، ويُظهر «حُفِظ» عند النجاح ورسالة الخطأ عند الفشل.
+ * قبله كانت شاشات الإعدادات تنادي الحفظ بلا مَسكٍ للخطأ، فالجدول الممنوع
+ * يُرفض بصمت ويظنّ المستخدم أنّه حُفظ.
+ */
+export function useSaver() {
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const run = useCallback(async (fn: () => Promise<unknown>) => {
+    setBusy(true);
+    setError(null);
+    setSaved(false);
+    try {
+      await fn();
+      setSaved(true);
+      return true;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+      return false;
+    } finally {
+      setBusy(false);
+    }
+  }, []);
+
+  /** يُنادى عند أي تعديل، فلا تبقى «حُفِظ» معلّقة فوق تغييرٍ لم يُرسل */
+  const touch = useCallback(() => {
+    setSaved(false);
+    setError(null);
+  }, []);
+
+  return { run, touch, busy, saved, error };
 }

@@ -6,7 +6,7 @@ import { fetchDrivers, fetchOrders, updateOrder } from "../matam/db";
 import { useLive, useTick } from "../matam/hooks";
 import { money, sinceText, timeOf } from "../matam/format";
 import { STATUS_COLOR, STATUS_LABEL } from "../matam/status";
-import { Body, Chip, Empty, Loading, Phone, TabBar, TopBar, mGhost, mPrimary } from "../matam/ui";
+import { DataErrorBar, Body, Chip, Empty, Loading, Phone, TabBar, TopBar, mGhost, mPrimary } from "../matam/ui";
 
 type Tab = "available" | "mine" | "done";
 
@@ -123,6 +123,7 @@ export default function DriverApp() {
     return (
       <Phone>
         <TopBar title="المندوب" subtitle="من أنت؟" />
+        <DataErrorBar />
         <Body className="flex flex-col gap-2 p-4">
           {(drivers ?? []).filter((d) => d.is_active).length === 0 ? (
             <Empty title="لا يوجد مندوبون" hint="تُضاف أسماؤهم من تطبيق الإدارة" />
@@ -212,6 +213,8 @@ export default function DriverApp() {
           </button>
         }
       />
+
+      <DataErrorBar />
 
       <Body className="flex flex-col gap-3 p-4">
         {loading ? (

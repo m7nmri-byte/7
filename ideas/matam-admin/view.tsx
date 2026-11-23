@@ -17,7 +17,7 @@ import {
 } from "../matam/db";
 import { useLive, useTick } from "../matam/hooks";
 import { isOpenOrder } from "../matam/status";
-import { Body, Phone, TabBar, TopBar } from "../matam/ui";
+import { DataErrorBar, Body, Phone, TabBar, TopBar } from "../matam/ui";
 import { Home } from "./Home";
 import { Orders } from "./Orders";
 import { Items } from "./Items";
@@ -202,6 +202,7 @@ export default function AdminApp() {
         }
       />
 
+      <DataErrorBar />
       <Body>{content()}</Body>
     </Phone>
   );

@@ -6,7 +6,7 @@ import { fetchOrders, updateOrder } from "../matam/db";
 import { useLive, useTick } from "../matam/hooks";
 import { sinceText } from "../matam/format";
 import { TYPE_LABEL, nextStatus } from "../matam/status";
-import {
+import { DataErrorBar,
   Body,
   Empty,
   Loading,
@@ -128,6 +128,7 @@ export default function KitchenApp() {
         }
       />
 
+      <DataErrorBar />
       <Body className="flex flex-col gap-3 p-4">
         {loading ? (
           <Loading />

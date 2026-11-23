@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { clearWrite, useFailures } from "@/lib/failures";
 
 /**
  * وضع الإطار: صفحة كاملة، أو جهاز ضمن منصّة تعرض عدة أجهزة.
@@ -38,6 +39,43 @@ export function Phone({
 }
 
 /** شريط علوي ثابت */
+/**
+ * شريط واحد يعترف بما تعذّر جلبه.
+ * قبله كان الجدول الممنوع يظهر كجدول فارغ، فتبدو الشاشة سليمة وهي معطوبة.
+ */
+export function DataErrorBar() {
+  const { reads, write } = useFailures("matam");
+  if (reads.length === 0 && !write) return null;
+  return (
+    <div className="shrink-0 border-b border-m-danger/30 bg-m-danger/10 px-4 py-2">
+      {write && (
+        <button
+          onClick={() => clearWrite("matam")}
+          className="flex w-full items-start gap-2 text-start"
+        >
+          <span className="flex-1 text-[11px] font-semibold text-m-danger">
+            تعذّر الحفظ — {write}
+          </span>
+          <span className="shrink-0 text-[11px] text-m-danger/70">×</span>
+        </button>
+      )}
+
+      {reads.length > 0 && (
+        <>
+          <p className="text-[11px] font-semibold text-m-danger">
+            تعذّر جلب {reads.length === 1 ? "جدول" : reads.length + " جداول"}
+          </p>
+          {reads.map((r) => (
+            <p key={r.key} className="truncate text-[10px] text-m-danger/80">
+              <span className="mark">{r.key}</span> — {r.message}
+            </p>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
 export function TopBar({
   title,
   subtitle,

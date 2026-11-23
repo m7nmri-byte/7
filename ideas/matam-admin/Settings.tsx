@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { DayHours, Settings as S } from "../matam/types";
 import { saveSettings } from "../matam/db";
+import { useSaver } from "../matam/hooks";
 import { MapPicker } from "../matam/MapPicker";
 import { ImageField } from "../matam/ImageField";
 import { DAY_NAMES } from "../matam/format";
@@ -25,7 +26,7 @@ export function SettingsScreen({
   onChanged: () => void;
 }) {
   const [draft, setDraft] = useState<S | null>(settings);
-  const [saved, setSaved] = useState(false);
+  const saveState = useSaver();
 
   // أول تحميل يصل بعد التركيب، فنأخذ نسخته مرة واحدة
   if (!draft && settings) setDraft(settings);
@@ -33,7 +34,7 @@ export function SettingsScreen({
 
   const set = (p: Partial<S>) => {
     setDraft({ ...draft, ...p });
-    setSaved(false);
+    saveState.touch();
   };
 
   const hours = draft.work_hours?.length ? draft.work_hours : defaultHours();
@@ -41,11 +42,11 @@ export function SettingsScreen({
   const setDay = (day: number, p: Partial<DayHours>) =>
     set({ work_hours: hours.map((h) => (h.day === day ? { ...h, ...p } : h)) });
 
-  const save = async () => {
-    await saveSettings(draft);
-    setSaved(true);
-    onChanged();
-  };
+  const save = () =>
+    saveState.run(async () => {
+      await saveSettings(draft);
+      onChanged();
+    });
 
   return (
     <div className="flex flex-col gap-5 p-4">
@@ -208,9 +209,16 @@ export function SettingsScreen({
         ))}
       </section>
 
-      <button onClick={() => void save()} className={mPrimary}>
-        {saved ? "حُفظ ✓" : "حفظ الإعدادات"}
-      </button>
+      <div className="flex flex-col gap-2">
+        {saveState.error && (
+          <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">
+            {saveState.error}
+          </p>
+        )}
+        <button onClick={() => void save()} disabled={saveState.busy} className={mPrimary}>
+          {saveState.busy ? "جارٍ الحفظ…" : saveState.saved ? "حُفظ ✓" : "حفظ الإعدادات"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { reportWrite } from "@/lib/failures";
 import type {
   Achievement,
   Aid,
@@ -31,13 +32,22 @@ import type {
   TaskUpdate,
 } from "./types";
 
+/**
+ * عطب قراءةٍ أو كتابة: يُبلَّغ سجلّ النظام ثم يُرفع.
+ * فالحذف الذي يُرفض لا يمضي بصمت وإن نسي المنادي مَسكه.
+ */
+function fail(message: string) {
+  reportWrite("jam", message);
+  return new Error(message);
+}
+
 /** قارئ عام: كل الجداول تُقرأ بنفس الشكل، فلا داعي لتكرار الدالة */
 async function all<T>(table: string, order = "created_at", asc = false): Promise<T[]> {
   const { data, error } = await supabase
     .from(table)
     .select("*")
     .order(order, { ascending: asc });
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
   return (data ?? []) as T[];
 }
 
@@ -73,7 +83,7 @@ export async function markMailRead(mailId: string, memberId: string) {
       onConflict: "mail_id,member_id",
       ignoreDuplicates: true,
     });
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
 }
 
 export const fetchSurveys = () => all<Survey>("jam_surveys");
@@ -84,62 +94,68 @@ export async function fetchResponses(surveyId: string) {
     .select("*")
     .eq("survey_id", surveyId)
     .order("created_at");
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
   return (data ?? []) as SurveyResponse[];
 }
 
 export const fetchLeaves = () => all<Leave>("jam_leaves", "start_date");
 
 export async function fetchSettings(): Promise<Settings | null> {
-  const { data } = await supabase.from("jam_settings").select("*").maybeSingle();
+  const { data, error } = await supabase.from("jam_settings").select("*").maybeSingle();
+  if (error) throw fail(error.message);
   return (data as Settings) ?? null;
 }
 
 export async function saveSettings(patch: Partial<Settings>) {
   const { error } = await supabase.from("jam_settings").update(patch).eq("id", true);
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
 }
 
 /** حضور يوم بعينه لكل الموظفين */
 export async function fetchAttendance(day: string): Promise<Attendance[]> {
-  const { data } = await supabase.from("jam_attendance").select("*").eq("work_date", day);
+  const { data, error } = await supabase.from("jam_attendance").select("*").eq("work_date", day);
+  if (error) throw fail(error.message);
   return (data ?? []) as Attendance[];
 }
 
 export async function fetchMemberAttendance(memberId: string, from: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("jam_attendance")
     .select("*")
     .eq("member_id", memberId)
     .gte("work_date", from)
     .order("work_date", { ascending: false });
+  if (error) throw fail(error.message);
   return (data ?? []) as Attendance[];
 }
 
 export async function fetchTaskUpdates(taskId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("jam_task_updates")
     .select("*")
     .eq("task_id", taskId)
     .order("created_at");
+  if (error) throw fail(error.message);
   return (data ?? []) as TaskUpdate[];
 }
 
 export async function fetchChainSteps(chainId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("jam_chain_steps")
     .select("*")
     .eq("chain_id", chainId)
     .order("step_order");
+  if (error) throw fail(error.message);
   return (data ?? []) as ChainStep[];
 }
 
 export async function fetchRequestLogs(requestId: string) {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("jam_request_logs")
     .select("*")
     .eq("request_id", requestId)
     .order("created_at");
+  if (error) throw fail(error.message);
   return (data ?? []) as RequestLog[];
 }
 
@@ -163,16 +179,16 @@ export async function logRequest(
 
 export async function save(table: string, row: Record<string, unknown>) {
   const { data, error } = await supabase.from(table).upsert(row).select().single();
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
   return data;
 }
 
 export async function remove(table: string, id: string) {
   const { error } = await supabase.from(table).delete().eq("id", id);
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
 }
 
 export async function patch(table: string, id: string, values: Record<string, unknown>) {
   const { error } = await supabase.from(table).update(values).eq("id", id);
-  if (error) throw new Error(error.message);
+  if (error) throw fail(error.message);
 }
