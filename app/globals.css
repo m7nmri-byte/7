@@ -31,11 +31,6 @@
   --color-m-faint: var(--m-faint);
   --color-m-accent: var(--m-accent);
   --color-m-accent-soft: var(--m-accent-soft);
-  --color-m-accent-deep: var(--m-accent-deep);
-  --color-m-line-soft: var(--m-line-soft);
-  --shadow-m-sm: var(--m-shadow-sm);
-  --shadow-m: var(--m-shadow);
-  --shadow-m-lg: var(--m-shadow-lg);
   --color-m-ok: var(--m-ok);
   --color-m-warn: var(--m-warn);
   --color-m-info: var(--m-info);
@@ -132,31 +127,21 @@ body {
    الموقع الأزرق، وأوضح في مطبخ تُقرأ شاشته من بعيد.
    ====================================================================== */
 [data-matam] {
-  /* أسطح دافئة متدرّجة لا رمادي مسطّح: الفرق بينها يصنع العمق */
-  --m-bg: #faf7f3;
+  /* فاتح ودافئ: الطعام يحتاج ضوءًا، وكل تطبيقات التوصيل الجادّة فاتحة */
+  --m-bg: #f7f5f2;
   --m-surface: #ffffff;
-  --m-raised: #f4eee6;
-  --m-line: #ebe2d6;
-  --m-line-soft: #f3ece3;
+  --m-raised: #f1ece6;
+  --m-line: #e4ddd4;
+  --m-text: #1d1a17;
+  --m-dim: #6d655e;
+  --m-faint: #9c948c;
 
-  /* نصّ بتباين متدرّج — لا لونان فقط */
-  --m-text: #19130e;
-  --m-dim: #6a5e53;
-  --m-faint: #a3978a;
-
-  /* لون واحد واثق، ومعه عمقه */
-  --m-accent: #c8431f;
-  --m-accent-deep: #9e3317;
-  --m-accent-soft: #fdf1ec;
-  --m-ok: #1f7a4d;
-  --m-warn: #a8690c;
-  --m-info: #245f91;
-  --m-danger: #b5281c;
-
-  /* ظلال مصبوغة بلون السطح لا سوداء */
-  --m-shadow-sm: 0 1px 2px rgba(74, 48, 30, 0.06);
-  --m-shadow: 0 4px 16px -4px rgba(74, 48, 30, 0.12);
-  --m-shadow-lg: 0 18px 48px -12px rgba(74, 48, 30, 0.22);
+  --m-accent: #d1492a;
+  --m-accent-soft: #fdf0ec;
+  --m-ok: #2e7d57;
+  --m-warn: #b8791a;
+  --m-info: #2f6fa8;
+  --m-danger: #c0392b;
 
   background-color: var(--m-bg);
   color: var(--m-text);
