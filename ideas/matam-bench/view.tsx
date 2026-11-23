@@ -1,6 +1,7 @@
 "use client";
 
 import { PhoneBench } from "../matam/ui";
+import { ErrorBoundary } from "../matam/ErrorBoundary";
 import { DEVICES, type DeviceKey, useDevices } from "./devices";
 import CustomerApp from "../matam-customer/view";
 import KitchenApp from "../matam-kitchen/view";
@@ -53,7 +54,9 @@ export default function Bench() {
                 <span className="text-xs text-[#9a8f86]">{d.label}</span>
               </div>
               <div className="min-h-0 flex-1">
-                <PhoneBench value="embedded">{NODES[d.key]}</PhoneBench>
+                <PhoneBench value="embedded">
+                  <ErrorBoundary label={d.label}>{NODES[d.key]}</ErrorBoundary>
+                </PhoneBench>
               </div>
             </section>
           ))}

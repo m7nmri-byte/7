@@ -19,22 +19,28 @@ export function Combos({
   onChanged: () => void;
 }) {
   const [draft, setDraft] = useState<Partial<Combo> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
-    if (!draft?.name?.trim()) return;
-    await upsert("matam_combos", {
-      ...(draft.id ? { id: draft.id } : {}),
-      name: draft.name.trim(),
-      description: draft.description ?? null,
-      image_url: draft.image_url ?? null,
-      price: Number(draft.price ?? 0),
-      is_active: draft.is_active ?? true,
-      sort_order: Number(draft.sort_order ?? 0),
-      items: draft.items ?? [],
-      option_item_ids: draft.option_item_ids ?? [],
-    });
-    setDraft(null);
-    onChanged();
+    setError(null);
+    try {
+      if (!draft?.name?.trim()) return;
+      await upsert("matam_combos", {
+        ...(draft.id ? { id: draft.id } : {}),
+        name: draft.name.trim(),
+        description: draft.description ?? null,
+        image_url: draft.image_url ?? null,
+        price: Number(draft.price ?? 0),
+        is_active: draft.is_active ?? true,
+        sort_order: Number(draft.sort_order ?? 0),
+        items: draft.items ?? [],
+        option_item_ids: draft.option_item_ids ?? [],
+      });
+      setDraft(null);
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+    }
   };
 
   const toggleItem = (itemId: string) => {
@@ -112,6 +118,9 @@ export function Combos({
       >
         {draft && (
           <div className="flex flex-col gap-4">
+            {error && (
+              <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">{error}</p>
+            )}
             <input
               className={mField}
               value={draft.name ?? ""}

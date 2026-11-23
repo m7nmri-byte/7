@@ -16,17 +16,23 @@ export function Drivers({
   onChanged: () => void;
 }) {
   const [draft, setDraft] = useState<Partial<Driver> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
-    if (!draft?.name?.trim()) return;
-    await upsert("matam_drivers", {
-      ...(draft.id ? { id: draft.id } : {}),
-      name: draft.name.trim(),
-      phone: draft.phone ?? null,
-      is_active: draft.is_active ?? true,
-    });
-    setDraft(null);
-    onChanged();
+    setError(null);
+    try {
+      if (!draft?.name?.trim()) return;
+      await upsert("matam_drivers", {
+        ...(draft.id ? { id: draft.id } : {}),
+        name: draft.name.trim(),
+        phone: draft.phone ?? null,
+        is_active: draft.is_active ?? true,
+      });
+      setDraft(null);
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+    }
   };
 
   return (
@@ -83,6 +89,9 @@ export function Drivers({
       >
         {draft && (
           <div className="flex flex-col gap-4">
+            {error && (
+              <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">{error}</p>
+            )}
             <input
               className={mField}
               value={draft.name ?? ""}

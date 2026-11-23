@@ -20,18 +20,24 @@ export function Categories({
   onChanged: () => void;
 }) {
   const [draft, setDraft] = useState<Partial<Category> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
-    if (!draft?.name?.trim()) return;
-    await upsert("matam_categories", {
-      ...(draft.id ? { id: draft.id } : {}),
-      name: draft.name.trim(),
-      image_url: draft.image_url ?? null,
-      sort_order: Number(draft.sort_order ?? 0),
-      is_active: draft.is_active ?? true,
-    });
-    setDraft(null);
-    onChanged();
+    setError(null);
+    try {
+      if (!draft?.name?.trim()) return;
+      await upsert("matam_categories", {
+        ...(draft.id ? { id: draft.id } : {}),
+        name: draft.name.trim(),
+        image_url: draft.image_url ?? null,
+        sort_order: Number(draft.sort_order ?? 0),
+        is_active: draft.is_active ?? true,
+      });
+      setDraft(null);
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+    }
   };
 
   const del = async (id: string) => {
@@ -83,6 +89,9 @@ export function Categories({
       >
         {draft && (
           <div className="flex flex-col gap-4">
+            {error && (
+              <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">{error}</p>
+            )}
             <label className="flex flex-col gap-1.5">
               <span className="text-xs text-m-dim">الاسم</span>
               <input

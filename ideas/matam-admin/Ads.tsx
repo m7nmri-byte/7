@@ -10,24 +10,30 @@ const num = (v: string) => Number(v.replace(/\D/g, "")) || 0;
 
 export function Ads({ ads, onChanged }: { ads: PopupAd[]; onChanged: () => void }) {
   const [draft, setDraft] = useState<Partial<PopupAd> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
-    const urls = (draft?.image_urls ?? []).map((u) => u.trim()).filter(Boolean);
-    if (!urls.length) return;
-    await upsert("matam_popup_ads", {
-      ...(draft?.id ? { id: draft.id } : {}),
-      image_urls: urls,
-      caption: draft?.caption ?? null,
-      is_active: draft?.is_active ?? true,
-      sort_order: Number(draft?.sort_order ?? 0),
-      auto_scroll: draft?.auto_scroll ?? true,
-      auto_scroll_seconds: Number(draft?.auto_scroll_seconds ?? 5),
-      link_type: draft?.link_type ?? "none",
-      link_id: draft?.link_id ?? null,
-      external_url: draft?.external_url ?? null,
-    });
-    setDraft(null);
-    onChanged();
+    setError(null);
+    try {
+      const urls = (draft?.image_urls ?? []).map((u) => u.trim()).filter(Boolean);
+      if (!urls.length) return;
+      await upsert("matam_popup_ads", {
+        ...(draft?.id ? { id: draft.id } : {}),
+        image_urls: urls,
+        caption: draft?.caption ?? null,
+        is_active: draft?.is_active ?? true,
+        sort_order: Number(draft?.sort_order ?? 0),
+        auto_scroll: draft?.auto_scroll ?? true,
+        auto_scroll_seconds: Number(draft?.auto_scroll_seconds ?? 5),
+        link_type: draft?.link_type ?? "none",
+        link_id: draft?.link_id ?? null,
+        external_url: draft?.external_url ?? null,
+      });
+      setDraft(null);
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+    }
   };
 
   return (
@@ -91,6 +97,9 @@ export function Ads({ ads, onChanged }: { ads: PopupAd[]; onChanged: () => void 
       >
         {draft && (
           <div className="flex flex-col gap-4">
+            {error && (
+              <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">{error}</p>
+            )}
             <input
               className={mField}
               value={draft.caption ?? ""}

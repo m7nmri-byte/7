@@ -74,23 +74,45 @@ type OrderQuery = {
   deviceId?: string;
   driverId?: string;
   limit?: number;
+  /** الصفحة: يُجلب ما بعد هذا العدد */
+  offset?: number;
   since?: string;
 };
 
+export const PAGE_SIZE = 50;
+
+/**
+ * الطلبات مرتّبة بالأحدث.
+ * الحدّ الافتراضي صفحة واحدة لا كل السجلّ — جلب ألف طلب في كل
+ * تحديث لحظي يُبطئ الجهاز ويستهلك الحصّة بلا فائدة.
+ */
 export async function fetchOrders(q: OrderQuery = {}): Promise<Order[]> {
+  const limit = q.limit ?? PAGE_SIZE;
+  const from = q.offset ?? 0;
+
   let query = supabase
     .from("matam_orders")
     .select("*")
     .order("created_at", { ascending: false })
-    .limit(q.limit ?? 200);
+    .range(from, from + limit - 1);
 
   if (q.statuses?.length) query = query.in("status", q.statuses);
   if (q.deviceId) query = query.eq("device_id", q.deviceId);
   if (q.driverId) query = query.eq("driver_id", q.driverId);
   if (q.since) query = query.gte("created_at", q.since);
 
-  const { data } = await query;
+  const { data, error } = await query;
+  if (error) throw new Error(error.message);
   return (data ?? []) as Order[];
+}
+
+/** عدد الطلبات المطابقة — للترقيم وللتقارير */
+export async function countOrders(q: Pick<OrderQuery, "statuses" | "since"> = {}) {
+  let query = supabase.from("matam_orders").select("id", { count: "exact", head: true });
+  if (q.statuses?.length) query = query.in("status", q.statuses);
+  if (q.since) query = query.gte("created_at", q.since);
+  const { count } = await query;
+  return count ?? 0;
 }
 
 export async function fetchOrder(id: string): Promise<Order | null> {

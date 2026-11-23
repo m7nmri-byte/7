@@ -10,6 +10,7 @@ import {
   fetchDrivers,
   fetchItems,
   fetchOrders,
+  PAGE_SIZE,
   fetchSettings,
   fetchTickets,
   fetchZones,
@@ -72,7 +73,12 @@ export default function AdminApp() {
   const [tab, setTab] = useState<Tab>("home");
   const [page, setPage] = useState<MorePage>(null);
 
-  const loadOrders = useCallback(() => fetchOrders({ limit: 300 }), []);
+  // صفحة أولى، وتُزاد عند الطلب — لا نجلب السجلّ كلّه في كل تحديث
+  const [pages, setPages] = useState(1);
+  const loadOrders = useCallback(
+    () => fetchOrders({ limit: PAGE_SIZE * pages }),
+    [pages],
+  );
   const { data: orders, refresh: refreshOrders } = useLive("matam_orders", loadOrders);
   const { data: settings, refresh: refreshSettings } = useLive("matam_settings", fetchSettings);
   const { data: items, refresh: refreshItems } = useLive("matam_items", fetchItems);
@@ -149,6 +155,7 @@ export default function AdminApp() {
           drivers={drivers ?? []}
           settings={settings ?? null}
           onChanged={refreshOrders}
+          onMore={all.length >= PAGE_SIZE * pages ? () => setPages((n) => n + 1) : undefined}
         />
       );
     if (tab === "menu")

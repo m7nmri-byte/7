@@ -14,19 +14,25 @@ export function Banners({
   onChanged: () => void;
 }) {
   const [draft, setDraft] = useState<Partial<Banner> | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const save = async () => {
-    if (!draft?.image_url?.trim()) return;
-    await upsert("matam_banners", {
-      ...(draft.id ? { id: draft.id } : {}),
-      image_url: draft.image_url.trim(),
-      sort_order: Number(draft.sort_order ?? 0),
-      is_active: draft.is_active ?? true,
-      link_type: draft.link_type ?? "none",
-      link_id: draft.link_id ?? null,
-    });
-    setDraft(null);
-    onChanged();
+    setError(null);
+    try {
+      if (!draft?.image_url?.trim()) return;
+      await upsert("matam_banners", {
+        ...(draft.id ? { id: draft.id } : {}),
+        image_url: draft.image_url.trim(),
+        sort_order: Number(draft.sort_order ?? 0),
+        is_active: draft.is_active ?? true,
+        link_type: draft.link_type ?? "none",
+        link_id: draft.link_id ?? null,
+      });
+      setDraft(null);
+      onChanged();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+    }
   };
 
   return (
@@ -83,6 +89,9 @@ export function Banners({
       >
         {draft && (
           <div className="flex flex-col gap-4">
+            {error && (
+              <p className="rounded-lg bg-m-danger/15 px-3 py-2 text-xs text-m-danger">{error}</p>
+            )}
             <ImageField
               value={draft.image_url ?? null}
               onChange={(url) => setDraft({ ...draft, image_url: url ?? "" })}

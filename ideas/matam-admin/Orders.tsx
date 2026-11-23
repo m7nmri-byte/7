@@ -26,11 +26,13 @@ export function Orders({
   drivers,
   settings,
   onChanged,
+  onMore,
 }: {
   orders: Order[];
   drivers: Driver[];
   settings: Settings | null;
   onChanged: () => void;
+  onMore?: () => void;
 }) {
   const [filter, setFilter] = useState("open");
   const [open, setOpen] = useState<Order | null>(null);
@@ -93,6 +95,15 @@ export function Orders({
           ))
         )}
       </div>
+
+      {onMore && (
+        <button
+          onClick={onMore}
+          className="mx-4 mb-4 rounded-xl border border-m-line py-2.5 text-xs text-m-dim transition-colors hover:text-m-text"
+        >
+          عرض المزيد
+        </button>
+      )}
 
       <OrderSheet
         order={open}
