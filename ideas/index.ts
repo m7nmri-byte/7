@@ -67,6 +67,21 @@ export const groups: Group[] = [
 
 export const ideas: Idea[] = [
   {
+    slug: "jam",
+    appBg: "#f6f6f3",
+    title: "جمعية",
+    summary: "نظام إداري داخلي: الفريق والمهام والاعتماد والبرامج والمالية.",
+    tags: ["إدارة", "جمعية"],
+    started: "2026-11",
+    icon: {
+      bg: "#3f6b4a",
+      fg: "#ffffff",
+      // يدان تحملان قلباً
+      path: "M12 20.2s-6.6-4.3-6.6-9.2a3.9 3.9 0 0 1 6.6-2.5 3.9 3.9 0 0 1 6.6 2.5c0 4.9-6.6 9.2-6.6 9.2Z",
+      stroke: 1.7,
+    },
+  },
+  {
     slug: "nashat",
     appBg: "#0f1419",
     title: "نشاط",
@@ -163,6 +178,7 @@ export const ideas: Idea[] = [
 ];
 
 export const views: Record<string, ComponentType> = {
+  jam: dynamic(() => import("./jam/view")),
   nashat: dynamic(() => import("./nashat/view")),
   matam: dynamic(() => import("./matam-bench/view")),
   "matam-customer": dynamic(() => import("./matam-customer/view")),

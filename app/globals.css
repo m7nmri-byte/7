@@ -10,6 +10,25 @@
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
 
+  --color-j-bg: var(--j-bg);
+  --color-j-surface: var(--j-surface);
+  --color-j-raised: var(--j-raised);
+  --color-j-line: var(--j-line);
+  --color-j-line-soft: var(--j-line-soft);
+  --color-j-text: var(--j-text);
+  --color-j-dim: var(--j-dim);
+  --color-j-faint: var(--j-faint);
+  --color-j-brand: var(--j-brand);
+  --color-j-brand-deep: var(--j-brand-deep);
+  --color-j-brand-soft: var(--j-brand-soft);
+  --color-j-accent: var(--j-accent);
+  --color-j-ok: var(--j-ok);
+  --color-j-warn: var(--j-warn);
+  --color-j-info: var(--j-info);
+  --color-j-danger: var(--j-danger);
+  --shadow-j-sm: var(--j-shadow-sm);
+  --shadow-j: var(--j-shadow);
+  --shadow-j-md: var(--j-shadow-md);
   --color-n-bg: var(--n-bg);
   --color-n-surface: var(--n-surface);
   --color-n-raised: var(--n-raised);
@@ -199,4 +218,48 @@ body {
 
 [data-nashat] ::selection {
   background-color: color-mix(in oklab, var(--n-accent) 30%, transparent);
+}
+
+/* ======================================================================
+   الجمعية — هوية مستقلة: نهار فاتح بأخضر زيتوني ونحاسي.
+   نظام إداري يُقرأ ساعات طويلة على شاشة مكتب، فالفاتح أريح، والأخضر
+   يصل بلا صخب.
+   ====================================================================== */
+[data-jam] {
+  --j-bg: #f6f6f3;
+  --j-surface: #ffffff;
+  --j-raised: #eeeee9;
+  --j-line: #e0e0d8;
+  --j-line-soft: #efefe9;
+  --j-text: #1b1d19;
+  --j-dim: #636a5e;
+  --j-faint: #99a093;
+
+  --j-brand: #3f6b4a;
+  --j-brand-deep: #2d5137;
+  --j-brand-soft: #eef4ef;
+  --j-accent: #a9643a;
+  --j-ok: #2f7d52;
+  --j-warn: #b0791c;
+  --j-info: #3a6186;
+  --j-danger: #b03a2e;
+
+  --j-shadow-sm: 0 1px 2px rgba(30, 40, 30, 0.05);
+  --j-shadow: 0 4px 14px -4px rgba(30, 40, 30, 0.1);
+  --j-shadow-md: 0 10px 30px -8px rgba(30, 40, 30, 0.18);
+
+  background-color: var(--j-bg);
+  color: var(--j-text);
+  font-family: var(--font-sans);
+  color-scheme: light;
+}
+
+[data-jam] ::selection {
+  background-color: color-mix(in oklab, var(--j-brand) 24%, transparent);
+}
+
+[data-jam] input,
+[data-jam] textarea,
+[data-jam] select {
+  color-scheme: light;
 }
