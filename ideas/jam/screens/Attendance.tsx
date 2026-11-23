@@ -7,7 +7,7 @@ import { ATTENDANCE_STATUS } from "../types";
 import { fmtTime } from "../format";
 import { today, useMe } from "../hooks";
 import { Card, Empty, Stat, Tag, jField, jGhost, jPrimary } from "../ui";
-import { isWorkDay, nearestSite, statusFor, summarize } from "./attend-core";
+import { isWorkDay, statusFor, summarize, verdictFor } from "./attend-core";
 
 const TONE: Record<string, string> = {
   present: "var(--j-ok)",
@@ -70,15 +70,26 @@ export function AttendanceScreen({
     const at = coords
       ? { lat: coords.coords.latitude, lng: coords.coords.longitude }
       : null;
-    const near = at ? nearestSite(sites, at) : null;
-    const remote = Boolean(
-      near && near.distance > near.site.radius_m && members.find((m) => m.id === me)?.remote_allowed,
+
+    /** القبول أو الرفض قرارٌ واحد في attend-core، لا حسابٌ متفرّق هنا */
+    const verdict = verdictFor(
+      sites,
+      at,
+      Boolean(members.find((m) => m.id === me)?.remote_allowed),
     );
+
+    if (!verdict.ok) {
+      setBusy(false);
+      setMsg(verdict.reason);
+      return;
+    }
+
+    const remote = verdict.remote;
 
     const base = {
       member_id: me,
       work_date: day,
-      site_id: near?.site.id ?? null,
+      site_id: verdict.site?.id ?? null,
     };
 
     const payload: Record<string, unknown> =
@@ -88,7 +99,7 @@ export function AttendanceScreen({
             check_in_at: new Date().toISOString(),
             check_in_lat: at?.lat ?? null,
             check_in_lng: at?.lng ?? null,
-            check_in_distance_m: near?.distance ?? null,
+            check_in_distance_m: verdict.distance,
             status: statusFor(myShift, new Date(), remote),
             is_remote: remote,
           }
@@ -97,7 +108,7 @@ export function AttendanceScreen({
             check_out_at: new Date().toISOString(),
             check_out_lat: at?.lat ?? null,
             check_out_lng: at?.lng ?? null,
-            check_out_distance_m: near?.distance ?? null,
+            check_out_distance_m: verdict.distance,
           };
 
     const { error } = await supabase

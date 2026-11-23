@@ -73,3 +73,56 @@ export function summarize(
     absent: Math.max(0, totalMembers - present - late - remote - onLeave),
   };
 }
+
+/* ===================== قبول البصمة ===================== */
+
+export type PunchVerdict =
+  | { ok: true; site: Site | null; distance: number | null; remote: boolean }
+  | { ok: false; reason: string };
+
+/**
+ * هل تُقبل هذه البصمة؟
+ *
+ * «نطاق القبول» في الإعدادات كان يُحسب ويُسجَّل ولا يَقبل ولا يَرفض:
+ * من بصم خارج النطاق يُسجَّل حاضرًا، ومن منع تحديد موقعه يُسجَّل
+ * حاضرًا كذلك — فالموقع كلّه زينة. والقرار هنا في مكان واحد:
+ *
+ * - من يُسمح له بالعمل عن بُعد تُقبل بصمته أينما كان، وتُوسم «عن بُعد».
+ * - من لا يُسمح له فلا بدّ من موقعٍ داخل نطاق موقعٍ مفعَّل.
+ * - ولا مواقع محفوظة أصلًا؟ فلا نطاق يُحتكم إليه، فتُقبل.
+ */
+export function verdictFor(
+  sites: Site[],
+  at: { lat: number; lng: number } | null,
+  remoteAllowed: boolean,
+): PunchVerdict {
+  const usable = sites.filter((s) => s.is_active && s.lat != null && s.lng != null);
+
+  if (usable.length === 0) {
+    return { ok: true, site: null, distance: null, remote: false };
+  }
+
+  if (!at) {
+    if (remoteAllowed) return { ok: true, site: null, distance: null, remote: true };
+    return {
+      ok: false,
+      reason: "تعذّر تحديد موقعك. اسمح بالموقع ثم أعد المحاولة.",
+    };
+  }
+
+  const near = nearestSite(usable, at);
+  if (!near) return { ok: true, site: null, distance: null, remote: false };
+
+  if (near.distance <= near.site.radius_m) {
+    return { ok: true, site: near.site, distance: near.distance, remote: false };
+  }
+
+  if (remoteAllowed) {
+    return { ok: true, site: near.site, distance: near.distance, remote: true };
+  }
+
+  return {
+    ok: false,
+    reason: `أنت على بعد ${near.distance} م من ${near.site.name}، والنطاق المسموح ${near.site.radius_m} م.`,
+  };
+}
