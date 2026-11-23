@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { useSession } from "@/components/SessionProvider";
+import { useStandalone } from "@/lib/standalone";
 import {
   fetchDepartments,
   fetchMail,
@@ -42,6 +44,8 @@ import {
 export default function JamView() {
   const [section, setSection] = useState<SectionKey>("home");
   const me = useMe();
+  const { session, checking } = useSession();
+  const standalone = useStandalone();
 
   /** اليوم يُحسب مرّة عند التركيب — لا في كل تصيير */
   const [today] = useState(todayOf);
@@ -115,13 +119,47 @@ export default function JamView() {
 
       <Body>
         {coreError ? (
-          <div className="mx-auto max-w-lg rounded-2xl border border-j-danger/30 bg-j-danger/5 p-6">
-            <p className="text-sm font-semibold text-j-danger">تعذّر الوصول إلى قاعدة البيانات</p>
-            <p className="mt-2 text-xs leading-relaxed text-j-dim">{coreError}</p>
-            <p className="mt-3 text-xs leading-relaxed text-j-faint">
-              جداول هذا النظام موجودة، لكنّها بلا صلاحيات قراءة للمتصفّح بعد. حتى تُمنح،
-              لن يظهر شيء.
+          <div className="mx-auto flex max-w-lg flex-col gap-3 rounded-2xl border border-j-danger/30 bg-j-danger/5 p-6">
+            <p className="text-sm font-semibold text-j-danger">
+              {checking
+                ? "جارٍ التحقّق من الجلسة…"
+                : session
+                  ? "تعذّر الوصول إلى البيانات"
+                  : "هذا النظام يلزمه تسجيل دخول"}
             </p>
+
+            {/* بيانات الجمعية مقصورة على من سجّل دخوله، فالرسالة تميّز
+                بين «لم تسجّل» و«سجّلت ومع ذلك مُنعت» */}
+            {!checking && !session ? (
+              <>
+                <p className="text-xs leading-relaxed text-j-dim">
+                  بيانات الجمعية — أسماء المستفيدين والقيود المالية والمحاضر — مقصورة
+                  على من سجّل دخوله. الدخول مرّة واحدة من الموقع الأساسي، وتقرأ منه
+                  الأدوات كلّها.
+                </p>
+                {/* التطبيق المثبّت لا يخرج إلى الموقع الأساسي، فلا رابط فيه */}
+                {standalone ? (
+                  <p className="text-xs leading-relaxed text-j-faint">
+                    سجّل الدخول من الموقع في المتصفّح، ثم عُد إلى هذا التطبيق.
+                  </p>
+                ) : (
+                  <a
+                    href="/login"
+                    className="self-start rounded-xl bg-j-brand px-4 py-2.5 text-sm font-semibold text-white"
+                  >
+                    سجّل الدخول
+                  </a>
+                )}
+              </>
+            ) : (
+              <>
+                <p className="text-xs leading-relaxed text-j-dim">{coreError}</p>
+                <p className="text-xs leading-relaxed text-j-faint">
+                  إن كانت الرسالة عن صلاحية، فجداول jam_‎* لم تُمنح بعد صلاحية القراءة.
+                  أمرها في ideas/jam/sql/grants.sql.
+                </p>
+              </>
+            )}
           </div>
         ) : (
           <>
