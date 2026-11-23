@@ -68,18 +68,14 @@ function DeviceToggles({ onNavigate }: { onNavigate: () => void }) {
   return (
     <>
       {DEVICES.map((d) => {
-        const on = onBench && active.includes(d.key);
+        const on = active.includes(d.key);
         return (
           <button
             key={d.key}
             aria-pressed={on}
             onClick={() => {
-              if (!onBench) {
-                if (!active.includes(d.key)) toggleDevice(d.key);
-                router.push("/lab/matam");
-              } else {
-                toggleDevice(d.key);
-              }
+              toggleDevice(d.key);
+              if (!onBench) router.push("/lab/matam");
               onNavigate();
             }}
             className={`${rowBase} justify-between ${
@@ -103,6 +99,7 @@ function DeviceToggles({ onNavigate }: { onNavigate: () => void }) {
 
 export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
   const pathname = usePathname();
+  const router = useRouter();
   const { session, checking } = useSession();
 
   // المجموعة التي تخصّ الصفحة الحالية تُفتح وحدها
@@ -173,7 +170,11 @@ export function SidebarContent({ onNavigate }: { onNavigate: () => void }) {
             {groups.map((g) => (
               <button
                 key={g.slug}
-                onClick={() => setOpen(g.slug)}
+                onClick={() => {
+                  setOpen(g.slug);
+                  router.push(`/lab/${g.slug}`);
+                  onNavigate();
+                }}
                 className={`${rowBase} justify-between text-muted hover:bg-card hover:text-ink`}
               >
                 <span className="flex items-center gap-2.5">
