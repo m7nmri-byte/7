@@ -41,6 +41,8 @@ export function Menu({
   items,
   combos,
   banners,
+  category,
+  onCategory,
   onOpenItem,
   onOpenCombo,
 }: {
@@ -50,10 +52,14 @@ export function Menu({
   items: Item[];
   combos: Combo[];
   banners: Banner[];
+  /** القسم المختار — مُسيَّر من الأب ليقدر الإعلان على فتح قسمٍ بعينه */
+  category: string;
+  onCategory: (id: string) => void;
   onOpenItem: (item: Item) => void;
   onOpenCombo: (combo: Combo) => void;
 }) {
-  const [active, setActive] = useState<string>("all");
+  const active = category;
+  const setActive = onCategory;
   const [query, setQuery] = useState("");
 
   const cats = categories.filter((c) => c.is_active);
@@ -87,16 +93,46 @@ export function Menu({
         <div className="m-noscroll flex gap-3 overflow-x-auto px-4 pt-4">
           {banners
             .filter((b) => b.is_active)
-            .map((b) => (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                key={b.id}
-                src={b.image_url}
-                alt=""
-                loading="lazy"
-                className="h-32 w-72 shrink-0 rounded-2xl object-cover"
-              />
-            ))}
+            .map((b) => {
+              /**
+               * رابط اللافتة يعمل.
+               * كانت صورةً صامتة: الإدارة تختار «اربطها بقسم» أو «بصنف»
+               * ولا يحدث عند الضغط شيء، فالحقلان زينة.
+               */
+              const cat =
+                b.link_type === "category" && b.link_id
+                  ? cats.find((c) => c.id === b.link_id)
+                  : undefined;
+              const linked =
+                b.link_type === "item" && b.link_id
+                  ? items.find((i) => i.id === b.link_id)
+                  : undefined;
+              const go = cat
+                ? () => setActive(cat.id)
+                : linked
+                  ? () => onOpenItem(linked)
+                  : null;
+
+              return go ? (
+                <button
+                  key={b.id}
+                  onClick={go}
+                  className="h-32 w-72 shrink-0 overflow-hidden rounded-2xl"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={b.image_url} alt="" loading="lazy" className="size-full object-cover" />
+                </button>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={b.id}
+                  src={b.image_url}
+                  alt=""
+                  loading="lazy"
+                  className="h-32 w-72 shrink-0 rounded-2xl object-cover"
+                />
+              );
+            })}
         </div>
       )}
 

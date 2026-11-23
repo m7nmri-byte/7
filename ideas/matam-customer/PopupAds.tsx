@@ -18,7 +18,18 @@ function seen(): string[] {
  * الإعلان المنبثق يظهر مرة واحدة لكل جهاز.
  * إظهاره في كل فتحة يزعج الزبون ويفقده أثره — فنتذكّر ما رآه.
  */
-export function PopupAds({ ads }: { ads: PopupAd[] }) {
+export function PopupAds({
+  ads,
+  onLink,
+}: {
+  ads: PopupAd[];
+  /**
+   * وجهة الإعلان الداخلية.
+   * كان link_type وlink_id حقلين في الإدارة بلا أثر: يعمل الرابط
+   * الخارجي وحده، والإعلان المربوط بقسمٍ أو صنف صورةٌ صامتة.
+   */
+  onLink: (kind: "category" | "item", id: string) => void;
+}) {
   const [ad, setAd] = useState<PopupAd | null>(null);
   const [slide, setSlide] = useState(0);
 
@@ -60,7 +71,19 @@ export function PopupAds({ ads }: { ads: PopupAd[] }) {
       onClose={close}
       title={ad.caption ?? undefined}
       footer={
-        ad.external_url ? (
+        (ad.link_type === "category" || ad.link_type === "item") && ad.link_id ? (
+          <button
+            onClick={() => {
+              const id = ad.link_id;
+              const kind = ad.link_type === "category" ? "category" : "item";
+              close();
+              if (id) onLink(kind, id);
+            }}
+            className={`${mGhost} block w-full text-center`}
+          >
+            {ad.link_type === "category" ? "اعرض القسم" : "اعرض الصنف"}
+          </button>
+        ) : ad.external_url ? (
           <a
             href={ad.external_url}
             target="_blank"

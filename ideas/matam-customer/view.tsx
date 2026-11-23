@@ -62,6 +62,7 @@ const I = {
 export default function CustomerApp() {
   const deviceId = useDeviceId();
   const [tab, setTab] = useState<Tab>("menu");
+  const [category, setCategory] = useState("all");
   const [item, setItem] = useState<Item | null>(null);
   const [combo, setCombo] = useState<Combo | null>(null);
   const [checkout, setCheckout] = useState(false);
@@ -172,6 +173,8 @@ export default function CustomerApp() {
           </>
         ) : tab === "menu" ? (
           <Menu
+            category={category}
+            onCategory={setCategory}
             closedNote={open.ordering ? null : closedText(open)}
             settings={settings ?? null}
             categories={categories ?? []}
@@ -276,7 +279,20 @@ export default function CustomerApp() {
         }}
       />
 
-      <PopupAds ads={ads ?? []} />
+      <PopupAds
+        ads={ads ?? []}
+        onLink={(kind, id) => {
+          /** الوجهة الداخلية: القائمة ثم القسم أو بطاقة الصنف */
+          setOpenOrder(null);
+          setTab("menu");
+          if (kind === "item") {
+            const found = (items ?? []).find((i) => i.id === id);
+            if (found) setItem(found);
+          } else {
+            setCategory(id);
+          }
+        }}
+      />
 
       {node}
     </Phone>
