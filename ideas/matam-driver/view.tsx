@@ -76,7 +76,7 @@ function Card({
       </div>
 
       <div className="flex gap-2">
-        {onMap && order.delivery_address && (
+        {onMap && (order.delivery_address || order.delivery_lat != null) && (
           <button onClick={onMap} className={`${mGhost} flex-1 py-2 text-xs`}>
             افتح الخريطة
           </button>
@@ -168,8 +168,12 @@ export default function DriverApp() {
     void refresh();
   };
 
+  // الإحداثيات أدقّ من النصّ حين توفّرت
   const openMap = (o: Order) => {
-    const q = encodeURIComponent(o.delivery_address ?? "");
+    const q =
+      o.delivery_lat != null && o.delivery_lng != null
+        ? `${o.delivery_lat},${o.delivery_lng}`
+        : encodeURIComponent(o.delivery_address ?? "");
     window.open(`https://www.google.com/maps/search/?api=1&query=${q}`, "_blank");
   };
 

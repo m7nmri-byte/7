@@ -7,10 +7,17 @@ import { createOrder } from "../matam/db";
 import { enqueue, type PendingOrder } from "../matam/queue";
 import { money } from "../matam/format";
 import { MSheet, mField, mPrimary } from "../matam/ui";
+import { MapPicker } from "../matam/MapPicker";
 
 const PROFILE_KEY = "matam.profile";
 
-type Profile = { name: string; phone: string; address: string };
+type Profile = {
+  name: string;
+  phone: string;
+  address: string;
+  lat?: number | null;
+  lng?: number | null;
+};
 
 function loadProfile(): Profile {
   try {
@@ -19,7 +26,7 @@ function loadProfile(): Profile {
   } catch {
     /* لا بأس */
   }
-  return { name: "", phone: "", address: "" };
+  return { name: "", phone: "", address: "", lat: null, lng: null };
 }
 
 /** نموذج إتمام الطلب — يتذكّر بيانات صاحب الجهاز فلا يكتبها كل مرة */
@@ -99,8 +106,8 @@ export function Checkout({
       estimated_minutes: null,
       estimated_set_at: null,
       delivery_address: type === "delivery" ? profile.address.trim() : null,
-      delivery_lat: null,
-      delivery_lng: null,
+      delivery_lat: type === "delivery" ? (profile.lat ?? null) : null,
+      delivery_lng: type === "delivery" ? (profile.lng ?? null) : null,
       zone_id: type === "delivery" ? (zoneId || null) : null,
       zone_name: type === "delivery" ? (zone?.name ?? null) : null,
       driver_id: null,
@@ -206,6 +213,18 @@ export function Checkout({
               placeholder="الحي، الشارع، وصف يسهّل الوصول"
             />
           </label>
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-xs text-m-dim">الموقع على الخريطة</span>
+            <MapPicker
+              value={
+                profile.lat != null && profile.lng != null
+                  ? { lat: profile.lat, lng: profile.lng }
+                  : null
+              }
+              onChange={(pt) => set({ lat: pt.lat, lng: pt.lng })}
+            />
+          </div>
         </>
       )}
 

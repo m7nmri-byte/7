@@ -9,7 +9,13 @@ export type MoreKey =
   | "ads"
   | "reports"
   | "support"
-  | "settings";
+  | "settings"
+  | "users"
+  | "hours"
+  | "appearance"
+  | "splash"
+  | "closing"
+  | "maintenance";
 
 /** مسارات أيقونات مختصرة داخل مربّع 24×24 */
 const ICON: Record<MoreKey, string> = {
@@ -21,6 +27,12 @@ const ICON: Record<MoreKey, string> = {
   ads: "M5 10v4h3l4 3V7l-4 3zM16 9.5a3.5 3.5 0 0 1 0 5",
   reports: "M5 20V11M12 20V5M19 20v-6",
   support: "M21 12a9 9 0 1 0-3.4 7M12 8v4.5l3 1.8",
+  users: "M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19 M10 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7 M17 11a3 3 0 1 0 0-6M20 19v-1.4a3 3 0 0 0-2-2.8",
+  hours: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z M12 7.5V12l3 1.8",
+  appearance: "M12 3a9 9 0 1 0 0 18c1 0 1.6-.8 1.6-1.6 0-.5-.2-.9-.5-1.2a1.7 1.7 0 0 1 1.2-2.9H16a5 5 0 0 0 5-5c0-4-4-7.3-9-7.3Z M7.5 12.5v.1M9.5 8.5v.1M14.5 7.5v.1",
+  splash: "M5 4h14v16H5zM9 9h6M9 13h6",
+  closing: "M6 3h12v18l-3-2-3 2-3-2-3 2zM9.5 8h5M9.5 12h5",
+  maintenance: "M14.7 6.3a4 4 0 0 1 5 5l-9 9-5 1 1-5 8-10Z M13 8l3 3",
   settings: "M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4Z M19.3 14a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.4 13H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 3.4V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7h.3a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1Z",
 };
 
@@ -33,6 +45,12 @@ export const MORE_ITEMS: { key: MoreKey; label: string }[] = [
   { key: "ads", label: "الإعلانات" },
   { key: "reports", label: "التقارير" },
   { key: "support", label: "الدعم" },
+  { key: "hours", label: "ساعات العمل" },
+  { key: "users", label: "المستخدمون" },
+  { key: "closing", label: "تقرير الإغلاق" },
+  { key: "appearance", label: "المظهر" },
+  { key: "splash", label: "شاشة البداية" },
+  { key: "maintenance", label: "الصيانة" },
   { key: "settings", label: "الإعدادات" },
 ];
 

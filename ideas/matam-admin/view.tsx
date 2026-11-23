@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import {
   fetchAds,
   fetchBanners,
@@ -28,6 +29,14 @@ import { Reports } from "./Reports";
 import { SupportDesk } from "./SupportDesk";
 import { SettingsScreen } from "./Settings";
 import { MORE_ITEMS, MoreGrid, type MoreKey } from "./MoreGrid";
+import { Users } from "./Users";
+import { Hours } from "./Hours";
+import { Appearance } from "./Appearance";
+import { Splash } from "./Splash";
+import { Closing } from "./Closing";
+import { Maintenance } from "./Maintenance";
+import type { AppUser } from "./users-core";
+import type { Splash as SplashImage, Theme } from "./theme-core";
 
 type Tab = "home" | "orders" | "menu" | "more";
 type MorePage = MoreKey | null;
@@ -71,6 +80,21 @@ export default function AdminApp() {
   const { data: drivers, refresh: refreshDrivers } = useLive("matam_drivers", fetchDrivers);
   const { data: zones, refresh: refreshZones } = useLive("matam_zones", fetchZones);
   const { data: banners, refresh: refreshBanners } = useLive("matam_banners", fetchBanners);
+  const loadUsers = useCallback(async () => {
+    const { data } = await supabase.from("matam_users").select("*").order("created_at", { ascending: false });
+    return (data ?? []) as AppUser[];
+  }, []);
+  const { data: users, refresh: refreshUsers } = useLive("matam_users", loadUsers);
+  const loadSplash = useCallback(async () => {
+    const { data } = await supabase.from("matam_splash").select("*").order("sort_order");
+    return (data ?? []) as SplashImage[];
+  }, []);
+  const { data: splash, refresh: refreshSplash } = useLive("matam_splash", loadSplash);
+  const loadTheme = useCallback(async () => {
+    const { data } = await supabase.from("matam_theme").select("*").maybeSingle();
+    return (data as Theme) ?? null;
+  }, []);
+  const { data: theme, refresh: refreshTheme } = useLive("matam_theme", loadTheme);
   const { data: combos, refresh: refreshCombos } = useLive("matam_combos", fetchCombos);
   const loadTickets = useCallback(() => fetchTickets(), []);
   const { data: tickets, refresh: refreshTickets } = useLive("matam_tickets", loadTickets);
@@ -91,6 +115,17 @@ export default function AdminApp() {
     if (page === "zones") return <Zones zones={zones ?? []} onChanged={refreshZones} />;
     if (page === "banners") return <Banners banners={banners ?? []} onChanged={refreshBanners} />;
     if (page === "ads") return <Ads ads={ads ?? []} onChanged={refreshAds} />;
+    if (page === "users")
+      return <Users users={users ?? []} orders={all} onChanged={refreshUsers} />;
+    if (page === "hours")
+      return <Hours settings={settings ?? null} onChanged={refreshSettings} />;
+    if (page === "appearance")
+      return <Appearance theme={theme ?? null} onChanged={refreshTheme} />;
+    if (page === "splash")
+      return <Splash images={splash ?? []} onChanged={refreshSplash} />;
+    if (page === "closing") return <Closing orders={all} />;
+    if (page === "maintenance")
+      return <Maintenance orders={all} onChanged={refreshOrders} />;
     if (page === "reports") return <Reports orders={all} now={now} />;
     if (page === "support")
       return <SupportDesk tickets={tickets ?? []} onChanged={refreshTickets} />;
