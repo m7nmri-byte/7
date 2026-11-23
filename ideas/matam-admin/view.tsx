@@ -27,19 +27,10 @@ import { Ads } from "./Ads";
 import { Reports } from "./Reports";
 import { SupportDesk } from "./SupportDesk";
 import { SettingsScreen } from "./Settings";
+import { MORE_ITEMS, MoreGrid, type MoreKey } from "./MoreGrid";
 
 type Tab = "home" | "orders" | "menu" | "more";
-type MorePage =
-  | null
-  | "categories"
-  | "combos"
-  | "drivers"
-  | "zones"
-  | "banners"
-  | "ads"
-  | "reports"
-  | "support"
-  | "settings";
+type MorePage = MoreKey | null;
 
 const ICONS = {
   home: (
@@ -66,18 +57,6 @@ const ICONS = {
     </svg>
   ),
 };
-
-const MORE_ITEMS: { key: Exclude<MorePage, null>; label: string; hint: string }[] = [
-  { key: "categories", label: "الفئات", hint: "تنظيم القائمة" },
-  { key: "combos", label: "الوجبات المركّبة", hint: "عدة أصناف بسعر واحد" },
-  { key: "drivers", label: "المندوبون", hint: "من يوصّل الطلبات" },
-  { key: "zones", label: "مناطق التوصيل", hint: "الرسوم حسب المنطقة" },
-  { key: "banners", label: "اللافتات", hint: "صور أعلى قائمة الزبون" },
-  { key: "ads", label: "الإعلانات المنبثقة", hint: "تظهر مرة عند فتح التطبيق" },
-  { key: "reports", label: "التقارير", hint: "الإيرادات والأكثر مبيعًا" },
-  { key: "support", label: "الدعم", hint: "رسائل الزبائن" },
-  { key: "settings", label: "الإعدادات", hint: "المطعم وساعات العمل" },
-];
 
 export default function AdminApp() {
   const now = useTick(60_000);
@@ -135,23 +114,7 @@ export default function AdminApp() {
         <Items items={items ?? []} categories={categories ?? []} onChanged={refreshItems} />
       );
 
-    return (
-      <div className="flex flex-col gap-2 p-4">
-        {MORE_ITEMS.map((m) => (
-          <button
-            key={m.key}
-            onClick={() => setPage(m.key)}
-            className="flex items-center justify-between gap-3 rounded-xl border border-m-line bg-m-surface p-3.5 text-start"
-          >
-            <span className="flex flex-col">
-              <span className="text-sm font-medium">{m.label}</span>
-              <span className="text-[11px] text-m-dim">{m.hint}</span>
-            </span>
-            <span className="text-m-faint">‹</span>
-          </button>
-        ))}
-      </div>
-    );
+    return <MoreGrid onOpen={setPage} />;
   };
 
   return (
@@ -176,7 +139,7 @@ export default function AdminApp() {
         title={current ? current.label : settings?.restaurant_name || "الإدارة"}
         subtitle={
           current
-            ? current.hint
+            ? undefined
             : waiting > 0
               ? `${waiting} بانتظار القبول`
               : `${live} طلب جارٍ`
