@@ -54,6 +54,21 @@ export function Combos({
     });
   };
 
+  /**
+   * الصنف الذي تُسأل خياراته داخل الوجبة.
+   * الحقل كان يُحفظ فارغًا أبدًا — لا واجهة تضبطه — فالوجبة تُضاف
+   * بلا صلصة تُختار ولا مشروب.
+   */
+  const toggleOptionSource = (itemId: string) => {
+    const list = draft?.option_item_ids ?? [];
+    setDraft({
+      ...draft,
+      option_item_ids: list.includes(itemId)
+        ? list.filter((x) => x !== itemId)
+        : [...list, itemId],
+    });
+  };
+
   const setQty = (itemId: string, qty: number) =>
     setDraft({
       ...draft,
@@ -65,7 +80,7 @@ export function Combos({
   return (
     <div className="flex flex-col gap-2 p-4">
       <button
-        onClick={() => setDraft({ name: "", price: 0, is_active: true, items: [] })}
+        onClick={() => setDraft({ name: "", price: 0, is_active: true, items: [], option_item_ids: [] })}
         className={mPrimary}
       >
         + وجبة مركّبة
@@ -177,6 +192,20 @@ export function Combos({
                       >
                         {it.name}
                       </button>
+                      {row && (it.option_groups ?? []).length > 0 && (
+                        <button
+                          onClick={() => toggleOptionSource(it.id)}
+                          title="يُسأل الزبون عن خيارات هذا الصنف داخل الوجبة"
+                          className={
+                            "shrink-0 rounded-lg border px-2 py-2 text-[11px] transition-colors " +
+                            ((draft.option_item_ids ?? []).includes(it.id)
+                              ? "border-m-accent text-m-accent"
+                              : "border-m-line text-m-faint")
+                          }
+                        >
+                          خياراته
+                        </button>
+                      )}
                       {row && (
                         <input
                           className={`${mField} mark w-16 py-1.5 text-center text-xs`}

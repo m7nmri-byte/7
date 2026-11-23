@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Combo, Item } from "../matam/types";
 import { addToCart } from "../matam/cart";
 import { money } from "../matam/format";
+import { OptionGroups, useOptions } from "./options";
 import { MSheet, mField, mPrimary } from "../matam/ui";
 
 /**
@@ -25,6 +26,19 @@ export function ComboSheet({
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
 
+  /**
+   * خيارات الوجبة: مجموعات الأصناف التي عيّنتها الإدارة في
+   * option_item_ids. كان الحقل يُحفظ ولا يُقرأ، فالوجبة تُضاف بلا
+   * خيار البتّة — لا صلصة تُختار ولا مشروب. والخطّاف قبل أي خروج
+   * مبكّر، فلا يكون مشروطًا.
+   */
+  const groups = (combo?.option_item_ids ?? [])
+    .map((id) => items.find((x) => x.id === id))
+    .filter((x): x is Item => Boolean(x))
+    .flatMap((x) => x.option_groups ?? []);
+
+  const { picked, toggle, bump, chosen, missing, extras, reset } = useOptions(groups);
+
   if (!combo) return null;
 
   const contents = combo.items
@@ -34,7 +48,11 @@ export function ComboSheet({
     })
     .filter((x): x is string => x !== null);
 
+  const unit = Number(combo.price) + extras;
+
   const add = () => {
+    /** مجموعة إلزامية بلا اختيار تمنع الإضافة، كما في بطاقة الصنف */
+    if (missing.length) return;
     // يُمثَّل كصنف بسعره الخاص، واسم الوجبة هو اسمه
     addToCart(
       {
@@ -56,16 +74,12 @@ export function ComboSheet({
         exclude_base_price: false,
         option_groups: [],
       },
-      contents.length
-        ? [
-            {
-              group_id: "combo",
-              group_name: "تشمل",
-              names: contents,
-              extra: 0,
-            },
-          ]
-        : [],
+      [
+        ...(contents.length
+          ? [{ group_id: "combo", group_name: "تشمل", names: contents, extra: 0 }]
+          : []),
+        ...chosen,
+      ],
       qty,
       note.trim() || null,
     );
@@ -73,6 +87,7 @@ export function ComboSheet({
     onClose();
     setQty(1);
     setNote("");
+    reset();
   };
 
   return (
@@ -91,8 +106,12 @@ export function ComboSheet({
               +
             </button>
           </div>
-          <button onClick={add} className={`${mPrimary} flex-1`}>
-            أضف · {money(Number(combo.price) * qty)}
+          <button
+            onClick={add}
+            disabled={missing.length > 0}
+            className={mPrimary + " flex-1 disabled:opacity-50"}
+          >
+            {missing.length > 0 ? "اختر " + missing[0].name : "أضف · " + money(unit * qty)}
           </button>
         </div>
       }
@@ -123,6 +142,8 @@ export function ComboSheet({
             </ul>
           </section>
         )}
+
+        <OptionGroups groups={groups} picked={picked} toggle={toggle} bump={bump} />
 
         <label className="flex flex-col gap-2">
           <span className="text-sm font-medium">ملاحظة للمطبخ</span>

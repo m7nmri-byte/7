@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { OrderType, Settings, Zone } from "../matam/types";
 import { useCart } from "../matam/cart";
 import { createOrder, isPhoneBlocked, rememberCustomer } from "../matam/db";
+import { distanceKm } from "../matam/geo";
 import { enqueue, type PendingOrder } from "../matam/queue";
 import { money, taxIn } from "../matam/format";
 import { MSheet, mField, mPrimary } from "../matam/ui";
@@ -120,6 +121,38 @@ export function Checkout({
       rating: null,
       rating_note: null,
     };
+
+    /**
+     * حدّ مسافة المنطقة: كان يُحدَّد في الإدارة ويُعرض فيها «حتى N كم»
+     * ولا يُقارن بشيء، فالحدّ وعدٌ لا يُنفَّذ. يُفحص هنا قبل الإرسال.
+     */
+    if (
+      type === "delivery" &&
+      zone &&
+      zone.max_distance_km > 0 &&
+      settings?.restaurant_lat != null &&
+      settings?.restaurant_lng != null &&
+      profile.lat != null &&
+      profile.lng != null
+    ) {
+      const km = distanceKm(
+        { lat: settings.restaurant_lat, lng: settings.restaurant_lng },
+        { lat: profile.lat, lng: profile.lng },
+      );
+      if (km > zone.max_distance_km) {
+        setError(
+          "موقعك يبعد " +
+            km.toFixed(1) +
+            " كم، و" +
+            zone.name +
+            " تُوصَّل حتى " +
+            zone.max_distance_km +
+            " كم.",
+        );
+        setBusy(false);
+        return;
+      }
+    }
 
     /** الحظر يُفحص قبل الإرسال لا بعده، فلا يُنشأ طلبٌ ثم يُلغى */
     if (await isPhoneBlocked(payload.customer_phone)) {

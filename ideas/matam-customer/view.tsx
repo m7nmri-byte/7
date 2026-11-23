@@ -24,6 +24,7 @@ import { Menu } from "./Menu";
 import { ItemSheet } from "./ItemSheet";
 import { ComboSheet } from "./ComboSheet";
 import { PopupAds } from "./PopupAds";
+import { Splash } from "./Splash";
 import { Cart } from "./Cart";
 import { Checkout } from "./Checkout";
 import { OrderDetail, OrdersList } from "./Tracking";
@@ -278,6 +279,8 @@ export default function CustomerApp() {
           }, 400);
         }}
       />
+
+      <Splash />
 
       <PopupAds
         ads={ads ?? []}

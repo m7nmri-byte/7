@@ -1,4 +1,5 @@
 "use client";
+import { useTheme } from "../matam/theme";
 
 import { useMemo, useState } from "react";
 import type { Banner, Category, Combo, Item, Settings } from "../matam/types";
@@ -18,10 +19,11 @@ function Price({ item }: { item: Item }) {
   );
 }
 
-function Thumb({ src, alt }: { src: string | null; alt: string }) {
+function Thumb({ src, alt, wide }: { src: string | null; alt: string; wide?: boolean }) {
+  const box = wide ? "h-24 w-full" : "size-20 shrink-0";
   if (!src)
     return (
-      <div className="grid size-20 shrink-0 place-items-center rounded-xl bg-m-raised text-m-faint">
+      <div className={`grid place-items-center rounded-xl bg-m-raised text-m-faint ${box}`}>
         <svg viewBox="0 0 24 24" className="size-7" fill="none" stroke="currentColor" strokeWidth="1.3">
           <path d="M4 7h16v12H4z" />
           <path d="M4 15l4-4 3 3 3-3 6 6" />
@@ -30,7 +32,7 @@ function Thumb({ src, alt }: { src: string | null; alt: string }) {
     );
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} loading="lazy" className="size-20 shrink-0 rounded-xl object-cover" />
+    <img src={src} alt={alt} loading="lazy" className={`rounded-xl object-cover ${box}`} />
   );
 }
 
@@ -61,6 +63,9 @@ export function Menu({
   const active = category;
   const setActive = onCategory;
   const [query, setQuery] = useState("");
+  /** نمط العرض من شاشة المظهر في الإدارة */
+  const { theme } = useTheme();
+  const grid = theme.menu_style === "grid";
 
   const cats = categories.filter((c) => c.is_active);
 
@@ -196,7 +201,11 @@ export function Menu({
         </section>
       )}
 
-      <section className="mt-5 flex flex-col gap-2 px-4 pb-6">
+      <section
+        className={
+        "mt-5 px-4 pb-6 " + (grid ? "grid grid-cols-2 gap-3" : "flex flex-col gap-2")
+        }
+        >
         {visible.length === 0 ? (
           <Empty title="لا توجد أصناف" hint={query ? "جرّب كلمة أخرى" : "ستظهر هنا فور إضافتها"} />
         ) : (
@@ -205,9 +214,12 @@ export function Menu({
               key={item.id}
               onClick={() => onOpenItem(item)}
               disabled={!item.is_available}
-              className="flex items-center gap-3 rounded-2xl border border-m-line bg-m-surface p-3 text-start transition-colors enabled:hover:border-m-accent/40 disabled:opacity-50"
+              className={
+                "m-card rounded-2xl bg-m-surface p-3 text-start transition-colors disabled:opacity-50 " +
+                (grid ? "flex flex-col gap-2" : "flex items-center gap-3")
+              }
             >
-              <Thumb src={item.image_url} alt={item.name} />
+              <Thumb src={item.image_url} alt={item.name} wide={grid} />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <span className="truncate text-sm font-medium">{item.name}</span>

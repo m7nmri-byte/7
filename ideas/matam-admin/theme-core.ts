@@ -1,11 +1,7 @@
-export type Theme = {
-  primary_color: string;
-  surface_color: string;
-  bg_color: string;
-  text_color: string;
-  card_style: "soft" | "flat" | "outlined";
-  menu_style: "list" | "grid";
-};
+/** النوع والافتراضي من مصدرٍ واحد يقرؤه التطبيق كما تكتبه الإدارة */
+export type { Theme } from "../matam/theme";
+export { DEFAULT_THEME } from "../matam/theme";
+import type { Theme } from "../matam/theme";
 
 export type Splash = {
   id: string;
@@ -14,14 +10,6 @@ export type Splash = {
   is_active: boolean;
 };
 
-export const DEFAULT_THEME: Theme = {
-  primary_color: "#d1492a",
-  surface_color: "#ffffff",
-  bg_color: "#f7f5f2",
-  text_color: "#1d1a17",
-  card_style: "soft",
-  menu_style: "list",
-};
 
 /** لوحات جاهزة — أسرع من اختيار أربعة ألوان متناسقة يدويًا */
 export const PRESETS: {

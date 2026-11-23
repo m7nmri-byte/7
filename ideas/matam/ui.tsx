@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useTheme } from "./theme";
 import { clearWrite, useFailures } from "@/lib/failures";
 
 /**
@@ -25,13 +26,20 @@ export function Phone({
   bar?: React.ReactNode;
 }) {
   const mode = useContext(PhoneMode);
+  /** المظهر يُقرأ هنا مرّة، فيَرِثه كل ما في الجهاز */
+  const { style, card } = useTheme();
   const frame =
     mode === "embedded"
       ? "relative h-full w-full rounded-[1.75rem] border border-m-line shadow-xl shadow-black/30"
       : "relative mx-auto h-dvh w-full max-w-[26rem] sm:my-[2.5dvh] sm:h-[min(44rem,95dvh)] sm:rounded-[2rem] sm:border sm:border-m-line sm:shadow-2xl sm:shadow-black/40";
 
   return (
-    <div data-matam className={`flex flex-col overflow-hidden bg-m-bg ${frame}`}>
+    <div
+      data-matam
+      data-card={card}
+      style={style}
+      className={`flex flex-col overflow-hidden bg-m-bg ${frame}`}
+    >
       {children}
       {bar}
     </div>
@@ -228,8 +236,13 @@ export function MSheet({
 
   if (!open) return null;
 
+  /**
+   * بلا data-matam: الورقة داخل الجهاز فترث متغيّراته. وإعلانها من
+   * جديد يُطبّق عليها قاعدة [data-matam] فتعود الألوان إلى الافتراضي
+   * ويُلغى مظهر المدير داخل كل ورقة.
+   */
   return (
-    <div data-matam className="absolute inset-0 z-50 flex items-end overflow-hidden rounded-[inherit]">
+    <div className="absolute inset-0 z-50 flex items-end overflow-hidden rounded-[inherit]">
       <button aria-label="إغلاق" onClick={onClose} className="absolute inset-0 bg-black/60" />
       <div className="relative flex max-h-[85%] w-full flex-col rounded-t-3xl border-t border-m-line bg-m-surface">
         {title && (
