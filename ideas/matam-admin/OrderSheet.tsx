@@ -10,6 +10,7 @@ import {
   nextStatus,
 } from "../matam/status";
 import { MSheet, mField, mGhost, mPrimary } from "../matam/ui";
+import { useState } from "react";
 import { printOrder } from "../matam/print";
 import { OrderTimeline } from "./Timeline";
 
@@ -27,6 +28,8 @@ export function OrderSheet({
   onClose: () => void;
   onApply: (o: Order, patch: Partial<Order>) => void;
 }) {
+  const [reason, setReason] = useState("");
+
   if (!order) return null;
 
   const next = nextStatus(order.status, order.order_type);
@@ -51,7 +54,15 @@ export function OrderSheet({
             طباعة
           </button>
           {isOpenOrder(order.status) && (
-            <button onClick={() => onApply(order, { status: "cancelled" })} className={mGhost}>
+            <button
+              onClick={() =>
+                onApply(order, {
+                  status: "cancelled",
+                  cancel_reason: reason.trim() || null,
+                })
+              }
+              className={mGhost}
+            >
               إلغاء
             </button>
           )}
@@ -144,6 +155,31 @@ export function OrderSheet({
             ))}
           </select>
         </label>
+
+        {isOpenOrder(order.status) && (
+          <label className="flex flex-col gap-1.5">
+            <span className="text-xs text-m-dim">سبب الإلغاء — يُحفظ مع الطلب</span>
+            <input
+              className={mField}
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="مثال: الصنف غير متوفر"
+            />
+          </label>
+        )}
+
+        {order.cancel_reason && (
+          <p className="rounded-xl bg-m-danger/10 px-3 py-2.5 text-xs text-m-danger">
+            سبب الإلغاء: {order.cancel_reason}
+          </p>
+        )}
+
+        {order.rating !== null && (
+          <p className="rounded-xl bg-m-raised px-3 py-2.5 text-xs">
+            تقييم الزبون: <b className="mark">{order.rating}/5</b>
+            {order.rating_note ? " — " + order.rating_note : ""}
+          </p>
+        )}
 
         <OrderTimeline orderId={order.id} />
 

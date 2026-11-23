@@ -11,6 +11,8 @@ export const newGroup = (): OptionGroup => ({
   type: "single",
   required: false,
   options: [],
+  allow_quantity: false,
+  kitchen_control: false,
 });
 
 const newOption = (): ItemOption => ({
@@ -66,18 +68,32 @@ export function OptionGroupsEditor({
             </button>
           </div>
 
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => patch(gi, { type: g.type === "single" ? "multi" : "single" })}
-              className={`${mGhost} flex-1 py-2 text-xs`}
+              className={`${mGhost} py-2 text-xs`}
             >
               {g.type === "single" ? "اختيار واحد" : "اختيار متعدّد"}
             </button>
             <button
               onClick={() => patch(gi, { required: !g.required })}
-              className={`${mGhost} flex-1 py-2 text-xs ${g.required ? "text-m-accent" : ""}`}
+              className={`${mGhost} py-2 text-xs ${g.required ? "text-m-accent" : ""}`}
             >
               {g.required ? "مطلوبة" : "اختيارية"}
+            </button>
+            <button
+              onClick={() => patch(gi, { allow_quantity: !g.allow_quantity })}
+              className={`${mGhost} py-2 text-xs ${g.allow_quantity ? "text-m-accent" : ""}`}
+              title="يسمح بتكرار الخيار الواحد"
+            >
+              {g.allow_quantity ? "بكمّية" : "بلا كمّية"}
+            </button>
+            <button
+              onClick={() => patch(gi, { kitchen_control: !g.kitchen_control })}
+              className={`${mGhost} py-2 text-xs ${g.kitchen_control ? "text-m-accent" : ""}`}
+              title="يظهر بارزًا في المطبخ"
+            >
+              {g.kitchen_control ? "يهمّ المطبخ" : "لا يهمّ المطبخ"}
             </button>
           </div>
 

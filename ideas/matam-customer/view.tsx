@@ -25,6 +25,7 @@ import { PopupAds } from "./PopupAds";
 import { Cart } from "./Cart";
 import { Checkout } from "./Checkout";
 import { OrderDetail, OrdersList } from "./Tracking";
+import { Rating } from "./Rating";
 import { Support } from "./Support";
 
 type Tab = "menu" | "cart" | "orders" | "support";
@@ -152,7 +153,10 @@ export default function CustomerApp() {
 
       <Body>
         {shown ? (
-          <OrderDetail order={shown} />
+          <>
+            <Rating order={shown} onDone={() => void refreshOrders()} />
+            <OrderDetail order={shown} />
+          </>
         ) : tab === "menu" ? (
           <Menu
             settings={settings ?? null}
@@ -190,7 +194,13 @@ export default function CustomerApp() {
         )}
       </Body>
 
-      <ItemSheet item={item} onClose={() => setItem(null)} onAdded={() => toast("أُضيف إلى السلة")} />
+      <ItemSheet
+        item={item}
+        items={items ?? []}
+        onClose={() => setItem(null)}
+        onAdded={() => toast("أُضيف إلى السلة")}
+        onOpenItem={setItem}
+      />
 
       <ComboSheet
         combo={combo}

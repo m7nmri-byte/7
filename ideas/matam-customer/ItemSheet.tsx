@@ -9,49 +9,69 @@ import { MSheet, mField, mPrimary } from "../matam/ui";
 /** اختيار الخيارات ثم الإضافة للسلة */
 export function ItemSheet({
   item,
+  items,
   onClose,
   onAdded,
+  onOpenItem,
 }: {
   item: Item | null;
+  items: Item[];
   onClose: () => void;
   onAdded: () => void;
+  onOpenItem: (i: Item) => void;
 }) {
-  const [picked, setPicked] = useState<Record<string, string[]>>({});
+  // لكل مجموعة: معرّف الخيار ← كمّيته. الصفر يعني غير مختار
+  const [picked, setPicked] = useState<Record<string, Record<string, number>>>({});
   const [qty, setQty] = useState(1);
   const [note, setNote] = useState("");
 
   if (!item) return null;
 
   const groups = item.option_groups ?? [];
+  const suggested = items.filter(
+    (x) => (item.suggested_ids ?? []).includes(x.id) && x.is_available,
+  );
 
   const toggle = (groupId: string, optionId: string, single: boolean) => {
     setPicked((prev) => {
-      const cur = prev[groupId] ?? [];
-      if (single) return { ...prev, [groupId]: [optionId] };
-      return {
-        ...prev,
-        [groupId]: cur.includes(optionId)
-          ? cur.filter((x) => x !== optionId)
-          : [...cur, optionId],
-      };
+      const cur = prev[groupId] ?? {};
+      if (single) return { ...prev, [groupId]: { [optionId]: 1 } };
+      const next = { ...cur };
+      if (next[optionId]) delete next[optionId];
+      else next[optionId] = 1;
+      return { ...prev, [groupId]: next };
+    });
+  };
+
+  const bump = (groupId: string, optionId: string, delta: number) => {
+    setPicked((prev) => {
+      const cur = { ...(prev[groupId] ?? {}) };
+      const qty = (cur[optionId] ?? 0) + delta;
+      if (qty <= 0) delete cur[optionId];
+      else cur[optionId] = Math.min(20, qty);
+      return { ...prev, [groupId]: cur };
     });
   };
 
   const chosen: ChosenOption[] = groups
-    .map((g) => {
-      const ids = picked[g.id] ?? [];
-      const opts = g.options.filter((o) => ids.includes(o.id));
+    .map((g): ChosenOption | null => {
+      const qtys = picked[g.id] ?? {};
+      const opts = g.options.filter((o) => (qtys[o.id] ?? 0) > 0);
       if (!opts.length) return null;
       return {
         group_id: g.id,
         group_name: g.name,
-        names: opts.map((o) => o.name),
-        extra: opts.reduce((s, o) => s + (Number(o.price) || 0), 0),
+        names: opts.map((o) => (qtys[o.id] > 1 ? `${o.name} ×${qtys[o.id]}` : o.name)),
+        quantities: opts.map((o) => qtys[o.id]),
+        extra: opts.reduce((sum, o) => sum + (Number(o.price) || 0) * qtys[o.id], 0),
+        ...(g.kitchen_control ? { kitchen: true } : {}),
       };
     })
     .filter((x): x is ChosenOption => x !== null);
 
-  const missing = groups.filter((g) => g.required && !(picked[g.id] ?? []).length);
+  const missing = groups.filter(
+    (g) => g.required && !Object.keys(picked[g.id] ?? {}).length,
+  );
   const extras = chosen.reduce((s, o) => s + o.extra, 0);
   const base = item.exclude_base_price ? 0 : discounted(item);
   const unit = base + extras;
@@ -117,7 +137,7 @@ export function ItemSheet({
 
         {groups.map((g) => {
           const single = g.type === "single";
-          const ids = picked[g.id] ?? [];
+          const qtys = picked[g.id] ?? {};
           return (
             <fieldset key={g.id} className="flex flex-col gap-2">
               <legend className="mb-1 flex items-center gap-2 text-sm font-medium">
@@ -128,7 +148,8 @@ export function ItemSheet({
                 </span>
               </legend>
               {g.options.map((o) => {
-                const on = ids.includes(o.id);
+                const qty = qtys[o.id] ?? 0;
+                const on = qty > 0;
                 return (
                   <button
                     key={o.id}
@@ -150,15 +171,64 @@ export function ItemSheet({
                       </span>
                       {o.name}
                     </span>
-                    {Number(o.price) > 0 && (
-                      <span className="text-xs text-m-accent">+{money(Number(o.price))}</span>
-                    )}
+                    <span className="flex items-center gap-2">
+                      {Number(o.price) > 0 && (
+                        <span className="text-xs text-m-accent">+{money(Number(o.price))}</span>
+                      )}
+                      {on && g.allow_quantity && (
+                        <span className="flex items-center gap-1 rounded-lg bg-m-surface">
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              bump(g.id, o.id, -1);
+                            }}
+                            onKeyDown={(e) => e.key === "Enter" && bump(g.id, o.id, -1)}
+                            className="px-2 py-0.5 text-m-dim"
+                          >
+                            −
+                          </span>
+                          <span className="mark w-4 text-center text-xs tabular-nums">{qty}</span>
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              bump(g.id, o.id, 1);
+                            }}
+                            onKeyDown={(e) => e.key === "Enter" && bump(g.id, o.id, 1)}
+                            className="px-2 py-0.5 text-m-dim"
+                          >
+                            +
+                          </span>
+                        </span>
+                      )}
+                    </span>
                   </button>
                 );
               })}
             </fieldset>
           );
         })}
+
+        {suggested.length > 0 && (
+          <section className="flex flex-col gap-2 border-t border-m-line pt-4">
+            <h3 className="text-sm font-medium">يُطلب معه عادة</h3>
+            <div className="m-noscroll flex gap-2 overflow-x-auto">
+              {suggested.map((x) => (
+                <button
+                  key={x.id}
+                  onClick={() => onOpenItem(x)}
+                  className="flex w-28 shrink-0 flex-col gap-1 rounded-xl border border-m-line p-2 text-start"
+                >
+                  <span className="truncate text-xs font-medium">{x.name}</span>
+                  <span className="text-xs text-m-accent">{money(discounted(x))}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         <label className="flex flex-col gap-2">
           <span className="text-sm font-medium">ملاحظة للمطبخ</span>

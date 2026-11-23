@@ -112,6 +112,9 @@ export function Checkout({
       zone_name: type === "delivery" ? (zone?.name ?? null) : null,
       driver_id: null,
       driver_name: null,
+      cancel_reason: null,
+      rating: null,
+      rating_note: null,
     };
 
     try {

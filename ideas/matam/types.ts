@@ -29,6 +29,9 @@ export type ItemOption = {
   available: boolean;
 };
 
+/** خيار مختار مع كمّيته — «جبن ×٢» يختلف سعره وتحضيره عن «جبن» */
+export type ChosenOne = { name: string; qty: number };
+
 /** single = اختيار واحد، multi = عدة اختيارات */
 export type OptionGroup = {
   id: string;
@@ -36,6 +39,10 @@ export type OptionGroup = {
   type: "single" | "multi";
   required: boolean;
   options: ItemOption[];
+  /** يسمح بتكرار الخيار الواحد بكمّية */
+  allow_quantity?: boolean;
+  /** يظهر للمطبخ بارزًا — خيارات تغيّر طريقة التحضير لا السعر فقط */
+  kitchen_control?: boolean;
 };
 
 export type Item = {
@@ -93,7 +100,11 @@ export type ChosenOption = {
   group_id: string;
   group_name: string;
   names: string[];
+  /** الكمّيات موازية للأسماء حين سمحت المجموعة بها */
+  quantities?: number[];
   extra: number;
+  /** يُبرزه المطبخ */
+  kitchen?: boolean;
 };
 
 export type OrderItem = {
@@ -130,6 +141,9 @@ export type Order = {
   zone_name: string | null;
   driver_id: string | null;
   driver_name: string | null;
+  cancel_reason: string | null;
+  rating: number | null;
+  rating_note: string | null;
   created_at: string;
   updated_at: string;
 };

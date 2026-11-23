@@ -120,6 +120,7 @@ export function Items({
       <ItemSheet
         draft={draft}
         categories={categories}
+        items={items}
         onChange={setDraft}
         onClose={() => setDraft(null)}
         onSave={save}
@@ -133,6 +134,7 @@ export function Items({
 function ItemSheet({
   draft,
   categories,
+  items,
   onChange,
   onClose,
   onSave,
@@ -140,6 +142,7 @@ function ItemSheet({
 }: {
   draft: Partial<Item> | null;
   categories: Category[];
+  items: Item[];
   onChange: (d: Partial<Item>) => void;
   onClose: () => void;
   onSave: () => void;
@@ -268,6 +271,71 @@ function ItemSheet({
               </button>
             );
           })}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold text-m-dim">أصناف تُقترح مع هذا</span>
+          <div className="flex flex-wrap gap-1.5">
+            {items
+              .filter((x) => x.id !== draft.id)
+              .map((x) => {
+                const on = (draft.suggested_ids ?? []).includes(x.id);
+                return (
+                  <button
+                    key={x.id}
+                    onClick={() =>
+                      set({
+                        suggested_ids: on
+                          ? (draft.suggested_ids ?? []).filter((id) => id !== x.id)
+                          : [...(draft.suggested_ids ?? []), x.id],
+                      })
+                    }
+                    className={
+                      "rounded-full px-3 py-1.5 text-xs transition-colors " +
+                      (on
+                        ? "bg-m-accent-soft font-medium text-m-accent"
+                        : "border border-m-line text-m-dim")
+                    }
+                  >
+                    {x.name}
+                  </button>
+                );
+              })}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold text-m-dim">مسبّبات الحساسية</span>
+          <input
+            className={mField}
+            value={(draft.allergens ?? []).join("، ")}
+            onChange={(e) =>
+              set({
+                allergens: e.target.value
+                  .split(/[،,]/)
+                  .map((x) => x.trim())
+                  .filter(Boolean),
+              })
+            }
+            placeholder="جلوتين، مكسّرات، ألبان"
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="text-xs font-semibold text-m-dim">وسوم</span>
+          <input
+            className={mField}
+            value={(draft.tags ?? []).join("، ")}
+            onChange={(e) =>
+              set({
+                tags: e.target.value
+                  .split(/[،,]/)
+                  .map((x) => x.trim())
+                  .filter(Boolean),
+              })
+            }
+            placeholder="حار، نباتي"
+          />
         </div>
 
         <OptionGroupsEditor

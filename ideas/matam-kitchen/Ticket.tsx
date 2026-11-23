@@ -49,11 +49,21 @@ export function KitchenTicket({
             </span>
             <span className="flex min-w-0 flex-col">
               <span className="font-medium">{it.name}</span>
-              {it.options.map((o) => (
-                <span key={o.group_id} className="text-xs text-m-dim">
-                  {o.group_name}: {o.names.join("، ")}
-                </span>
-              ))}
+              {it.options.map((o) =>
+                o.kitchen ? (
+                  // خيار يغيّر طريقة التحضير — يُقرأ من مسافة
+                  <span
+                    key={o.group_id}
+                    className="mt-0.5 w-fit rounded-md bg-m-accent-soft px-1.5 py-0.5 text-xs font-bold text-m-accent"
+                  >
+                    {o.group_name}: {o.names.join("، ")}
+                  </span>
+                ) : (
+                  <span key={o.group_id} className="text-xs text-m-dim">
+                    {o.group_name}: {o.names.join("، ")}
+                  </span>
+                ),
+              )}
               {it.note && <span className="text-xs font-medium text-m-warn">{it.note}</span>}
             </span>
           </li>
