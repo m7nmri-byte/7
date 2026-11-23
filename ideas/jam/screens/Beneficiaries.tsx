@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Aid, Beneficiary, Program } from "../types";
+import type { Aid, Beneficiary, Program, Member } from "../types";
 import { AID_STATUS } from "../types";
 import { fmtDate, money } from "../format";
 import { useMe } from "../hooks";
@@ -11,16 +11,20 @@ import { AID_TONE, AidForm } from "./AidForm";
 
 export function Beneficiaries({
   beneficiaries,
+  members,
   aids,
   programs,
   onChanged,
 }: {
   beneficiaries: Beneficiary[];
+  members: Member[];
   aids: Aid[];
   programs: Program[];
   onChanged: () => void;
 }) {
   const me = useMe();
+
+  const memberName = (id: string) => members.find((m) => m.id === id)?.name ?? "—";
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("all");
   const [draft, setDraft] = useState<Partial<Beneficiary> | null>(null);
@@ -197,6 +201,12 @@ export function Beneficiaries({
                         {a.program_id
                           ? ` · ${programs.find((p) => p.id === a.program_id)?.name ?? ""}`
                           : ""}
+                      </span>
+                      {/* أثر الصرف: من طلب ومن اعتمد — لازمٌ في عمل خيري */}
+                      <span className="text-[10px] text-j-faint">
+                        {a.requested_by ? "طلبها " + memberName(a.requested_by) : ""}
+                        {a.approved_by ? " · اعتمدها " + memberName(a.approved_by) : ""}
+                        {a.disbursed_at ? " · صُرفت " + fmtDate(a.disbursed_at) : ""}
                       </span>
                     </span>
                     <span className="flex shrink-0 items-center gap-2">

@@ -68,9 +68,18 @@ export function Members({
               key={m.id}
               className="flex items-start gap-3 rounded-2xl border border-j-line bg-j-surface p-4 shadow-j-sm"
             >
-              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-j-brand-soft text-sm font-bold text-j-brand">
-                {m.name.charAt(0)}
-              </span>
+              {m.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={m.avatar_url}
+                  alt=""
+                  className="size-10 shrink-0 rounded-full object-cover"
+                />
+              ) : (
+                <span className="grid size-10 shrink-0 place-items-center rounded-full bg-j-brand-soft text-sm font-bold text-j-brand">
+                  {m.name.charAt(0)}
+                </span>
+              )}
 
               <button
                 onClick={() => setDraft(m)}

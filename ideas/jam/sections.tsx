@@ -188,7 +188,7 @@ export function LeavesSection({ core }: { core: Core }) {
   );
 }
 
-export function BeneficiariesSection() {
+export function BeneficiariesSection({ core }: { core: Core }) {
   const ben = useLive("jam_beneficiaries", fetchBeneficiaries);
   const aids = useLive("jam_aids", fetchAids);
   const progs = useLive("jam_programs", fetchPrograms);
@@ -199,6 +199,7 @@ export function BeneficiariesSection() {
     >
       <Beneficiaries
         beneficiaries={ben.data ?? []}
+        members={core.members}
         aids={aids.data ?? []}
         programs={progs.data ?? []}
         onChanged={() => {

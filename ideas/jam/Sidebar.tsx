@@ -34,9 +34,14 @@ function Who({ members, me }: { members: Member[]; me: string | null }) {
         onClick={() => setOpen((v) => !v)}
         className="flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-start hover:bg-j-raised"
       >
-        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-j-brand/12 text-xs font-bold text-j-brand">
-          {current ? current.name.trim().charAt(0) : "؟"}
-        </span>
+        {current?.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={current.avatar_url} alt="" className="size-8 shrink-0 rounded-full object-cover" />
+        ) : (
+          <span className="grid size-8 shrink-0 place-items-center rounded-full bg-j-brand/12 text-xs font-bold text-j-brand">
+            {current ? current.name.trim().charAt(0) : "؟"}
+          </span>
+        )}
         <span className="min-w-0 flex-1">
           <span className="block truncate text-xs font-medium">
             {current ? current.name : "اختر هويّتك"}

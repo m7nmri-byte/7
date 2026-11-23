@@ -5,6 +5,7 @@ import type { Department, Member, MemberRole, Shift } from "../types";
 import { ROLE_LABEL } from "../types";
 import { remove, save } from "../db";
 import { Modal, jField, jGhost, jPrimary } from "../ui";
+import { FileField } from "../FileField";
 
 export function MemberForm({
   draft,
@@ -36,6 +37,7 @@ export function MemberForm({
         ...(draft.id ? { id: draft.id } : {}),
         name: draft.name.trim(),
         phone: draft.phone || null,
+        avatar_url: draft.avatar_url ?? null,
         email: draft.email || null,
         job_title: draft.job_title || null,
         department_id: draft.department_id || null,
@@ -84,6 +86,13 @@ export function MemberForm({
       )}
 
       <div className="grid grid-cols-2 gap-3">
+        <FileField
+          label="الصورة"
+          folder="jam/members"
+          value={draft.avatar_url ?? null}
+          onChange={(f) => set({ avatar_url: f ? f.url : null })}
+        />
+        
         <input
           className={jField}
           value={draft.name ?? ""}

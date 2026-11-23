@@ -33,6 +33,9 @@ export function AidForm({
   const set = (p: Partial<Aid>) => onChange({ ...draft, ...p });
 
   const submit = async () => {
+    const status = draft.status ?? "requested";
+    const approved = status === "approved" || status === "disbursed";
+
     await save("jam_aids", {
       ...(draft.id ? { id: draft.id } : {}),
       beneficiary_id: beneficiaryId,
@@ -40,9 +43,19 @@ export function AidForm({
       kind: draft.kind ?? "cash",
       amount: Number(draft.amount ?? 0),
       description: draft.description ?? null,
-      status: draft.status ?? "requested",
-      requested_by: me,
-      disbursed_at: draft.status === "disbursed" ? new Date().toISOString() : null,
+      status,
+      /** الطالب يُكتب مرّة: من يُعدّل لاحقًا لا يصير هو الطالب */
+      requested_by: draft.requested_by ?? me,
+      /** المعتمِد يُسجَّل عند أوّل اعتماد، وهو أثرٌ لازم في الصرف */
+      approved_by: approved ? (draft.approved_by ?? me) : null,
+      /**
+       * تاريخ الصرف يُثبّت عند أوّل صرف.
+       * كان يُحسب في كل حفظ، فيتنقّل مع كل تعديل ويضيع الأصل.
+       */
+      disbursed_at:
+        status === "disbursed"
+          ? (draft.disbursed_at ?? new Date().toISOString())
+          : null,
     });
     onClose();
     onSaved();

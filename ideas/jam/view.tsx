@@ -1,10 +1,11 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSession } from "@/components/SessionProvider";
 import { useStandalone } from "@/lib/standalone";
 import {
   fetchDepartments,
+  patch,
   fetchMail,
   fetchMailReads,
   fetchMembers,
@@ -12,7 +13,7 @@ import {
   fetchSettings,
   fetchTasks,
 } from "./db";
-import { today as todayOf, useLive, useMe } from "./hooks";
+import { setMe, today as todayOf, useLive, useMe } from "./hooks";
 import { Body, FailureBar, PageHead, Shell } from "./ui";
 import { Sidebar } from "./Sidebar";
 import { navItem, type SectionKey } from "./nav";
@@ -99,6 +100,30 @@ export default function JamView() {
     return { requests: reqs, tasks, mail: unread };
   }, [inbox.data, myTasks.data, mail.data, reads.data, me]);
 
+  /**
+   * ربط الهويّة بالجلسة.
+   *
+   * `user_id` كان عمودًا بلا مستعمل، والهويّة تُختار يدويًا في كل
+   * جهاز. ومع اشتراط تسجيل الدخول، صار العضو يُعرف من جلسته:
+   * بالمعرّف إن سبق الربط، وإلّا بالبريد — ويُثبّت المعرّف وقتها
+   * فلا يُسأل مرّة أخرى.
+   */
+  const membersFlat = core.members;
+  useEffect(() => {
+    if (!session || me) return;
+    const byId = membersFlat.find((m) => m.user_id === session.user.id);
+    if (byId) {
+      setMe(byId.id);
+      return;
+    }
+    const email = session.user.email?.trim().toLowerCase();
+    if (!email) return;
+    const byEmail = membersFlat.find((m) => (m.email ?? "").trim().toLowerCase() === email);
+    if (!byEmail) return;
+    setMe(byEmail.id);
+    void patch("jam_members", byEmail.id, { user_id: session.user.id }).catch(() => {});
+  }, [session, me, membersFlat]);
+
   const item = navItem(section);
   const coreError = settings.error ?? members.error ?? departments.error;
 
@@ -184,7 +209,7 @@ export default function JamView() {
             {section === "members" && <MembersSection core={core} />}
             {section === "attendance" && <AttendanceSection core={core} />}
             {section === "leaves" && <LeavesSection core={core} />}
-            {section === "beneficiaries" && <BeneficiariesSection />}
+            {section === "beneficiaries" && <BeneficiariesSection core={core} />}
             {section === "programs" && <ProgramsSection core={core} />}
             {section === "donors" && <DonorsSection />}
             {section === "grants" && <GrantsSection core={core} />}
