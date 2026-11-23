@@ -108,7 +108,14 @@ export default function AdminApp() {
         />
       );
     if (tab === "orders")
-      return <Orders orders={all} drivers={drivers ?? []} onChanged={refreshOrders} />;
+      return (
+        <Orders
+          orders={all}
+          drivers={drivers ?? []}
+          settings={settings ?? null}
+          onChanged={refreshOrders}
+        />
+      );
     if (tab === "menu")
       return (
         <Items items={items ?? []} categories={categories ?? []} onChanged={refreshItems} />

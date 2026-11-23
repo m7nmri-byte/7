@@ -18,7 +18,10 @@ import {
   mGhost,
   mPrimary,
 } from "../matam/ui";
+import { printOrder } from "../matam/print";
+import { fetchSettings } from "../matam/db";
 import { KitchenTicket } from "./Ticket";
+import { useOrderAlerts } from "./useAlerts";
 
 type Tab = "queue" | "ready";
 
@@ -46,8 +49,12 @@ export default function KitchenApp() {
   const [note, setNote] = useState("");
 
   const load = useCallback(() => fetchOrders({ statuses: KITCHEN, limit: 80 }), []);
+  const { data: settings } = useLive("matam_settings", fetchSettings);
   const { data, loading, refresh } = useLive("matam_orders", load);
   const orders = data ?? [];
+
+  // التنبيه يحتاج تفاعلًا واحدًا من المستخدم قبل أن يسمح به المتصفح
+  const { ready: alertsOn, enable: enableAlerts } = useOrderAlerts(orders, true);
 
   const queue = orders
     .filter((o) => o.status !== "ready")
@@ -95,7 +102,31 @@ export default function KitchenApp() {
         />
       }
     >
-      <TopBar title="المطبخ" subtitle={`${queue.length} قيد العمل · ${ready.length} جاهزة`} />
+      <TopBar
+        title="المطبخ"
+        subtitle={`${queue.length} قيد العمل · ${ready.length} جاهزة`}
+        end={
+          alertsOn ? (
+            <span
+              title="التنبيه مفعّل"
+              aria-label="التنبيه مفعّل"
+              className="grid size-9 place-items-center rounded-full text-m-ok"
+            >
+              <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.6">
+                <path d="M6 9a6 6 0 1 1 12 0c0 4 1.5 5.5 1.5 5.5h-15S6 13 6 9Z" strokeLinejoin="round" />
+                <path d="M10 18a2 2 0 0 0 4 0" strokeLinecap="round" />
+              </svg>
+            </span>
+          ) : (
+            <button
+              onClick={() => void enableAlerts()}
+              className="rounded-full bg-m-accent px-3 py-1.5 text-xs font-bold text-white"
+            >
+              فعّل التنبيه
+            </button>
+          )
+        }
+      />
 
       <Body className="flex flex-col gap-3 p-4">
         {loading ? (
@@ -131,8 +162,14 @@ export default function KitchenApp() {
             <button onClick={() => void save()} className={`${mPrimary} flex-1`}>
               حفظ
             </button>
+            <button
+              onClick={() => open && printOrder(open, settings ?? null, "kitchen")}
+              className={mGhost}
+            >
+              طباعة
+            </button>
             <button onClick={() => void cancel()} className={mGhost}>
-              إلغاء الطلب
+              إلغاء
             </button>
           </div>
         }

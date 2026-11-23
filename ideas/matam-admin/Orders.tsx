@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Driver, Order, OrderStatus } from "../matam/types";
+import type { Driver, Order, OrderStatus, Settings } from "../matam/types";
 import { updateOrder } from "../matam/db";
 import { money, sinceText, timeOf } from "../matam/format";
 import {
@@ -24,10 +24,12 @@ const FILTERS: { key: string; label: string; match: (s: OrderStatus) => boolean 
 export function Orders({
   orders,
   drivers,
+  settings,
   onChanged,
 }: {
   orders: Order[];
   drivers: Driver[];
+  settings: Settings | null;
   onChanged: () => void;
 }) {
   const [filter, setFilter] = useState("open");
@@ -95,6 +97,7 @@ export function Orders({
       <OrderSheet
         order={open}
         drivers={drivers}
+        settings={settings}
         onClose={() => setOpen(null)}
         onApply={apply}
       />

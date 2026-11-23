@@ -15,6 +15,7 @@ import {
 } from "../matam/db";
 import { useCart } from "../matam/cart";
 import { useDeviceId, useLive } from "../matam/hooks";
+import { useQueue, useQueueFlusher } from "../matam/queue";
 import { isOpenOrder } from "../matam/status";
 import { Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
 import { Menu } from "./Menu";
@@ -64,6 +65,7 @@ export default function CustomerApp() {
   const [openOrder, setOpenOrder] = useState<Order | null>(null);
   const { toast, node } = useMToast();
   const { count } = useCart();
+  const queued = useQueue();
 
   const { data: settings } = useLive("matam_settings", fetchSettings);
   const { data: categories } = useLive("matam_categories", fetchCategories);
@@ -84,6 +86,16 @@ export default function CustomerApp() {
     [deviceId],
   );
   const { data: tickets, refresh: refreshTickets } = useLive("matam_tickets", loadTickets);
+
+  // الطلبات المؤجّلة تُرسل حين تعود الشبكة
+  const onFlushed = useCallback(
+    (n: number) => {
+      toast(n === 1 ? "أُرسل طلبك المؤجّل" : `أُرسلت ${n} طلبات مؤجّلة`);
+      void refreshOrders();
+    },
+    [toast, refreshOrders],
+  );
+  useQueueFlusher(onFlushed);
 
   const orderList = useMemo(() => orders ?? [], [orders]);
   const live = orderList.filter((o) => isOpenOrder(o.status));
@@ -159,7 +171,14 @@ export default function CustomerApp() {
             onCheckout={() => setCheckout(true)}
           />
         ) : tab === "orders" ? (
-          <OrdersList orders={orderList} onOpen={setOpenOrder} />
+          <>
+            {queued.length > 0 && (
+              <p className="mx-4 mt-4 rounded-xl bg-m-warn/15 px-3 py-2.5 text-center text-xs text-m-warn">
+                {queued.length} طلب بانتظار الاتصال — يُرسل تلقائيًا
+              </p>
+            )}
+            <OrdersList orders={orderList} onOpen={setOpenOrder} />
+          </>
         ) : (
           <Support
             deviceId={deviceId}
@@ -186,6 +205,10 @@ export default function CustomerApp() {
         settings={settings ?? null}
         zones={zones ?? []}
         onClose={() => setCheckout(false)}
+        onQueued={() => {
+          setTab("orders");
+          toast("لا اتصال — حُفظ طلبك وسيُرسل تلقائيًا");
+        }}
         onPlaced={(id) => {
           void refreshOrders();
           setTab("orders");

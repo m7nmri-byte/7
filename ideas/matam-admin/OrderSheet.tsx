@@ -1,6 +1,6 @@
 "use client";
 
-import type { Driver, Order, PaymentStatus } from "../matam/types";
+import type { Driver, Order, PaymentStatus, Settings } from "../matam/types";
 import { money } from "../matam/format";
 import {
   ADVANCE_LABEL,
@@ -10,17 +10,20 @@ import {
   nextStatus,
 } from "../matam/status";
 import { MSheet, mField, mGhost, mPrimary } from "../matam/ui";
+import { printOrder } from "../matam/print";
 import { OrderTimeline } from "./Timeline";
 
 /** تفاصيل الطلب وكل ما يمكن للإدارة تغييره فيه */
 export function OrderSheet({
   order,
   drivers,
+  settings,
   onClose,
   onApply,
 }: {
   order: Order | null;
   drivers: Driver[];
+  settings: Settings | null;
   onClose: () => void;
   onApply: (o: Order, patch: Partial<Order>) => void;
 }) {
@@ -44,6 +47,9 @@ export function OrderSheet({
               {advance}
             </button>
           )}
+          <button onClick={() => printOrder(order, settings, "receipt")} className={mGhost}>
+            طباعة
+          </button>
           {isOpenOrder(order.status) && (
             <button onClick={() => onApply(order, { status: "cancelled" })} className={mGhost}>
               إلغاء
