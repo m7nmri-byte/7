@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Category } from "../matam/types";
 import { remove, upsert } from "../matam/db";
 import { Empty, MSheet, mDanger, mField, mGhost, mPrimary } from "../matam/ui";
+import { ImageField } from "../matam/ImageField";
 
 const blank = (): Partial<Category> => ({
   name: "",
@@ -92,16 +93,12 @@ export function Categories({
               />
             </label>
 
-            <label className="flex flex-col gap-1.5">
-              <span className="text-xs text-m-dim">رابط الصورة</span>
-              <input
-                className={`${mField} mark`}
-                dir="ltr"
-                value={draft.image_url ?? ""}
-                onChange={(e) => setDraft({ ...draft, image_url: e.target.value || null })}
-                placeholder="https://…"
-              />
-            </label>
+            <ImageField
+              value={draft.image_url ?? null}
+              onChange={(url) => setDraft({ ...draft, image_url: url })}
+              folder="matam/categories"
+              label="صورة الفئة"
+            />
 
             <label className="flex flex-col gap-1.5">
               <span className="text-xs text-m-dim">الترتيب</span>

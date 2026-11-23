@@ -5,6 +5,7 @@ import type { Combo, Item } from "../matam/types";
 import { remove, upsert } from "../matam/db";
 import { money } from "../matam/format";
 import { Empty, MSheet, mDanger, mField, mGhost, mPrimary } from "../matam/ui";
+import { ImageField } from "../matam/ImageField";
 
 const num = (v: string) => Number(v.replace(/[^\d.]/g, "")) || 0;
 
@@ -143,12 +144,11 @@ export function Combos({
                 />
               </label>
             </div>
-            <input
-              className={`${mField} mark`}
-              dir="ltr"
-              value={draft.image_url ?? ""}
-              onChange={(e) => setDraft({ ...draft, image_url: e.target.value || null })}
-              placeholder="رابط الصورة"
+            <ImageField
+              value={draft.image_url ?? null}
+              onChange={(url) => setDraft({ ...draft, image_url: url })}
+              folder="matam/combos"
+              label="صورة الوجبة"
             />
 
             <div className="flex flex-col gap-2">

@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { PopupAd } from "../matam/types";
 import { remove, upsert } from "../matam/db";
 import { Empty, MSheet, mDanger, mField, mGhost, mPrimary } from "../matam/ui";
+import { ImageField } from "../matam/ImageField";
 
 const num = (v: string) => Number(v.replace(/\D/g, "")) || 0;
 
@@ -98,21 +99,22 @@ export function Ads({ ads, onChanged }: { ads: PopupAd[]; onChanged: () => void 
             />
 
             {(draft.image_urls ?? []).map((u, i) => (
-              <div key={i} className="flex gap-2">
-                <input
-                  className={`${mField} mark`}
-                  dir="ltr"
-                  value={u}
-                  onChange={(e) =>
-                    setDraft({
-                      ...draft,
-                      image_urls: (draft.image_urls ?? []).map((x, k) =>
-                        k === i ? e.target.value : x,
-                      ),
-                    })
-                  }
-                  placeholder="https://…"
-                />
+              <div key={i} className="flex items-start gap-2">
+                <div className="flex-1">
+                  <ImageField
+                    value={u || null}
+                    onChange={(url) =>
+                      setDraft({
+                        ...draft,
+                        image_urls: (draft.image_urls ?? []).map((x, k) =>
+                          k === i ? (url ?? "") : x,
+                        ),
+                      })
+                    }
+                    folder="matam/ads"
+                    label={`صورة ${i + 1}`}
+                  />
+                </div>
                 <button
                   onClick={() =>
                     setDraft({
@@ -121,7 +123,7 @@ export function Ads({ ads, onChanged }: { ads: PopupAd[]; onChanged: () => void 
                     })
                   }
                   aria-label="احذف"
-                  className="px-2 text-m-faint hover:text-m-danger"
+                  className="mt-6 px-2 text-m-faint hover:text-m-danger"
                 >
                   ✕
                 </button>

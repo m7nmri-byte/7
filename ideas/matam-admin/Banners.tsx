@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Banner } from "../matam/types";
 import { remove, upsert } from "../matam/db";
 import { Empty, MSheet, mDanger, mField, mGhost, mPrimary } from "../matam/ui";
+import { ImageField } from "../matam/ImageField";
 
 export function Banners({
   banners,
@@ -82,12 +83,11 @@ export function Banners({
       >
         {draft && (
           <div className="flex flex-col gap-4">
-            <input
-              className={`${mField} mark`}
-              dir="ltr"
-              value={draft.image_url ?? ""}
-              onChange={(e) => setDraft({ ...draft, image_url: e.target.value })}
-              placeholder="https://…"
+            <ImageField
+              value={draft.image_url ?? null}
+              onChange={(url) => setDraft({ ...draft, image_url: url ?? "" })}
+              folder="matam/banners"
+              label="صورة اللافتة"
             />
             <input
               className={`${mField} mark`}

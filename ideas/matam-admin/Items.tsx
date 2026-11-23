@@ -5,6 +5,7 @@ import type { Category, Item } from "../matam/types";
 import { remove, upsert } from "../matam/db";
 import { money } from "../matam/format";
 import { Empty, MSheet, mDanger, mField, mGhost, mPrimary } from "../matam/ui";
+import { ImageField } from "../matam/ImageField";
 import { OptionGroupsEditor } from "./OptionGroups";
 
 const blank = (): Partial<Item> => ({
@@ -219,16 +220,12 @@ function ItemSheet({
           </select>
         </label>
 
-        <label className="flex flex-col gap-1.5">
-          <span className="text-xs text-m-dim">رابط الصورة</span>
-          <input
-            className={`${mField} mark`}
-            dir="ltr"
-            value={draft.image_url ?? ""}
-            onChange={(e) => set({ image_url: e.target.value || null })}
-            placeholder="https://…"
-          />
-        </label>
+        <ImageField
+          value={draft.image_url ?? null}
+          onChange={(url) => set({ image_url: url })}
+          folder="matam/items"
+          label="صورة الصنف"
+        />
 
         <div className="flex gap-2">
           <label className="flex flex-1 flex-col gap-1.5">
