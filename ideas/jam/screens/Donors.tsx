@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { Donor, Grant } from "../types";
 import { remove, save } from "../db";
 import { money } from "../format";
-import { Empty, Modal, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 
 const KINDS = ["جهة حكومية", "شركة", "مؤسسة مانحة", "جمعية", "فرد", "أخرى"];
 
@@ -154,9 +154,7 @@ export function Donors({
                   key={k}
                   onClick={() => setDraft({ ...draft, kind: k })}
                   className={
-                    jGhost +
-                    " px-3 py-1.5 text-xs " +
-                    (draft.kind === k ? "border-j-brand text-j-brand" : "")
+                    jOption(draft.kind === k) + " px-3 py-1.5 text-xs"
                   }
                 >
                   {k}

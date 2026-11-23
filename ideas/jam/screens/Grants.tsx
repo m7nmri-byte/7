@@ -5,7 +5,7 @@ import type { Donor, Grant, GrantStatus, Member, Program } from "../types";
 import { GRANT_STATUS } from "../types";
 import { remove, save } from "../db";
 import { daysUntil, fmtDate, money } from "../format";
-import { Empty, Modal, Stat, Tag, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, Stat, Tag, jField, jGhost, jPrimary, jOption } from "../ui";
 
 const TONE: Record<GrantStatus, string> = {
   idea: "var(--j-faint)",
@@ -232,9 +232,7 @@ export function Grants({
                     })
                   }
                   className={
-                    jGhost +
-                    " py-2 text-[11px] " +
-                    (draft.status === s ? "border-j-brand text-j-brand" : "")
+                    jOption(draft.status === s) + " py-2 text-[11px]"
                   }
                 >
                   {GRANT_STATUS[s]}

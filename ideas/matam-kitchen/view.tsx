@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useCallback, useState } from "react";
-import type { Order, OrderStatus } from "../matam/types";
+import type { Order } from "../matam/types";
 import { fetchOrders, updateOrder } from "../matam/db";
 import { useLive, useTick } from "../matam/hooks";
 import { sinceText , setCurrency } from "../matam/format";
-import { TYPE_LABEL, nextStatus } from "../matam/status";
+import { KITCHEN_STATUSES, TYPE_LABEL, nextStatus } from "../matam/status";
 import { DataErrorBar,
   Body,
   Empty,
@@ -25,7 +25,6 @@ import { useOrderAlerts } from "./useAlerts";
 
 type Tab = "queue" | "ready";
 
-const KITCHEN: OrderStatus[] = ["pending", "confirmed", "preparing", "ready"];
 
 const ICONS = {
   queue: (
@@ -48,7 +47,7 @@ export default function KitchenApp() {
   const [minutes, setMinutes] = useState("");
   const [note, setNote] = useState("");
 
-  const load = useCallback(() => fetchOrders({ statuses: KITCHEN, limit: 80 }), []);
+  const load = useCallback(() => fetchOrders({ statuses: KITCHEN_STATUSES, limit: 80 }), []);
   const { data: settings } = useLive("matam_settings", fetchSettings);
   /** العملة من الإعدادات — تُضبط في تأثير لا في تصيير */
   const currency = settings?.currency;

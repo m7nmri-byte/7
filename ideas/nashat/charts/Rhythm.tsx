@@ -1,4 +1,5 @@
 "use client";
+import { F_SWITCH, arCount } from "../arabic";
 
 import { FOCUS_MID } from "../types";
 import type { DaySeg } from "../model";
@@ -42,7 +43,11 @@ export function Rhythm({ day, segs }: { day: string; segs: DaySeg[] }) {
     else if (perHour <= 1) pace = "هادئ";
   }
 
-  const stats: Stat[] = [{ n: switches, l: "تنقّلات" }];
+  /**
+   * «تنقّلات» نصًّا ثابتًا تقول «١ تنقّلات» و«٠ تنقّلات».
+   * وجدول الصيغ موجود لهذا، فيُستعمل.
+   */
+  const stats: Stat[] = [{ n: arCount(switches, F_SWITCH), l: "التنقّل", word: true }];
   if (pace) stats.push({ n: pace, l: "الإيقاع", word: true });
   if (overlap >= 5) stats.push({ n: minsLabel(overlap), l: "بالتوازي" });
   stats.push({

@@ -45,9 +45,6 @@ export function setState(next: State) {
   emit();
 }
 
-/** تعيين من الخادم: يُحفظ محلياً دون إطلاق رفع جديد */
-export const adopt = setState;
-
 export function updateState(fn: (s: State) => State) {
   const next = fn(getSnapshot());
   setState(next);

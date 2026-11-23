@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { Department, Member, Shift, Site } from "../types";
 import { patch, remove, save } from "../db";
 import { DAY_NAMES } from "../format";
-import { Empty, Modal, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 import { MapPicker } from "../MapPicker";
 
 type Tab = "departments" | "shifts" | "sites";
@@ -431,11 +431,7 @@ export function Structure({
                     key={d}
                     onClick={() => toggleDay(i)}
                     className={
-                      jGhost +
-                      " px-3 py-1.5 text-xs " +
-                      ((shift.work_days ?? []).includes(i)
-                        ? "border-j-brand bg-j-brand/10 text-j-brand"
-                        : "")
+                      jOption((shift.work_days ?? []).includes(i)) + " px-3 py-1.5 text-xs"
                     }
                   >
                     {d}

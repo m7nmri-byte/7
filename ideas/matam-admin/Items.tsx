@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Category, Item } from "../matam/types";
 import { remove, upsert } from "../matam/db";
 import { money } from "../matam/format";
-import { Empty, MSheet, mDanger, mField, mGhost, mPrimary } from "../matam/ui";
+import { Empty, MSheet, mDanger, mField, mPrimary, mOption } from "../matam/ui";
 import { ImageField } from "../matam/ImageField";
 import { OptionGroupsEditor } from "./OptionGroups";
 
@@ -265,7 +265,7 @@ function ItemSheet({
               <button
                 key={key}
                 onClick={() => set({ [key]: !on } as Partial<Item>)}
-                className={`${mGhost} py-2 text-xs ${on ? "border-m-accent text-m-accent" : ""}`}
+                className={`${mOption(on)} py-2 text-xs`}
               >
                 {label}
               </button>

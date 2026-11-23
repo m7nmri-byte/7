@@ -75,9 +75,18 @@ export function advanceLabel(status: OrderStatus, type: OrderType): string | und
 export const isOpenOrder = (s: OrderStatus) =>
   s !== "delivered" && s !== "cancelled";
 
-/** الطلبات التي تهمّ المطبخ */
-export const isKitchenOrder = (s: OrderStatus) =>
-  s === "pending" || s === "confirmed" || s === "preparing" || s === "ready";
+/**
+ * الحالات التي تهمّ المطبخ.
+ * كانت مُعرَّفة هنا ومُعادة في شاشة المطبخ، فيفترقان بأوّل تعديل.
+ */
+export const KITCHEN_STATUSES: OrderStatus[] = [
+  "pending",
+  "confirmed",
+  "preparing",
+  "ready",
+];
+
+export const isKitchenOrder = (s: OrderStatus) => KITCHEN_STATUSES.includes(s);
 
 export const TYPE_LABEL: Record<OrderType, string> = {
   delivery: "توصيل",

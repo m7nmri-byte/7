@@ -1,13 +1,14 @@
 "use client";
+import { CATEGORY_LABEL } from "../types";
 
 import type { Category, Task } from "../types";
 import { fmtHM } from "../time";
 import { Empty, Legend, Stack } from "./primitives";
 
 const PARTS: { key: Category; label: string; color: string }[] = [
-  { key: "work", label: "عمل", color: "var(--n-accent)" },
-  { key: "rest", label: "راحة", color: "var(--n-ok)" },
-  { key: "waste", label: "هدر", color: "#e08a7a" },
+  { key: "work", label: CATEGORY_LABEL.work, color: "var(--n-accent)" },
+  { key: "rest", label: CATEGORY_LABEL.rest, color: "var(--n-ok)" },
+  { key: "waste", label: CATEGORY_LABEL.waste, color: "#e08a7a" },
 ];
 
 /** عمل أم راحة أم هدر؟ */

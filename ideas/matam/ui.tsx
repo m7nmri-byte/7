@@ -168,6 +168,14 @@ export const mBtn =
 export const mPrimary = `${mBtn} bg-m-accent text-[#ffffff] hover:brightness-110`;
 export const mGhost = `${mBtn} border border-m-line text-m-text hover:bg-m-raised`;
 export const mDanger = `${mBtn} bg-m-danger/15 text-m-danger hover:bg-m-danger/25`;
+/** زرّ خيار — انظر jOption في نظام الجمعية لسبب خلوّ الأساس من الألوان */
+export const mOption = (on: boolean) =>
+  mBtn +
+  " border " +
+  (on
+    ? "border-m-accent bg-m-accent-soft text-m-accent"
+    : "border-m-line bg-m-surface text-m-text hover:bg-m-raised");
+
 export const mField =
   "w-full rounded-xl border border-m-line bg-m-raised px-3 py-3 text-sm text-m-text outline-none transition-colors placeholder:text-m-faint focus:border-m-accent/60";
 

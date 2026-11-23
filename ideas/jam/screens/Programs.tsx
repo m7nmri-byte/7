@@ -5,7 +5,7 @@ import type { Aid, Department, Member, Program } from "../types";
 import { PROGRAM_STATUS } from "../types";
 import { remove, save } from "../db";
 import { fmtDate, money } from "../format";
-import { Empty, Modal, Tag, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, Tag, jField, jGhost, jPrimary, jOption } from "../ui";
 import { FileField } from "../FileField";
 
 const TONE: Record<string, string> = {
@@ -278,9 +278,7 @@ export function Programs({
                   key={s}
                   onClick={() => setDraft({ ...draft, status: s })}
                   className={
-                    jGhost +
-                    " py-2 text-[11px] " +
-                    (draft.status === s ? "border-j-brand text-j-brand" : "")
+                    jOption(draft.status === s) + " py-2 text-[11px]"
                   }
                 >
                   {PROGRAM_STATUS[s]}

@@ -89,6 +89,23 @@ export const jBtn =
 export const jPrimary = `${jBtn} bg-j-brand text-white hover:bg-j-brand-deep`;
 export const jGhost = `${jBtn} border border-j-line bg-j-surface text-j-text hover:bg-j-raised`;
 export const jDanger = `${jBtn} text-j-danger hover:bg-j-danger/10`;
+/**
+ * زرّ خيار: مختارٌ أو لا.
+ *
+ * أساسه بلا لون حدٍّ ولا لون نصّ عمدًا. فالصيغة السابقة كانت تجمع
+ * `jGhost` — وفيه border-j-line و text-j-text — مع إضافةٍ شرطية
+ * فيها border-j-brand و text-j-brand. والصنفان حاضران معًا، والفائز
+ * بينهما ترتيبُ القواعد في ملف الأنماط لا ترتيب الكلمات في السمة:
+ * وborder-j-line يأتي بعد border-j-brand فيغلبه. فكان الزرّ يغيّر
+ * الحالة ولا يتغيّر مظهره — خيارٌ يبدو معطوبًا وهو يعمل.
+ */
+export const jOption = (on: boolean) =>
+  jBtn +
+  " border " +
+  (on
+    ? "border-j-brand bg-j-brand/10 text-j-brand"
+    : "border-j-line bg-j-surface text-j-text hover:bg-j-raised");
+
 export const jField =
   "w-full rounded-xl border border-j-line bg-j-surface px-3 py-2.5 text-sm text-j-text outline-none transition-colors placeholder:text-j-faint focus:border-j-brand/60";
 

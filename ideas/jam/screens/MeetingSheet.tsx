@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Department, Meeting, Member } from "../types";
 import { remove, save } from "../db";
 import { fmtDate, fmtTime } from "../format";
-import { Modal, jField, jGhost, jPrimary } from "../ui";
+import { Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 
 const TABS = [
   { k: "info" as const, t: "البيانات" },
@@ -184,9 +184,7 @@ export function MeetingSheet({
                     key={m.id}
                     onClick={() => toggleAttendee(m.id)}
                     className={
-                      jGhost +
-                      " px-3 py-1.5 text-xs " +
-                      (on ? "border-j-brand bg-j-brand/10 text-j-brand" : "")
+                      jOption(on) + " px-3 py-1.5 text-xs"
                     }
                   >
                     {m.name}

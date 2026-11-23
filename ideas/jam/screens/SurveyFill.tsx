@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { Question, Survey } from "../types";
 import { save } from "../db";
-import { Modal, jField, jGhost, jPrimary } from "../ui";
+import { Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 
 type Answer = string | string[] | number | boolean | null;
 
@@ -138,9 +138,7 @@ export function SurveyFill({
                     key={o}
                     onClick={() => set(q.id, o)}
                     className={
-                      jGhost +
-                      " px-3 py-1.5 text-xs " +
-                      (a === o ? "border-j-brand bg-j-brand/10 text-j-brand" : "")
+                      jOption(a === o) + " px-3 py-1.5 text-xs"
                     }
                   >
                     {o}
@@ -158,9 +156,7 @@ export function SurveyFill({
                       key={o}
                       onClick={() => toggleMulti(q.id, o)}
                       className={
-                        jGhost +
-                        " px-3 py-1.5 text-xs " +
-                        (on ? "border-j-brand bg-j-brand/10 text-j-brand" : "")
+                        jOption(on) + " px-3 py-1.5 text-xs"
                       }
                     >
                       {o}
@@ -199,9 +195,7 @@ export function SurveyFill({
                     key={String(v)}
                     onClick={() => set(q.id, v as boolean)}
                     className={
-                      jGhost +
-                      " px-4 py-1.5 text-xs " +
-                      (a === v ? "border-j-brand bg-j-brand/10 text-j-brand" : "")
+                      jOption(a === v) + " px-4 py-1.5 text-xs"
                     }
                   >
                     {label as string}

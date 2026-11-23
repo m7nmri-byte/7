@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Department, Member, MemberRole, Shift } from "../types";
 import { ROLE_LABEL } from "../types";
 import { remove, save } from "../db";
-import { Modal, jField, jGhost, jPrimary } from "../ui";
+import { Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 import { FileField } from "../FileField";
 
 export function MemberForm({
@@ -196,9 +196,7 @@ export function MemberForm({
           <button
             key={r}
             onClick={() => set({ role: r })}
-            className={`${jGhost} py-2 text-xs ${
-              draft.role === r ? "border-j-brand text-j-brand" : ""
-            }`}
+            className={`${jOption(draft.role === r)} py-2 text-xs`}
           >
             {ROLE_LABEL[r]}
           </button>
@@ -208,9 +206,7 @@ export function MemberForm({
       <div className="flex gap-2">
         <button
           onClick={() => set({ remote_allowed: !draft.remote_allowed })}
-          className={`${jGhost} flex-1 py-2 text-xs ${
-            draft.remote_allowed ? "border-j-brand text-j-brand" : ""
-          }`}
+          className={`${jOption(Boolean(draft.remote_allowed))} flex-1 py-2 text-xs`}
         >
           {draft.remote_allowed ? "يسمح بالعمل عن بُعد" : "حضوري فقط"}
         </button>

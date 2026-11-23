@@ -5,7 +5,7 @@ import type { Leave, LeaveType, Member } from "../types";
 import { LEAVE_TYPE } from "../types";
 import { patch, remove, save } from "../db";
 import { fmtDate } from "../format";
-import { Empty, Modal, Stat, Tag, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, Stat, Tag, jField, jGhost, jPrimary, jOption } from "../ui";
 
 const TONE: Record<LeaveType, string> = {
   annual: "var(--j-brand)",
@@ -253,9 +253,7 @@ export function Leaves({
                   key={t}
                   onClick={() => setDraft({ ...draft, type: t })}
                   className={
-                    jGhost +
-                    " py-2 text-[11px] " +
-                    (draft.type === t ? "border-j-brand text-j-brand" : "")
+                    jOption(draft.type === t) + " py-2 text-[11px]"
                   }
                 >
                   {LEAVE_TYPE[t]}

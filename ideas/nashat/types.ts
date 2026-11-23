@@ -36,17 +36,16 @@ export type State = { tasks: Task[]; memo: Memo[] };
 
 export const MAX_PARALLEL = 2;
 
-export const CATEGORIES: { key: Category; label: string }[] = [
-  { key: "work", label: "عمل" },
-  { key: "rest", label: "راحة" },
-  { key: "waste", label: "هدر" },
-];
-
+/** مسمّيات الفئات — مصدر واحد، وكانت مكتوبة في ثلاثة مواضع */
 export const CATEGORY_LABEL: Record<Category, string> = {
   work: "عمل",
   rest: "راحة",
   waste: "هدر",
 };
+
+export const CATEGORIES: { key: Category; label: string }[] = (
+  ["work", "rest", "waste"] as Category[]
+).map((key) => ({ key, label: CATEGORY_LABEL[key] }));
 
 /** حدّا التركيز بالدقائق: عميق فأكثر، ومتوسط فأكثر */
 export const FOCUS_DEEP = 25;

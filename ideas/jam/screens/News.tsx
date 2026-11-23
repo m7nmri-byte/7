@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { Achievement, Member, NewsItem, Program } from "../types";
 import { patch, remove, save } from "../db";
 import { fmtDate } from "../format";
-import { Empty, Modal, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 import { FileField } from "../FileField";
 
 const CATEGORIES = ["إعلان داخلي", "خبر", "تعميم", "تهنئة", "تنبيه"];
@@ -284,9 +284,7 @@ export function News({
                   key={c}
                   onClick={() => setDraft({ ...draft, category: c })}
                   className={
-                    jGhost +
-                    " px-3 py-1.5 text-xs " +
-                    (draft.category === c ? "border-j-brand text-j-brand" : "")
+                    jOption(draft.category === c) + " px-3 py-1.5 text-xs"
                   }
                 >
                   {c}

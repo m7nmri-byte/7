@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { Mail as MailRow, MailRead, Member } from "../types";
 import { markMailRead, remove, save } from "../db";
 import { fmtDate, fmtTime, sinceText } from "../format";
-import { Empty, Modal, jField, jGhost, jPrimary } from "../ui";
+import { Empty, Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 import { Attachments } from "../FileField";
 
 const KINDS = [
@@ -427,11 +427,7 @@ export function Mail({
                     key={m.id}
                     onClick={() => toggle("to_ids", m.id)}
                     className={
-                      jGhost +
-                      " px-3 py-1.5 text-xs " +
-                      ((draft.to_ids ?? []).includes(m.id)
-                        ? "border-j-brand bg-j-brand/10 text-j-brand"
-                        : "")
+                      jOption((draft.to_ids ?? []).includes(m.id)) + " px-3 py-1.5 text-xs"
                     }
                   >
                     {m.name}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { Department, Meeting, Member, Task, TaskStatus } from "../types";
 import { TASK_STATUS } from "../types";
 import { remove, save } from "../db";
-import { Modal, jField, jGhost, jPrimary } from "../ui";
+import { Modal, jField, jGhost, jPrimary, jOption } from "../ui";
 import { Attachments } from "../FileField";
 import { PRIORITY } from "./task-core";
 
@@ -167,9 +167,7 @@ export function TaskForm({
           <button
             key={s}
             onClick={() => set({ status: s })}
-            className={`${jGhost} flex-1 py-2 text-xs ${
-              draft.status === s ? "border-j-brand text-j-brand" : ""
-            }`}
+            className={`${jOption(draft.status === s)} flex-1 py-2 text-xs`}
           >
             {TASK_STATUS[s]}
           </button>

@@ -4,7 +4,7 @@ import { useMemo, useRef, useState } from "react";
 import type { Doc, Member } from "../types";
 import { remove, save } from "../db";
 import { fmtDate } from "../format";
-import { Empty, jField, jGhost, jPrimary } from "../ui";
+import { Empty, jField, jPrimary, jOption } from "../ui";
 import { fileSize, uploadFile } from "../FileField";
 
 const CATEGORIES = [
@@ -135,7 +135,7 @@ export function Documents({
           <button
             onClick={() => setFilter("")}
             className={
-              jGhost + " px-3 py-1.5 text-xs " + (filter === "" ? "border-j-brand text-j-brand" : "")
+              jOption(filter === "") + " px-3 py-1.5 text-xs"
             }
           >
             الكل
@@ -145,9 +145,7 @@ export function Documents({
               key={c}
               onClick={() => setFilter(c)}
               className={
-                jGhost +
-                " px-3 py-1.5 text-xs " +
-                (filter === c ? "border-j-brand text-j-brand" : "")
+                jOption(filter === c) + " px-3 py-1.5 text-xs"
               }
             >
               {c}
