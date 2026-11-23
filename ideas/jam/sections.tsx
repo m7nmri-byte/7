@@ -8,6 +8,9 @@ import {
   fetchAids,
   fetchBeneficiaries,
   fetchChains,
+  fetchIndicators,
+  fetchObjectives,
+  fetchPerspectives,
   fetchDocs,
   fetchDonors,
   fetchGrants,
@@ -45,7 +48,9 @@ import { OrgSettings } from "./screens/OrgSettings";
 import { Policies } from "./screens/Policies";
 import { Programs } from "./screens/Programs";
 import { Requests } from "./screens/Requests";
+import { Strategy } from "./screens/Strategy";
 import { Structure } from "./screens/Structure";
+import { Tracking } from "./screens/Tracking";
 import { Surveys } from "./screens/Surveys";
 import { Tasks } from "./screens/Tasks";
 
@@ -378,6 +383,52 @@ export function SurveysSection({ core }: { core: Core }) {
         members={core.members}
         me={core.me}
         onChanged={refresh}
+      />
+    </Shown>
+  );
+}
+
+/** الخطة ومتابعتها يقرآن الشجرة نفسها، فتُجمع قراءتها في خطّاف واحد */
+function usePlanTree() {
+  const perspectives = useLive("jam_perspectives", fetchPerspectives);
+  const objectives = useLive("jam_objectives", fetchObjectives);
+  const indicators = useLive("jam_indicators", fetchIndicators);
+  return {
+    error: perspectives.error ?? objectives.error ?? indicators.error,
+    loading: perspectives.loading || objectives.loading || indicators.loading,
+    perspectives: perspectives.data ?? [],
+    objectives: objectives.data ?? [],
+    indicators: indicators.data ?? [],
+    refresh: () => {
+      perspectives.refresh();
+      objectives.refresh();
+      indicators.refresh();
+    },
+  };
+}
+
+export function StrategySection() {
+  const t = usePlanTree();
+  return (
+    <Shown error={t.error} loading={t.loading}>
+      <Strategy
+        perspectives={t.perspectives}
+        objectives={t.objectives}
+        indicators={t.indicators}
+        onChanged={t.refresh}
+      />
+    </Shown>
+  );
+}
+
+export function TrackingSection() {
+  const t = usePlanTree();
+  return (
+    <Shown error={t.error} loading={t.loading}>
+      <Tracking
+        perspectives={t.perspectives}
+        objectives={t.objectives}
+        indicators={t.indicators}
       />
     </Shown>
   );

@@ -400,6 +400,150 @@ export type MailRead = {
   read_at: string;
 };
 
+
+/* ===================== الخطة الاستراتيجية ===================== */
+
+export type Perspective = {
+  id: string;
+  name: string;
+  /** بادئة رموز الأهداف: س ص م ل ت */
+  prefix: string;
+  sort_order: number;
+};
+
+export type Objective = {
+  id: string;
+  perspective_id: string;
+  /** رمز الهدف كما في الوثيقة: «س 1» */
+  code: string;
+  name: string;
+  description: string | null;
+  sort_order: number;
+};
+
+export type Indicator = {
+  id: string;
+  objective_id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  unit: string | null;
+  formula: string | null;
+  /** quarterly | semi | yearly */
+  frequency: string;
+  /** up للزيادة، down للنقص */
+  polarity: string;
+  /** مصدر قاعدة حساب المتحقق السنوي — انظر strategy-core */
+  cumulative: boolean;
+  owner: string | null;
+  exec_owner: string | null;
+  measure_owner: string | null;
+  baseline: number | null;
+  sort_order: number;
+};
+
+export type IndicatorResult = {
+  id: string;
+  indicator_id: string;
+  year: number;
+  /** year | q1 | q2 | q3 | q4 */
+  period: string;
+  target: number | null;
+  actual: number | null;
+  /** active | postponed | no_data */
+  state: string;
+  is_override: boolean;
+  note: string | null;
+};
+
+/* ===================== الخطة التشغيلية ===================== */
+
+export type Plan = {
+  id: string;
+  label: string;
+  start_date: string;
+  end_date: string;
+  week_count: number;
+};
+
+export type Initiative = {
+  id: string;
+  plan_id: string;
+  number: number;
+  name: string;
+  description: string | null;
+  objective_id: string | null;
+  duration_text: string | null;
+  manager_id: string | null;
+  department_id: string | null;
+  /** high | mid | low */
+  priority: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  budget: number;
+  /** { "2026-08": 18150 } — مفاتيحه أشهر لا أسماء */
+  monthly_budget: Record<string, number>;
+  marketing_url: string | null;
+};
+
+export type InitiativeStep = {
+  id: string;
+  initiative_id: string;
+  sort_order: number;
+  /** prep | exec | close */
+  phase: string | null;
+  title: string;
+  /** شاهد التنفيذ */
+  evidence: string | null;
+  owner_id: string | null;
+  cost: number;
+  actual_cost: number;
+  plan_start_week: number | null;
+  plan_weeks: number | null;
+  actual_start_week: number | null;
+  actual_weeks: number | null;
+  /** ٠-١٠٠، وهي المُدخل الوحيد ومنها تُحسب نسبة المبادرة */
+  progress: number;
+  monthly_cost: Record<string, number>;
+};
+
+/* ===================== الحوكمة والعطل ===================== */
+
+export type Governance = {
+  id: string;
+  question_id: string;
+  /** not_started | in_progress | done | not_applicable */
+  status: string;
+  proof_url: string | null;
+  note: string | null;
+};
+
+export type Holiday = {
+  id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+};
+
+export const GOVERNANCE_STATUS: Record<string, string> = {
+  not_started: "لم يبدأ",
+  in_progress: "قيد العمل",
+  done: "مكتمل",
+  not_applicable: "لا ينطبق",
+};
+
+export const PRIORITY_LABEL: Record<string, string> = {
+  high: "عالية",
+  mid: "متوسطة",
+  low: "منخفضة",
+};
+
+export const PHASE_LABEL: Record<string, string> = {
+  prep: "الإعداد",
+  exec: "التنفيذ",
+  close: "الإغلاق",
+};
+
 export type Settings = {
   name: string;
   logo_url: string | null;

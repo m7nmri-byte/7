@@ -6,6 +6,8 @@ export type SectionKey =
   | "members"
   | "attendance"
   | "leaves"
+  | "strategy"
+  | "tracking"
   | "beneficiaries"
   | "programs"
   | "donors"
@@ -94,6 +96,25 @@ export const NAV: NavGroup[] = [
         title: "الإجازات",
         subtitle: "الطلبات والاعتماد والأرصدة",
         icon: "M7 4v3M17 4v3M4 9h16M4 7.5h16V20H4zM8.5 13h3M8.5 16.5h7",
+      },
+    ],
+  },
+  {
+    label: "الخطة",
+    items: [
+      {
+        key: "strategy",
+        label: "الخطة الاستراتيجية",
+        title: "الخطة الاستراتيجية",
+        subtitle: "منظورات، وأهداف، ومؤشّرات تقيسها",
+        icon: "M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8-5.3 2.8 1-6L3.4 9.9l6-.9z",
+      },
+      {
+        key: "tracking",
+        label: "متابعة الأداء",
+        title: "متابعة الأداء",
+        subtitle: "المستهدف والمتحقق ربعًا بربع",
+        icon: "M4 19h16M6.5 19v-5M11 19V8M15.5 19v-8M20 19V5",
       },
     ],
   },

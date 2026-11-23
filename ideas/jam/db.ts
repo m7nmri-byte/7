@@ -24,6 +24,15 @@ import type {
   RequestAction,
   RequestLog,
   Settings,
+  Governance,
+  Holiday,
+  Indicator,
+  IndicatorResult,
+  Initiative,
+  InitiativeStep,
+  Objective,
+  Perspective,
+  Plan,
   Shift,
   Site,
   Survey,
@@ -83,6 +92,64 @@ export async function markMailRead(mailId: string, memberId: string) {
       onConflict: "mail_id,member_id",
       ignoreDuplicates: true,
     });
+  if (error) throw fail(error.message);
+}
+
+/* ===================== الخطة والحوكمة ===================== */
+
+export const fetchPerspectives = () => all<Perspective>("jam_perspectives", "sort_order", true);
+export const fetchObjectives = () => all<Objective>("jam_objectives", "sort_order", true);
+export const fetchIndicators = () => all<Indicator>("jam_indicators", "sort_order", true);
+export const fetchPlans = () => all<Plan>("jam_plans", "start_date");
+export const fetchGovernance = () => all<Governance>("jam_governance", "question_id", true);
+export const fetchHolidays = () => all<Holiday>("jam_holidays", "start_date");
+
+/** نتائج سنةٍ بعينها — لا كل السنوات، فالجدول يكبر بالسنين */
+export async function fetchResults(year: number) {
+  const { data, error } = await supabase
+    .from("jam_indicator_results")
+    .select("*")
+    .eq("year", year);
+  if (error) throw fail(error.message);
+  return (data ?? []) as IndicatorResult[];
+}
+
+export async function fetchInitiatives(planId: string) {
+  const { data, error } = await supabase
+    .from("jam_initiatives")
+    .select("*")
+    .eq("plan_id", planId)
+    .order("number");
+  if (error) throw fail(error.message);
+  return (data ?? []) as Initiative[];
+}
+
+export async function fetchSteps(initiativeId: string) {
+  const { data, error } = await supabase
+    .from("jam_initiative_steps")
+    .select("*")
+    .eq("initiative_id", initiativeId)
+    .order("sort_order");
+  if (error) throw fail(error.message);
+  return (data ?? []) as InitiativeStep[];
+}
+
+/**
+ * حفظ نتيجة فترة. المفتاح (مؤشّر، سنة، فترة) فريد، فالكتابة upsert
+ * عليه — وإلّا تراكمت نتائج للفترة الواحدة ولا يُعرف أيّها الصحيح.
+ */
+export async function saveResult(row: Record<string, unknown>) {
+  const { error } = await supabase
+    .from("jam_indicator_results")
+    .upsert(row, { onConflict: "indicator_id,year,period" });
+  if (error) throw fail(error.message);
+}
+
+/** حالة معيار حوكمة — مفتاحها السؤال، فتُكتب مرّة وتُحدَّث بعدها */
+export async function saveGovernance(row: Record<string, unknown>) {
+  const { error } = await supabase
+    .from("jam_governance")
+    .upsert(row, { onConflict: "question_id" });
   if (error) throw fail(error.message);
 }
 
