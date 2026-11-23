@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Order } from "../matam/types";
+import { fetchOrders } from "../matam/db";
+import { useLive } from "../matam/hooks";
 import { money } from "../matam/format";
-import { Empty } from "../matam/ui";
+import { Empty, Loading } from "../matam/ui";
 
 type Range = "today" | "week" | "month" | "all";
 
@@ -23,13 +25,29 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function Reports({ orders, now }: { orders: Order[]; now: number }) {
+/**
+ * التقرير يجلب مدى نفسه.
+ *
+ * كان يُحسب من قائمة الطلبات في الشاشة، وهي أوّل خمسين طلبًا فقط
+ * (صفحة واحدة). فمدى «شهر» أو «الكل» يُقرأ من خمسين طلبًا ويُعرض
+ * كأنّه الحقيقة. فصار يستعلم بالمدى المختار مباشرةً.
+ */
+export function Reports({ now }: { now: number }) {
   const [range, setRange] = useState<Range>("today");
 
+  const days = RANGES.find((r) => r.key === range)?.days ?? 1;
+  /** بداية المدى تُثبَّت على الدقيقة، فلا يتغيّر الاستعلام مع كل نبضة */
+  const since = useMemo(
+    () => new Date(now - days * 86_400_000).toISOString(),
+    [now, days],
+  );
+
+  const load = useCallback(() => fetchOrders({ since, limit: 5000 }), [since]);
+  const { data, loading } = useLive("matam_orders", load);
+  const orders = useMemo<Order[]>(() => data ?? [], [data]);
+
   const stats = useMemo(() => {
-    const days = RANGES.find((r) => r.key === range)?.days ?? 1;
-    const from = now - days * 86_400_000;
-    const inRange = orders.filter((o) => +new Date(o.created_at) >= from);
+    const inRange = orders;
 
     const delivered = inRange.filter((o) => o.status === "delivered");
     const cancelled = inRange.filter((o) => o.status === "cancelled");
@@ -58,7 +76,7 @@ export function Reports({ orders, now }: { orders: Order[]; now: number }) {
       top: [...sold.values()].sort((a, b) => b.qty - a.qty).slice(0, 8),
       zones: [...byZone.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6),
     };
-  }, [orders, range, now]);
+  }, [orders]);
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -77,6 +95,8 @@ export function Reports({ orders, now }: { orders: Order[]; now: number }) {
           </button>
         ))}
       </div>
+
+      {loading && <Loading />}
 
       <div className="grid grid-cols-2 gap-2">
         <Stat label="الإيرادات" value={money(stats.revenue)} />

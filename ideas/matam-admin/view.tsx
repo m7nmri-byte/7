@@ -135,10 +135,10 @@ export default function AdminApp() {
       return <Appearance theme={theme ?? null} onChanged={refreshTheme} />;
     if (page === "splash")
       return <Splash images={splash ?? []} onChanged={refreshSplash} />;
-    if (page === "closing") return <Closing orders={all} />;
+    if (page === "closing") return <Closing />;
     if (page === "maintenance")
       return <Maintenance orders={all} onChanged={refreshOrders} />;
-    if (page === "reports") return <Reports orders={all} now={now} />;
+    if (page === "reports") return <Reports now={now} />;
     if (page === "support")
       return <SupportDesk tickets={tickets ?? []} onChanged={refreshTickets} />;
     if (page === "settings")

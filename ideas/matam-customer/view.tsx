@@ -16,7 +16,7 @@ import {
 } from "../matam/db";
 import { useCart } from "../matam/cart";
 import { useDeviceId, useLive, useTick } from "../matam/hooks";
-import { useQueue, useQueueFlusher } from "../matam/queue";
+import { dropQueued, isStuck, retryQueued, useQueue, useQueueFlusher } from "../matam/queue";
 import { isOpenOrder } from "../matam/status";
 import { closedText, openState } from "../matam/hours";
 import { DataErrorBar, Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
@@ -191,9 +191,38 @@ export default function CustomerApp() {
         ) : tab === "orders" ? (
           <>
             {queued.length > 0 && (
-              <p className="mx-4 mt-4 rounded-xl bg-m-warn/15 px-3 py-2.5 text-center text-xs text-m-warn">
-                {queued.length} طلب بانتظار الاتصال — يُرسل تلقائيًا
-              </p>
+              <div className="mx-4 mt-4 flex flex-col gap-2">
+                {queued.map((q) =>
+                  /** المتوقّف لا يُقال له «يُرسل تلقائيًا» — فالوعد كاذب */
+                  isStuck(q) ? (
+                    <div
+                      key={q.key}
+                      className="flex flex-col gap-2 rounded-xl bg-m-danger/15 px-3 py-2.5 text-xs text-m-danger"
+                    >
+                      <span>تعذّر إرسال طلب — {q.error ?? "سبب غير معروف"}</span>
+                      <span className="flex gap-2">
+                        <button
+                          onClick={() => retryQueued(q.key)}
+                          className="rounded-lg bg-m-danger px-3 py-1.5 text-[11px] font-semibold text-[#ffffff]"
+                        >
+                          أعد المحاولة
+                        </button>
+                        <button
+                          onClick={() => dropQueued(q.key)}
+                          className="rounded-lg border border-m-danger/40 px-3 py-1.5 text-[11px]"
+                        >
+                          أسقِطه
+                        </button>
+                      </span>
+                    </div>
+                  ) : null,
+                )}
+                {queued.some((q) => !isStuck(q)) && (
+                  <p className="rounded-xl bg-m-warn/15 px-3 py-2.5 text-center text-xs text-m-warn">
+                    {queued.filter((q) => !isStuck(q)).length} طلب بانتظار الاتصال — يُرسل تلقائيًا
+                  </p>
+                )}
+              </div>
             )}
             <OrdersList orders={orderList} onOpen={setOpenOrder} />
           </>

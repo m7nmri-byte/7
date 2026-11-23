@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { Order } from "../matam/types";
+import { fetchOrders } from "../matam/db";
+import { useLive } from "../matam/hooks";
 import { money } from "../matam/format";
 import { STATUS_LABEL } from "../matam/status";
-import { mGhost } from "../matam/ui";
+import { Loading, mGhost } from "../matam/ui";
 
 const dayKey = (iso: string) => {
   const d = new Date(iso);
@@ -45,17 +47,39 @@ function Row({
  * تقرير الإغلاق: ما يُقرأ آخر اليوم قبل إقفال الصندوق.
  * يفصل المحصّل عن المعلّق، فتعرف كم في الدرج وكم ما زال في الطريق.
  */
-export function Closing({ orders }: { orders: Order[] }) {
+export function Closing() {
   const [day, setDay] = useState(() => dayKey(new Date().toISOString()));
 
+  /**
+   * يوم الإغلاق يُجلب بنفسه.
+   *
+   * كان التقرير يُحسب من قائمة الطلبات في الشاشة — صفحة واحدة
+   * (خمسون طلبًا). ويومٌ مشغول يتجاوزها، فيُقفل الصندوق على رقم
+   * ناقص. فصار يستعلم بيوم مختارٍ بحدوده.
+   */
+  const load = useCallback(() => {
+    const from = new Date(day + "T00:00:00").toISOString();
+    const to = new Date(day + "T23:59:59.999").toISOString();
+    return fetchOrders({ since: from, until: to, limit: 5000 });
+  }, [day]);
+
+  const { data, loading } = useLive("matam_orders", load);
+  const orders = useMemo<Order[]>(() => data ?? [], [data]);
+
+  /** ثلاثون يومًا للخلف — الاختيار لا يحتاج استعلامًا */
   const days = useMemo(() => {
-    const set = new Set(orders.map((o) => dayKey(o.created_at)));
-    set.add(dayKey(new Date().toISOString()));
-    return [...set].sort().reverse().slice(0, 30);
-  }, [orders]);
+    const out: string[] = [];
+    const base = new Date();
+    for (let i = 0; i < 30; i++) {
+      const d = new Date(base);
+      d.setDate(base.getDate() - i);
+      out.push(dayKey(d.toISOString()));
+    }
+    return out;
+  }, []);
 
   const r = useMemo(() => {
-    const list = orders.filter((o) => dayKey(o.created_at) === day);
+    const list = orders;
     const by = (f: (o: Order) => boolean) => {
       const sel = list.filter(f);
       return { count: sel.length, total: sel.reduce((s, o) => s + Number(o.total), 0) };
@@ -91,10 +115,12 @@ export function Closing({ orders }: { orders: Order[] }) {
       byStatus,
       avg: delivered.count ? delivered.total / delivered.count : 0,
     };
-  }, [orders, day]);
+  }, [orders]);
 
   return (
     <div className="flex flex-col gap-4 p-4">
+      {loading && <Loading />}
+
       <select
         className="w-full rounded-xl border border-m-line bg-m-surface px-3 py-2.5 text-sm outline-none"
         value={day}

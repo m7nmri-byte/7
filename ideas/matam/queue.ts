@@ -14,7 +14,23 @@ import { createOrder } from "./db";
 
 export type PendingOrder = Omit<Order, "id" | "order_number" | "created_at" | "updated_at">;
 
-type Entry = { key: string; order: PendingOrder; tries: number; at: string };
+type Entry = {
+  key: string;
+  order: PendingOrder;
+  tries: number;
+  at: string;
+  /** سبب آخر محاولة فاشلة، ليُقال لصاحب الطلب */
+  error?: string;
+};
+
+/**
+ * حدّ المحاولات. بعده يتوقّف الطابور عن المحاولة ويُبقي الطلب
+ * ظاهرًا لصاحبه. قبل هذا الحدّ كان `tries` يُزاد ولا يُفحص، فالطلب
+ * المرفوض لسببٍ ثابت يُعاد إرساله كل نصف دقيقة إلى الأبد.
+ */
+const MAX_TRIES = 10;
+
+export const isStuck = (e: Entry) => e.tries >= MAX_TRIES;
 
 const KEY = "matam.queue";
 const EMPTY: Entry[] = [];
@@ -77,12 +93,20 @@ export async function flushQueue(): Promise<number> {
   const left: Entry[] = [];
 
   for (const entry of items) {
+    /** المتوقّف لا يُحاول، ويبقى في الطابور ليراه صاحبه ويتصرّف */
+    if (isStuck(entry)) {
+      left.push(entry);
+      continue;
+    }
     try {
-      await createOrder(entry.order);
+      await createOrder(entry.order, { quiet: true });
       sent++;
-    } catch {
-      // بعد عشر محاولات نتوقّف عن المحاولة ونُبقيه ليراه صاحبه
-      left.push({ ...entry, tries: entry.tries + 1 });
+    } catch (e) {
+      left.push({
+        ...entry,
+        tries: entry.tries + 1,
+        error: e instanceof Error ? e.message : "تعذّر الإرسال",
+      });
     }
   }
 
@@ -91,8 +115,18 @@ export async function flushQueue(): Promise<number> {
   return sent;
 }
 
-export const useQueue = (): Entry[] =>
-  useSyncExternalStore(subscribe, read, () => EMPTY);
+export const useQueue = (): Entry[] => useSyncExternalStore(subscribe, read, () => EMPTY);
+
+/** إسقاط طلب معلّق — لمن تعذّر إرساله ولم يعد يريده */
+export function dropQueued(key: string) {
+  write(read().filter((e) => e.key !== key));
+}
+
+/** إعادة المحاولة يدويًا: تصفير العدّاد يُخرجه من حالة التوقّف */
+export function retryQueued(key: string) {
+  write(read().map((e) => (e.key === key ? { ...e, tries: 0, error: undefined } : e)));
+  void flushQueue();
+}
 
 /** يراقب عودة الشبكة ويحاول دوريًا */
 export function useQueueFlusher(onSent?: (n: number) => void) {

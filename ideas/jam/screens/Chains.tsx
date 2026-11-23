@@ -49,11 +49,16 @@ function StepEditor({
 
   const list = steps ?? [];
 
+  /**
+   * الرقم من أعلى موجودٍ لا من طول القائمة: لو حُذفت خطوة وسطى
+   * صار الطول أقلّ من أعلى رقم، فيصطدم الجديد بقيد التفرّد.
+   */
   const addStep = (approver_id: string) =>
     void guard(async () => {
+      const top = list.reduce((max, s) => Math.max(max, s.step_order), 0);
       await save("jam_chain_steps", {
         chain_id: chain.id,
-        step_order: list.length + 1,
+        step_order: top + 1,
         approver_id,
         label: null,
       });
@@ -62,14 +67,19 @@ function StepEditor({
   /**
    * النقل يبدّل رقمي الخطوتين لا يُعيد ترقيم الكلّ،
    * فالطلبات الجارية التي تشير إلى رقم خطوة تبقى على معناها.
+   *
+   * و(chain_id, step_order) قيدٌ فريد، فكتابة رقم الثانية على
+   * الأولى مباشرةً تصطدم به ويفشل التبديل كلّه. فتُركن الأولى
+   * في رقمٍ سالب لا يشغله أحد، ثم يُكمل التبديل.
    */
   const move = (i: number, dir: -1 | 1) => {
     const a = list[i];
     const b = list[i + dir];
     if (!a || !b) return;
     void guard(async () => {
-      await patch("jam_chain_steps", a.id, { step_order: b.step_order });
+      await patch("jam_chain_steps", a.id, { step_order: -a.step_order - 1 });
       await patch("jam_chain_steps", b.id, { step_order: a.step_order });
+      await patch("jam_chain_steps", a.id, { step_order: b.step_order });
     });
   };
 

@@ -96,6 +96,8 @@ type OrderQuery = {
   /** الصفحة: يُجلب ما بعد هذا العدد */
   offset?: number;
   since?: string;
+  /** حدٌّ أعلى للزمن — يلزم تقرير يومٍ بعينه لا «منذ كذا» */
+  until?: string;
 };
 
 export const PAGE_SIZE = 50;
@@ -119,6 +121,7 @@ export async function fetchOrders(q: OrderQuery = {}): Promise<Order[]> {
   if (q.deviceId) query = query.eq("device_id", q.deviceId);
   if (q.driverId) query = query.eq("driver_id", q.driverId);
   if (q.since) query = query.gte("created_at", q.since);
+  if (q.until) query = query.lte("created_at", q.until);
 
   const { data, error } = await query;
   if (error) throw fail(error.message);
@@ -142,13 +145,18 @@ export async function fetchOrder(id: string): Promise<Order | null> {
 
 export async function createOrder(
   order: Omit<Order, "id" | "order_number" | "created_at" | "updated_at">,
+  /**
+   * الإرسال الصامت لإعادة المحاولة من الطابور: تفشل في الخلف كل
+   * نصف دقيقة، فلو بلّغت السجلّ لأغرقت شاشة العميل بشرائط خطأ.
+   */
+  opts: { quiet?: boolean } = {},
 ) {
   const { data, error } = await supabase
     .from("matam_orders")
     .insert(order)
     .select()
     .single();
-  if (error) throw fail(error.message);
+  if (error) throw opts.quiet ? new Error(error.message) : fail(error.message);
   return data as Order;
 }
 
@@ -214,4 +222,62 @@ export async function upsert<T extends { id?: string }>(table: string, row: T) {
   const { data, error } = await supabase.from(table).upsert(row).select().single();
   if (error) throw fail(error.message);
   return data;
+}
+
+/* ===================== سجلّ العملاء ===================== */
+
+/**
+ * هل هذا الرقم محظور؟
+ *
+ * الحظر شأن إدارة، فلا يُعطَّل الطلب لأجله: كل عطبٍ هنا يُفهم
+ * «غير محظور» بصمت ولا يُبلَّغ سجلّ الأعطال — فالعميل لا شأن له
+ * بصلاحية جدولٍ لا يراه.
+ */
+export async function isPhoneBlocked(phone: string): Promise<boolean> {
+  const clean = phone.trim();
+  if (!clean) return false;
+  try {
+    const { data, error } = await supabase
+      .from("matam_users")
+      .select("is_blocked")
+      .eq("phone", clean)
+      .maybeSingle();
+    if (error) return false;
+    return Boolean((data as { is_blocked?: boolean } | null)?.is_blocked);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * يحفظ العميل في سجلّ العملاء عند أول طلب ويحدّثه بعده.
+ *
+ * قبله كان السجلّ يُملأ يدويًا من الإدارة وحدها، وأعمدة العنوان
+ * المحفوظ فارغة أبدًا. وهو كذلك بأفضل جهد: فشلُه لا يُفشل الطلب.
+ */
+export async function rememberCustomer(row: {
+  phone: string;
+  name: string;
+  device_id: string;
+  address: string | null;
+  lat: number | null;
+  lng: number | null;
+}): Promise<void> {
+  const phone = row.phone.trim();
+  if (!phone) return;
+  try {
+    await supabase.from("matam_users").upsert(
+      {
+        phone,
+        name: row.name.trim(),
+        device_id: row.device_id,
+        saved_address: row.address,
+        saved_lat: row.lat,
+        saved_lng: row.lng,
+      },
+      { onConflict: "phone" },
+    );
+  } catch {
+    /* السجلّ تحسينٌ للإدارة، لا شرطٌ لنجاح الطلب */
+  }
 }

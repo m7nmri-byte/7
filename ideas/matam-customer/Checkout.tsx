@@ -3,7 +3,7 @@
 import { useState } from "react";
 import type { OrderType, Settings, Zone } from "../matam/types";
 import { useCart } from "../matam/cart";
-import { createOrder } from "../matam/db";
+import { createOrder, isPhoneBlocked, rememberCustomer } from "../matam/db";
 import { enqueue, type PendingOrder } from "../matam/queue";
 import { money, taxIn } from "../matam/format";
 import { MSheet, mField, mPrimary } from "../matam/ui";
@@ -121,8 +121,23 @@ export function Checkout({
       rating_note: null,
     };
 
+    /** الحظر يُفحص قبل الإرسال لا بعده، فلا يُنشأ طلبٌ ثم يُلغى */
+    if (await isPhoneBlocked(payload.customer_phone)) {
+      setError("هذا الرقم موقوف عن الطلب. تواصل مع المطعم.");
+      setBusy(false);
+      return;
+    }
+
     try {
       const order = await createOrder(payload);
+      void rememberCustomer({
+        phone: payload.customer_phone,
+        name: payload.customer_name,
+        device_id: deviceId,
+        address: payload.delivery_address,
+        lat: payload.delivery_lat,
+        lng: payload.delivery_lng,
+      });
       clear();
       onPlaced(order.id);
       onClose();
