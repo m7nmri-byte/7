@@ -14,9 +14,10 @@ import {
   fetchZones,
 } from "../matam/db";
 import { useCart } from "../matam/cart";
-import { useDeviceId, useLive } from "../matam/hooks";
+import { useDeviceId, useLive, useTick } from "../matam/hooks";
 import { useQueue, useQueueFlusher } from "../matam/queue";
 import { isOpenOrder } from "../matam/status";
+import { closedText, openState } from "../matam/hours";
 import { Body, Phone, TabBar, TopBar, useMToast } from "../matam/ui";
 import { Menu } from "./Menu";
 import { ItemSheet } from "./ItemSheet";
@@ -115,6 +116,10 @@ export default function CustomerApp() {
 
   const fee = Number(settings?.delivery_fee ?? 0);
 
+  /** حالة المطعم تُعاد كل دقيقة، فالإغلاق يقع في وقته لا عند إعادة التحميل */
+  const tick = useTick(60_000);
+  const open = useMemo(() => openState(settings ?? null, new Date(tick)), [settings, tick]);
+
   return (
     <Phone
       bar={
@@ -135,15 +140,16 @@ export default function CustomerApp() {
     >
       <TopBar
         title={settings?.restaurant_name || "المطعم"}
-        subtitle={
-          settings
-            ? settings.is_open && settings.allow_orders
-              ? "مفتوح الآن"
-              : "مغلق"
-            : "…"
-        }
+        subtitle={settings ? (open.ordering ? "مفتوح الآن" : closedText(open)) : "…"}
         start={
-          shown ? (
+          !shown && settings?.logo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={settings.logo_url}
+              alt=""
+              className="size-9 shrink-0 rounded-xl object-cover"
+            />
+          ) : shown ? (
             <button onClick={() => setOpenOrder(null)} className="text-sm text-m-dim">
               ‹
             </button>
@@ -159,6 +165,7 @@ export default function CustomerApp() {
           </>
         ) : tab === "menu" ? (
           <Menu
+            closedNote={open.ordering ? null : closedText(open)}
             settings={settings ?? null}
             categories={categories ?? []}
             items={items ?? []}
@@ -171,7 +178,7 @@ export default function CustomerApp() {
           <Cart
             deliveryFee={fee}
             minOrder={Number(settings?.min_order_amount ?? 0)}
-            canOrder={Boolean(settings?.is_open && settings?.allow_orders)}
+            canOrder={open.ordering}
             onCheckout={() => setCheckout(true)}
           />
         ) : tab === "orders" ? (
@@ -185,6 +192,7 @@ export default function CustomerApp() {
           </>
         ) : (
           <Support
+            settings={settings ?? null}
             deviceId={deviceId}
             tickets={tickets ?? []}
             name={profile.name}

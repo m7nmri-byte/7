@@ -29,13 +29,18 @@ export function MapPicker({
   value,
   onChange,
   height = 220,
+  fallback,
 }: {
   value: Point | null;
   onChange: (p: Point) => void;
   height?: number;
+  /** من أين تبدأ الخريطة إن لم يكن للعميل موقع محفوظ — موقع المطعم أولى */
+  fallback?: Point | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
-  const [center, setCenter] = useState<Point>(value ?? { lat: 24.7136, lng: 46.6753 });
+  const [center, setCenter] = useState<Point>(
+    value ?? fallback ?? { lat: 24.7136, lng: 46.6753 },
+  );
   const [size, setSize] = useState({ w: 320, h: height });
   const drag = useRef<{ x: number; y: number; lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);

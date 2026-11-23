@@ -3,6 +3,8 @@
 import { useState } from "react";
 import type { DayHours, Settings as S } from "../matam/types";
 import { saveSettings } from "../matam/db";
+import { MapPicker } from "../matam/MapPicker";
+import { ImageField } from "../matam/ImageField";
 import { DAY_NAMES } from "../matam/format";
 import { mField, mGhost, mPrimary } from "../matam/ui";
 
@@ -81,6 +83,34 @@ export function SettingsScreen({
           onChange={(e) => set({ whatsapp_number: e.target.value || null })}
           placeholder="واتساب"
         />
+
+        <ImageField
+          label="الشعار"
+          folder="matam/brand"
+          value={draft.logo_url}
+          onChange={(url) => set({ logo_url: url })}
+        />
+        <ImageField
+          label="صورة الغلاف"
+          folder="matam/brand"
+          value={draft.cover_url}
+          onChange={(url) => set({ cover_url: url })}
+        />
+
+        {/* موقع المطعم: منه تبدأ خريطة العميل حين لا عنوان محفوظ له */}
+        <MapPicker
+          value={
+            draft.restaurant_lat != null && draft.restaurant_lng != null
+              ? { lat: draft.restaurant_lat, lng: draft.restaurant_lng }
+              : null
+          }
+          onChange={(pt) => set({ restaurant_lat: pt.lat, restaurant_lng: pt.lng })}
+        />
+        <p className="text-[11px] text-m-faint">
+          {draft.restaurant_lat != null
+            ? "موقع المطعم محدَّد — تبدأ خريطة العميل منه"
+            : "حدّد موقع المطعم على الخريطة"}
+        </p>
       </section>
 
       <section className="flex flex-col gap-3">

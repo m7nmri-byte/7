@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { supabase } from "@/lib/supabase";
-import type { Ticket } from "../matam/types";
+import type { Settings, Ticket } from "../matam/types";
 import { fetchTicketMessages, sendTicketMessage } from "../matam/db";
 import { useLive } from "../matam/hooks";
 import { sinceText } from "../matam/format";
@@ -12,12 +12,14 @@ const CATEGORIES = ["استفسار", "شكوى عن طلب", "اقتراح", "�
 
 export function Support({
   deviceId,
+  settings,
   tickets,
   name,
   phone,
   onRefresh,
 }: {
   deviceId: string;
+  settings: Settings | null;
   tickets: Ticket[];
   name: string;
   phone: string;
@@ -59,8 +61,35 @@ export function Support({
 
   if (open) return <Thread ticket={open} name={name} onBack={() => setOpenId(null)} />;
 
+  /** الرقم السعودي للواتساب يُرسل بلا صفر البداية ولا رموز */
+  const wa = (settings?.whatsapp_number ?? "").replace(/[^0-9]/g, "").replace(/^0+/, "");
+  const tel = settings?.restaurant_phone ?? null;
+
   return (
     <div className="flex flex-col gap-4 p-4">
+      {(wa || tel) && (
+        <section className="flex gap-2">
+          {wa && (
+            <a
+              href={"https://wa.me/" + (wa.startsWith("966") ? wa : "966" + wa)}
+              target="_blank"
+              rel="noreferrer"
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#25d366] px-4 py-3 text-sm font-semibold text-[#ffffff]"
+            >
+              واتساب
+            </a>
+          )}
+          {tel && (
+            <a
+              href={"tel:" + tel}
+              className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-m-line bg-m-surface px-4 py-3 text-sm font-semibold"
+            >
+              اتصال
+            </a>
+          )}
+        </section>
+      )}
+
       <section className="flex flex-col gap-3 rounded-2xl border border-m-line bg-m-surface p-4">
         <h2 className="text-sm font-semibold">تذكرة جديدة</h2>
 

@@ -82,6 +82,9 @@ export function Checkout({
       /* لا بأس */
     }
 
+    /** الافتراضي من إعدادات المطعم، لا صفرًا — فالمطبخ يرفعه أو يخفضه بعد */
+    const prep = Number(settings?.estimated_prep_time ?? 0);
+
     const payload: PendingOrder = {
       customer_name: profile.name.trim(),
       customer_phone: profile.phone.trim(),
@@ -103,8 +106,8 @@ export function Checkout({
       payment_status: "pending",
       notes: notes.trim() || null,
       kitchen_notes: null,
-      estimated_minutes: null,
-      estimated_set_at: null,
+      estimated_minutes: prep > 0 ? prep : null,
+      estimated_set_at: prep > 0 ? new Date().toISOString() : null,
       delivery_address: type === "delivery" ? profile.address.trim() : null,
       delivery_lat: type === "delivery" ? (profile.lat ?? null) : null,
       delivery_lng: type === "delivery" ? (profile.lng ?? null) : null,
@@ -220,6 +223,11 @@ export function Checkout({
           <div className="flex flex-col gap-1.5">
             <span className="text-xs text-m-dim">الموقع على الخريطة</span>
             <MapPicker
+              fallback={
+                settings?.restaurant_lat != null && settings?.restaurant_lng != null
+                  ? { lat: settings.restaurant_lat, lng: settings.restaurant_lng }
+                  : null
+              }
               value={
                 profile.lat != null && profile.lng != null
                   ? { lat: profile.lat, lng: profile.lng }
@@ -255,6 +263,11 @@ export function Checkout({
           <dd className="text-m-accent">{money(total)}</dd>
         </div>
         <p className="text-[11px] text-m-faint">الدفع نقدًا عند الاستلام</p>
+        {Number(settings?.estimated_prep_time ?? 0) > 0 && (
+          <p className="text-[11px] text-m-faint">
+            الوقت المتوقّع للتحضير: {settings?.estimated_prep_time} دقيقة
+          </p>
+        )}
       </dl>
 
       {error && (

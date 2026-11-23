@@ -36,6 +36,7 @@ function Thumb({ src, alt }: { src: string | null; alt: string }) {
 
 export function Menu({
   settings,
+  closedNote,
   categories,
   items,
   combos,
@@ -44,6 +45,7 @@ export function Menu({
   onOpenCombo,
 }: {
   settings: Settings | null;
+  closedNote: string | null;
   categories: Category[];
   items: Item[];
   combos: Combo[];
@@ -66,13 +68,18 @@ export function Menu({
   }, [items, active, query]);
 
   const activeCombos = combos.filter((c) => c.is_active);
-  const closed = settings && (!settings.is_open || !settings.allow_orders);
+
 
   return (
     <div className="flex flex-col">
-      {closed && (
+      {settings?.cover_url && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={settings.cover_url} alt="" className="h-36 w-full shrink-0 object-cover" />
+      )}
+
+      {closedNote && (
         <div className="bg-m-danger/15 px-4 py-2.5 text-center text-xs text-m-danger">
-          المطعم مغلق الآن — يمكنك التصفّح دون طلب
+          {closedNote} — يمكنك التصفّح دون طلب
         </div>
       )}
 
