@@ -5,7 +5,7 @@ import type { OrderType, Settings, Zone } from "../matam/types";
 import { useCart } from "../matam/cart";
 import { createOrder } from "../matam/db";
 import { enqueue, type PendingOrder } from "../matam/queue";
-import { money } from "../matam/format";
+import { money, taxIn } from "../matam/format";
 import { MSheet, mField, mPrimary } from "../matam/ui";
 import { MapPicker } from "../matam/MapPicker";
 
@@ -116,6 +116,7 @@ export function Checkout({
       driver_id: null,
       driver_name: null,
       cancel_reason: null,
+      printed_at: null,
       rating: null,
       rating_note: null,
     };
@@ -262,6 +263,12 @@ export function Checkout({
           <dt>الإجمالي</dt>
           <dd className="text-m-accent">{money(total)}</dd>
         </div>
+        {taxIn(total, Number(settings?.tax_percent ?? 0)) > 0 && (
+          <div className="flex justify-between text-[11px] text-m-faint">
+            <dt>منها ض.ق.م {settings?.tax_percent}٪</dt>
+            <dd>{money(taxIn(total, Number(settings?.tax_percent ?? 0)))}</dd>
+          </div>
+        )}
         <p className="text-[11px] text-m-faint">الدفع نقدًا عند الاستلام</p>
         {Number(settings?.estimated_prep_time ?? 0) > 0 && (
           <p className="text-[11px] text-m-faint">

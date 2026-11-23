@@ -1,6 +1,7 @@
 "use client";
+import { setCurrency } from "../matam/format";
 
-import { useCallback, useMemo, useState } from "react";
+import { useEffect, useCallback, useMemo, useState } from "react";
 import type { Combo, Item, Order } from "../matam/types";
 import {
   fetchAds,
@@ -70,6 +71,11 @@ export default function CustomerApp() {
   const queued = useQueue();
 
   const { data: settings } = useLive("matam_settings", fetchSettings);
+  /** العملة من الإعدادات — تُضبط في تأثير لا في تصيير */
+  const currency = settings?.currency;
+  useEffect(() => {
+    setCurrency(currency);
+  }, [currency]);
   const { data: categories } = useLive("matam_categories", fetchCategories);
   const { data: items } = useLive("matam_items", fetchItems);
   const { data: combos } = useLive("matam_combos", fetchCombos);

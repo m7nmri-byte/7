@@ -32,6 +32,11 @@ export function KitchenTicket({
         <button onClick={onOpen} className="flex items-center gap-2">
           <span className="mark text-lg font-bold tabular-nums">#{order.order_number}</span>
           <Chip color={STATUS_COLOR[order.status]}>{STATUS_LABEL[order.status]}</Chip>
+          {order.printed_at && (
+            <span className="shrink-0 text-[10px] text-m-faint" title="طُبعت بطاقته">
+              طُبع
+            </span>
+          )}
         </button>
         <span
           className="mark text-sm font-semibold tabular-nums"

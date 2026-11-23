@@ -1,6 +1,7 @@
 "use client";
+import { setCurrency } from "../matam/format";
 
-import { useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import {
   fetchAds,
@@ -81,6 +82,11 @@ export default function AdminApp() {
   );
   const { data: orders, refresh: refreshOrders } = useLive("matam_orders", loadOrders);
   const { data: settings, refresh: refreshSettings } = useLive("matam_settings", fetchSettings);
+  /** العملة من الإعدادات — تُضبط في تأثير لا في تصيير */
+  const currency = settings?.currency;
+  useEffect(() => {
+    setCurrency(currency);
+  }, [currency]);
   const { data: items, refresh: refreshItems } = useLive("matam_items", fetchItems);
   const { data: categories, refresh: refreshCats } = useLive("matam_categories", fetchCategories);
   const { data: drivers, refresh: refreshDrivers } = useLive("matam_drivers", fetchDrivers);

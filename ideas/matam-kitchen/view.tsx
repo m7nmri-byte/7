@@ -1,10 +1,10 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useEffect, useCallback, useState } from "react";
 import type { Order, OrderStatus } from "../matam/types";
 import { fetchOrders, updateOrder } from "../matam/db";
 import { useLive, useTick } from "../matam/hooks";
-import { sinceText } from "../matam/format";
+import { sinceText , setCurrency } from "../matam/format";
 import { TYPE_LABEL, nextStatus } from "../matam/status";
 import { DataErrorBar,
   Body,
@@ -50,11 +50,20 @@ export default function KitchenApp() {
 
   const load = useCallback(() => fetchOrders({ statuses: KITCHEN, limit: 80 }), []);
   const { data: settings } = useLive("matam_settings", fetchSettings);
+  /** العملة من الإعدادات — تُضبط في تأثير لا في تصيير */
+  const currency = settings?.currency;
+  useEffect(() => {
+    setCurrency(currency);
+  }, [currency]);
   const { data, loading, refresh } = useLive("matam_orders", load);
   const orders = data ?? [];
 
   // التنبيه يحتاج تفاعلًا واحدًا من المستخدم قبل أن يسمح به المتصفح
-  const { ready: alertsOn, enable: enableAlerts } = useOrderAlerts(orders, true);
+  /** الإدارة تملك إسكات المطبخ — الإعداد يُقرأ ولا يُفترض */
+  const { ready: alertsOn, enable: enableAlerts } = useOrderAlerts(
+    orders,
+    settings?.notify_sound ?? true,
+  );
 
   const queue = orders
     .filter((o) => o.status !== "ready")
@@ -164,7 +173,16 @@ export default function KitchenApp() {
               حفظ
             </button>
             <button
-              onClick={() => open && printOrder(open, settings ?? null, "kitchen")}
+              onClick={() =>
+                open &&
+                printOrder(open, settings ?? null, "kitchen", () => {
+                  /** الختم يُعرف منه ما طُبع، فلا يُطبع الطلب مرّتين بلا قصد */
+                  void updateOrder(open.id, { printed_at: new Date().toISOString() }).then(
+                    refresh,
+                    () => {},
+                  );
+                })
+              }
               className={mGhost}
             >
               طباعة

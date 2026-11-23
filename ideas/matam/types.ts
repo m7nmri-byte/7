@@ -142,6 +142,7 @@ export type Order = {
   driver_id: string | null;
   driver_name: string | null;
   cancel_reason: string | null;
+  printed_at: string | null;
   rating: number | null;
   rating_note: string | null;
   created_at: string;
@@ -168,6 +169,9 @@ export type Settings = {
   restaurant_lat: number | null;
   restaurant_lng: number | null;
   work_hours: DayHours[];
+  currency: string;
+  tax_percent: number;
+  notify_sound: boolean;
 };
 
 export type Banner = {

@@ -50,7 +50,15 @@ export function OrderSheet({
               {advance}
             </button>
           )}
-          <button onClick={() => printOrder(order, settings, "receipt")} className={mGhost}>
+          <button
+            onClick={() =>
+              printOrder(order, settings, "receipt", () =>
+                /** الختم يمرّ على onApply كبقية التعديلات، فمسار الحفظ واحد */
+                onApply(order, { printed_at: new Date().toISOString() }),
+              )
+            }
+            className={mGhost}
+          >
             طباعة
           </button>
           {isOpenOrder(order.status) && (

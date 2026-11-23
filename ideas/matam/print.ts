@@ -1,7 +1,7 @@
 "use client";
 
 import type { Order, Settings } from "./types";
-import { money, timeOf } from "./format";
+import { money, taxIn, timeOf } from "./format";
 import { TYPE_LABEL } from "./status";
 
 const esc = (s: string) =>
@@ -11,7 +11,13 @@ const esc = (s: string) =>
  * إيصال بعرض ٨٠ ملّيمترًا — مقاس طابعات الإيصالات الحرارية.
  * يُفتح في نافذة منفصلة فلا تتأثّر صفحة التطبيق بأنماط الطباعة.
  */
-export function printOrder(order: Order, settings: Settings | null, kind: "kitchen" | "receipt") {
+export function printOrder(
+  order: Order,
+  settings: Settings | null,
+  kind: "kitchen" | "receipt",
+  /** يُنادى بعد فتح نافذة الطباعة ليُختم وقت الطبع على الطلب */
+  onPrinted?: () => void,
+) {
   const rows = order.items
     .map((it) => {
       const opts = it.options
@@ -30,12 +36,20 @@ export function printOrder(order: Order, settings: Settings | null, kind: "kitch
     })
     .join("");
 
+  /** الأسعار شاملة للضريبة، فتُستخرج من الإجمالي ولا تُضاف فوقه */
+  const tax = taxIn(Number(order.total), Number(settings?.tax_percent ?? 0));
+  const taxRow =
+    tax > 0
+      ? `<tr><td>منها ض.ق.م ${esc(String(settings?.tax_percent ?? 0))}٪</td><td class="num">${esc(money(tax))}</td></tr>`
+      : "";
+
   const totals =
     kind === "receipt"
       ? `<table class="totals">
           <tr><td>المجموع</td><td class="num">${esc(money(order.subtotal))}</td></tr>
           <tr><td>التوصيل</td><td class="num">${esc(money(order.delivery_fee))}</td></tr>
           <tr class="grand"><td>الإجمالي</td><td class="num">${esc(money(order.total))}</td></tr>
+          ${taxRow}
         </table>`
       : "";
 
@@ -89,6 +103,7 @@ export function printOrder(order: Order, settings: Settings | null, kind: "kitch
   setTimeout(() => {
     w.print();
     w.close();
+    onPrinted?.();
   }, 350);
   return true;
 }

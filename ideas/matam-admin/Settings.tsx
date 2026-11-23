@@ -85,6 +85,34 @@ export function SettingsScreen({
           placeholder="واتساب"
         />
 
+        <div className="grid grid-cols-2 gap-2">
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[11px] text-m-dim">رمز العملة</span>
+            <input
+              className={mField}
+              value={draft.currency ?? ""}
+              onChange={(e) => set({ currency: e.target.value })}
+              placeholder="ر.س"
+            />
+          </label>
+          <label className="flex flex-col gap-1.5">
+            <span className="text-[11px] text-m-dim">ض.ق.م ٪ (شاملة في السعر)</span>
+            <input
+              type="number"
+              className={`${mField} mark`}
+              value={String(draft.tax_percent ?? 0)}
+              onChange={(e) => set({ tax_percent: num(e.target.value) })}
+            />
+          </label>
+        </div>
+        
+        <button
+          onClick={() => set({ notify_sound: !(draft.notify_sound ?? true) })}
+          className={`${mGhost} ${draft.notify_sound ?? true ? "" : "text-m-faint"}`}
+        >
+          {draft.notify_sound ?? true ? "تنبيه المطبخ الصوتي: مُفعَّل" : "تنبيه المطبخ الصوتي: مُسكَت"}
+        </button>
+        
         <ImageField
           label="الشعار"
           folder="matam/brand"

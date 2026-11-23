@@ -3,8 +3,31 @@ const nf = new Intl.NumberFormat("ar-SA", {
   maximumFractionDigits: 2,
 });
 
-/** مبلغ بالريال — الرمز بعد الرقم كما يُقرأ في السعودية */
-export const money = (n: number) => `${nf.format(Number(n) || 0)} ر.س`;
+/**
+ * رمز العملة من إعدادات المطعم.
+ * يُضبط مرّة حين تُحمَّل الإعدادات، بدل تمريره إلى أربعين موضعًا
+ * يستعمل money — فالمطعم واحد وعملته واحدة.
+ */
+let symbol = "ر.س";
+
+export function setCurrency(next: string | null | undefined) {
+  const clean = (next ?? "").trim();
+  if (clean) symbol = clean;
+}
+
+/** مبلغ — الرمز بعد الرقم كما يُقرأ في السعودية */
+export const money = (n: number) => `${nf.format(Number(n) || 0)} ${symbol}`;
+
+/**
+ * ضريبة القيمة المضافة المحتواة في مبلغ.
+ * الأسعار في السعودية تُعرض شاملةً للضريبة، فالضريبة تُستخرج من
+ * الإجمالي لا تُضاف فوقه — وإلّا حُسبت مرّتين.
+ */
+export const taxIn = (total: number, percent: number) => {
+  const rate = Number(percent) || 0;
+  if (rate <= 0) return 0;
+  return (Number(total) || 0) * (rate / (100 + rate));
+};
 
 const timeFmt = new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
   hour: "numeric",
