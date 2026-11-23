@@ -13,17 +13,20 @@ export function NextSheet({
   title,
   current,
   pending,
+  presetName,
   onClose,
   onProceed,
 }: {
   title: string;
   current: Task | null;
   pending: Task[];
+  /** اسم مبدئي يُملأ تلقائيًا — يأتي من مذكّرة */
+  presetName?: string;
   onClose: () => void;
   onProceed: (next: Next, endOverride?: string) => void;
 }) {
   const [mode, setMode] = useState<"new" | "resume">("new");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(presetName ?? "");
   const [cat, setCat] = useState<Category>("work");
   const [back, setBack] = useState(0);
   // تُركَّب النافذة عند الفتح فقط، فالقيم الابتدائية تُحسب مرة واحدة

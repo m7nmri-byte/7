@@ -14,6 +14,12 @@ import { DayCharts, RangeCharts, type Period, periodDays } from "./charts";
 import { DayNav, Summary, ViewTabs } from "./components/DayBar";
 import { EmptyNow, NowCard } from "./components/NowCard";
 import { PendingStack, Timeline } from "./components/Timeline";
+import { Memos } from "./components/Memos";
+import {
+  PendingActions,
+  StartChoice,
+  type StartIntent,
+} from "./components/StartChoice";
 import { Toast, useNow, useToast } from "./components/ui";
 import { InputSheet } from "./components/InputSheet";
 import { NextSheet } from "./components/NextSheet";
@@ -33,6 +39,8 @@ type Dialog =
   | { kind: "step"; taskId: string; taskName: string }
   | { kind: "next"; close: "completed" | "interrupted"; title: string }
   | { kind: "parallel" }
+  | { kind: "startChoice"; intent: StartIntent; memoId?: string }
+  | { kind: "pendingActions"; taskId: string }
   | { kind: "edit"; taskId: string; segIdx: number }
   | { kind: "addPast"; prevEnd: string | null; nextStart: string | null }
   | { kind: "menu" }
@@ -100,9 +108,41 @@ export function NashatApp({ session }: { session: Session }) {
   };
 
   const resume = (id: string) => {
-    const parallel = actives.length > 0 && actives.length < MAX_PARALLEL;
-    update((s) => A.resumeTask(s, id, parallel));
-    toast(`استُؤنفت: ${byId(id)?.name ?? ""}`);
+    const t = byId(id);
+    if (!t) return;
+    // شيء يعمل الآن: نسأل ماذا يحلّ به قبل البدء
+    if (actives.length > 0) {
+      setDialog({ kind: "startChoice", intent: { type: "resume", id, name: t.name } });
+      return;
+    }
+    update((s) => A.resumeTask(s, id, false));
+    toast(`استُؤنفت: ${t.name}`);
+  };
+
+  /** تنفيذ قرار ورقة «كيف تبدأ؟» */
+  const decide = (
+    intent: StartIntent,
+    d: { kind: "parallel" } | { kind: "close"; status: "completed" | "interrupted" },
+    memoId?: string,
+  ) => {
+    update((prev) => {
+      let next =
+        d.kind === "parallel"
+          ? intent.type === "new"
+            ? A.startParallel(prev, intent.name)
+            : A.resumeTask(prev, intent.id, true)
+          : A.closeAndProceed(
+              prev,
+              d.status,
+              intent.type === "new"
+                ? { type: "new", name: intent.name, category: "work", backMinutes: 0 }
+                : { type: "resume", id: intent.id },
+            );
+      if (memoId) next = A.removeMemo(next, memoId);
+      return next;
+    });
+    setDay(todayStr());
+    toast(`بدأت: ${intent.name}`);
   };
 
   const importFile = (file: File) => {
@@ -161,9 +201,28 @@ export function NashatApp({ session }: { session: Session }) {
               ))
             : isToday && <EmptyNow onStart={start} />}
 
+          <Memos
+            memos={state.memo}
+            hasActive={actives.length > 0}
+            onAdd={(text) => update((s) => A.addMemo(s, text))}
+            onRemove={(id) => update((s) => A.removeMemo(s, id))}
+            onStart={(m) => {
+              if (actives.length === 0) {
+                update((s) => A.removeMemo(A.startTask(s, m.text), m.id));
+                toast(`بدأت: ${m.text}`);
+              } else {
+                setDialog({
+                  kind: "startChoice",
+                  intent: { type: "new", name: m.text },
+                  memoId: m.id,
+                });
+              }
+            }}
+          />
+
           <PendingStack
             tasks={pending}
-            onResume={resume}
+            onResume={(id) => setDialog({ kind: "pendingActions", taskId: id })}
             onDismiss={(id) => update((s) => A.dismissTask(s, id))}
           />
 
@@ -193,7 +252,12 @@ export function NashatApp({ session }: { session: Session }) {
           </div>
 
           {period === "day" ? (
-            <DayCharts tasks={state.tasks} day={day} now={now} onResume={resume} />
+            <DayCharts
+              tasks={state.tasks}
+              day={day}
+              now={now}
+              onResume={(id) => setDialog({ kind: "pendingActions", taskId: id })}
+            />
           ) : (
             <RangeCharts
               tasks={state.tasks}
@@ -220,15 +284,57 @@ export function NashatApp({ session }: { session: Session }) {
       )}
 
       {dialog.kind === "parallel" && (
-        <InputSheet
+        <NextSheet
           title="مهمة بالتوازي"
-          desc="تبدأ الآن دون إغلاق المهمة الجارية"
-          placeholder="اسم المهمة"
-          onConfirm={(name) => {
-            update((s) => A.startParallel(s, name));
-            toast(`بدأت بالتوازي: ${name.trim()}`);
-          }}
+          current={null}
+          pending={pending}
           onClose={close}
+          onProceed={(next) => {
+            if (next.type === "new") {
+              update((s) => A.startParallel(s, next.name, next.category));
+              toast(`بدأت بالتوازي: ${next.name.trim()}`);
+            } else if (next.type === "resume") {
+              update((s) => A.resumeTask(s, next.id, true));
+              toast("استُؤنفت بالتوازي");
+            }
+          }}
+        />
+      )}
+
+      {dialog.kind === "startChoice" && (
+        <StartChoice
+          intent={dialog.intent}
+          actives={actives}
+          onClose={close}
+          onDecide={(d) => {
+            if (dialog.kind !== "startChoice") return;
+            decide(dialog.intent, d, dialog.memoId);
+            close();
+          }}
+        />
+      )}
+
+      {dialog.kind === "pendingActions" && byId(dialog.taskId) && (
+        <PendingActions
+          task={byId(dialog.taskId)!}
+          onClose={close}
+          onResume={() => {
+            const id = dialog.kind === "pendingActions" ? dialog.taskId : "";
+            close();
+            resume(id);
+          }}
+          onComplete={() => {
+            if (dialog.kind !== "pendingActions") return;
+            update((s) => A.setTaskStatus(s, dialog.taskId, "completed"));
+            toast("سُجّلت مكتملة");
+            close();
+          }}
+          onDismiss={() => {
+            if (dialog.kind !== "pendingActions") return;
+            update((s) => A.dismissTask(s, dialog.taskId));
+            toast("أُزيلت من المعلّقة");
+            close();
+          }}
         />
       )}
 
