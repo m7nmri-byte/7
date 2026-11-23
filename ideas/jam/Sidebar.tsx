@@ -202,17 +202,30 @@ export function Sidebar({
             : 0;
 
           return (
-          <div key={g.label || "top"} className="mb-1">
+          <div
+            key={g.label || "top"}
+            className={
+              "mb-1.5 rounded-xl " +
+              (g.label && !shut ? "bg-j-raised/50 pb-1.5" : "")
+            }
+          >
             {g.label && (
               <button
                 onClick={() => toggleFold(g.label)}
                 aria-expanded={!shut}
-                className="flex w-full items-center gap-1.5 rounded-lg px-3 pb-1 pt-3 text-start text-[10px] font-semibold tracking-wide text-j-faint hover:text-j-dim"
+                className={
+                  "flex w-full items-center gap-1.5 rounded-xl px-3 py-2.5 text-start text-[11px] font-bold tracking-[0.08em] transition-colors " +
+                  (shut
+                    ? "text-j-faint hover:text-j-dim"
+                    : "text-j-brand")
+                }
               >
                 <svg
                   viewBox="0 0 24 24"
                   aria-hidden
-                  className={"size-3 shrink-0 transition-transform " + (shut ? "-rotate-90" : "")}
+                  className={
+                    "size-3 shrink-0 opacity-70 transition-transform " + (shut ? "-rotate-90" : "")
+                  }
                   fill="none"
                   stroke="currentColor"
                   strokeWidth="2.2"
@@ -229,6 +242,8 @@ export function Sidebar({
                 )}
               </button>
             )}
+            {/* خطٌّ رأسيّ يجمع البنود تحت عنوانها، فيُرى أنّها منه */}
+            <div className={g.label && !shut ? "ms-4 me-1.5 border-s border-j-line ps-2" : ""}>
             {!shut &&
             g.items.map((it) => {
               const on = section === it.key;
@@ -241,10 +256,10 @@ export function Sidebar({
                     setOpen(false);
                   }}
                   className={
-                    "flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-start text-xs transition-colors " +
+                    "flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-start text-[13px] transition-colors " +
                     (on
-                      ? "bg-j-brand/10 font-semibold text-j-brand"
-                      : "text-j-dim hover:bg-j-raised hover:text-j-text")
+                      ? "bg-j-brand font-semibold text-white shadow-j-sm"
+                      : "text-j-dim hover:bg-j-surface hover:text-j-text")
                   }
                 >
                   <Glyph path={it.icon} />
@@ -257,6 +272,7 @@ export function Sidebar({
                 </button>
               );
             })}
+            </div>
           </div>
           );
         })}
