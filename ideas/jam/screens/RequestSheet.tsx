@@ -12,6 +12,9 @@ import {
   PRIORITY,
   STATUS_TONE,
   afterApprove,
+  afterDelegate,
+  afterExecuted,
+  afterForward,
   afterReject,
   afterReturn,
   awaitsMe,
@@ -45,6 +48,8 @@ export function RequestSheet({
   const me = useMe();
   const [note, setNote] = useState("");
   const [busy, setBusy] = useState(false);
+  /** من نحوّل إليه أو نُحيل، ونوع العملية */
+  const [hand, setHand] = useState<{ kind: "forward" | "delegate"; to: string } | null>(null);
 
   const loadLogs = useCallback(
     () => (request ? fetchRequestLogs(request.id) : Promise.resolve([])),
@@ -89,10 +94,64 @@ export function RequestSheet({
       wide
       title={`طلب #${request.number} — ${request.title}`}
       footer={
-        turn ? (
+        hand ? (
+          <div className="flex flex-col gap-2">
+            <span className="text-xs text-j-dim">
+              {hand.kind === "forward" ? "حوّل المراجعة إلى" : "أحِل التنفيذ إلى"}
+            </span>
+            <select
+              className={jField}
+              value={hand.to}
+              onChange={(e) => setHand({ ...hand, to: e.target.value })}
+            >
+              <option value="">— اختر عضوًا —</option>
+              {members
+                .filter((m) => m.is_active && m.id !== me)
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+            </select>
+            <div className="flex gap-2">
+              <button
+                disabled={busy || !hand.to}
+                onClick={() =>
+                  void act(
+                    hand.kind === "forward"
+                      ? afterForward(hand.to, note)
+                      : afterDelegate(hand.to, note),
+                    hand.kind === "forward" ? "forwarded" : "delegated",
+                  )
+                }
+                className={`${jPrimary} flex-1`}
+              >
+                تأكيد
+              </button>
+              <button onClick={() => setHand(null)} className={jGhost}>
+                تراجع
+              </button>
+            </div>
+          </div>
+        ) : request.status === "delegated" && request.delegated_to === me ? (
+          <button
+            disabled={busy}
+            onClick={() => void act(afterExecuted(note), "approved")}
+            className={`${jPrimary} w-full`}
+          >
+            تمّ التنفيذ
+          </button>
+        ) : turn ? (
           <div className="flex flex-wrap gap-2">
             <button disabled={busy} onClick={() => void approve()} className={`${jPrimary} flex-1`}>
               اعتماد
+            </button>
+            <button
+              disabled={busy}
+              onClick={() => setHand({ kind: "forward", to: "" })}
+              className={jGhost}
+            >
+              حوّل المراجعة
             </button>
             <button
               disabled={busy}
@@ -113,6 +172,14 @@ export function RequestSheet({
           <button disabled={busy} onClick={() => void resubmit()} className={`${jPrimary} w-full`}>
             إعادة الإرسال
           </button>
+        ) : request.status === "approved" ? (
+          <button
+            disabled={busy}
+            onClick={() => setHand({ kind: "delegate", to: "" })}
+            className={`${jGhost} w-full`}
+          >
+            أحِل للتنفيذ
+          </button>
         ) : null
       }
     >
@@ -132,7 +199,11 @@ export function RequestSheet({
         </div>
         <div>
           <dt className="text-j-dim">عند</dt>
-          <dd className="font-medium">{nameOf(request.current_reviewer)}</dd>
+          <dd className="font-medium">
+            {request.status === "delegated"
+              ? nameOf(request.delegated_to) + " (تنفيذًا)"
+              : nameOf(request.current_reviewer)}
+          </dd>
         </div>
         <div>
           <dt className="text-j-dim">السلسلة</dt>

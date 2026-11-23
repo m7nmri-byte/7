@@ -2,7 +2,7 @@
 
 import type { Order } from "../matam/types";
 import { minutesSince, timeOf } from "../matam/format";
-import { ADVANCE_LABEL, STATUS_COLOR, STATUS_LABEL, TYPE_LABEL } from "../matam/status";
+import { STATUS_COLOR, STATUS_LABEL, TYPE_LABEL, advanceLabel } from "../matam/status";
 import { Chip, mPrimary } from "../matam/ui";
 
 /** لون يشتدّ مع طول الانتظار — يلفت النظر لما تأخّر */
@@ -24,7 +24,7 @@ export function KitchenTicket({
   onOpen: () => void;
 }) {
   const age = minutesSince(order.created_at, now);
-  const label = order.status === "ready" ? null : ADVANCE_LABEL[order.status];
+  const label = order.status === "ready" ? null : advanceLabel(order.status, order.order_type);
 
   return (
     <article className="flex flex-col gap-3 rounded-2xl border border-m-line bg-m-surface p-4">

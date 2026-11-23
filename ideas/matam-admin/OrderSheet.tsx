@@ -3,7 +3,7 @@
 import type { Driver, Order, PaymentStatus, Settings } from "../matam/types";
 import { money } from "../matam/format";
 import {
-  ADVANCE_LABEL,
+  advanceLabel,
   PAYMENT_LABEL,
   TYPE_LABEL,
   isOpenOrder,
@@ -33,7 +33,7 @@ export function OrderSheet({
   if (!order) return null;
 
   const next = nextStatus(order.status, order.order_type);
-  const advance = ADVANCE_LABEL[order.status];
+  const advance = advanceLabel(order.status, order.order_type);
 
   return (
     <MSheet

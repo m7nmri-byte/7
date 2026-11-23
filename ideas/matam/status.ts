@@ -52,13 +52,25 @@ export function nextStatus(
 }
 
 /** نصّ الزرّ الذي ينقل الطلب إلى حالته التالية */
-export const ADVANCE_LABEL: Partial<Record<OrderStatus, string>> = {
+const ADVANCE: Partial<Record<OrderStatus, string>> = {
   pending: "اقبل الطلب",
   confirmed: "ابدأ التحضير",
   preparing: "جاهز",
   ready: "أخرجه للتوصيل",
   out_for_delivery: "تم التسليم",
 };
+
+/**
+ * النصّ يتبع نوع الطلب لا الحالة وحدها.
+ *
+ * طلب الاستلام الجاهز ينتقل إلى «تم التسليم» لا إلى الطريق، وكان
+ * زرّه يقول «أخرجه للتوصيل» — فيفعل الصواب ويقول الخطأ، وهو مما
+ * يُوقع في الغلط في مطبخ مشغول.
+ */
+export function advanceLabel(status: OrderStatus, type: OrderType): string | undefined {
+  if (status === "ready" && type === "pickup") return "سلّمه للزبون";
+  return ADVANCE[status];
+}
 
 export const isOpenOrder = (s: OrderStatus) =>
   s !== "delivered" && s !== "cancelled";
