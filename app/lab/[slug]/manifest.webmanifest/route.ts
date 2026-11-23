@@ -29,7 +29,7 @@ export async function GET(
     start_url: base,
     scope: base,
     display: "standalone",
-    orientation: "portrait",
+    orientation: idea.orientation ?? "portrait",
     dir: "rtl",
     lang: "ar",
     background_color: idea.appBg ?? idea.icon.bg,

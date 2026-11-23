@@ -1,6 +1,6 @@
 /* عامل خدمة بسيط: يُبقي الأدوات تعمل بلا إنترنت */
 
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL = `shell-${VERSION}`;
 const PAGES = `pages-${VERSION}`;
 
@@ -54,7 +54,43 @@ self.addEventListener("fetch", (event) => {
           void caches.open(PAGES).then((c) => c.put(request, copy));
           return res;
         })
-        .catch(async () => (await caches.match(request)) ?? caches.match("/")),
+        .catch(() => offline(url, request)),
     );
   }
 });
+
+/**
+ * بديل الانقطاع.
+ *
+ * كان الرجوع إلى "/" — أي إلى الصفحة الرئيسة للموقع الأساس. وأداة
+ * مثبَّتة لا يجوز أن تهبط في الموقع الأساس بحال، فلو انقطع الاتصال
+ * ولم تُحفظ صفحتها بعد خرجت من إطارها. فالبديل الآن من داخل الأداة:
+ * صفحتها المحفوظة، ثم صفحة اعتذار بلا أي رابطٍ يخرج منها.
+ */
+async function offline(url, request) {
+  const hit = await caches.match(request);
+  if (hit) return hit;
+
+  /** جذر الأداة: /lab/<المعرّف> — بلا تعبير نمطيّ، فالشرطة المائلة تكفي */
+  const parts = url.pathname.split("/");
+  if (parts[1] === "lab" && parts[2]) {
+    const own = await caches.match("/lab/" + parts[2]);
+    if (own) return own;
+    return apology("هذه الأداة تحتاج اتصالًا أول مرة");
+  }
+
+  return (await caches.match("/")) ?? apology("لا اتصال");
+}
+
+function apology(text) {
+  const html =
+    "<!DOCTYPE html><html lang=ar dir=rtl><head><meta charset=utf-8>" +
+    "<meta name=viewport content=\"width=device-width,initial-scale=1\">" +
+    "<title>بلا اتصال</title><style>" +
+    "html,body{height:100%;margin:0}body{display:grid;place-items:center;" +
+    "background:#1a1a1a;color:#e8e8e8;font-family:system-ui,sans-serif;padding:24px}" +
+    "p{font-size:14px;line-height:1.9;text-align:center;max-width:22rem}" +
+    "</style></head><body><p>" + text + "</p></body></html>";
+  return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+}
+
