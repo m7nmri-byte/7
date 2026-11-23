@@ -1,4 +1,5 @@
 "use client";
+import { Banners } from "./Banners";
 import { useTheme } from "../matam/theme";
 
 import { useMemo, useState } from "react";
@@ -94,52 +95,13 @@ export function Menu({
         </div>
       )}
 
-      {banners.filter((b) => b.is_active).length > 0 && (
-        <div className="m-noscroll flex gap-3 overflow-x-auto px-4 pt-4">
-          {banners
-            .filter((b) => b.is_active)
-            .map((b) => {
-              /**
-               * رابط اللافتة يعمل.
-               * كانت صورةً صامتة: الإدارة تختار «اربطها بقسم» أو «بصنف»
-               * ولا يحدث عند الضغط شيء، فالحقلان زينة.
-               */
-              const cat =
-                b.link_type === "category" && b.link_id
-                  ? cats.find((c) => c.id === b.link_id)
-                  : undefined;
-              const linked =
-                b.link_type === "item" && b.link_id
-                  ? items.find((i) => i.id === b.link_id)
-                  : undefined;
-              const go = cat
-                ? () => setActive(cat.id)
-                : linked
-                  ? () => onOpenItem(linked)
-                  : null;
-
-              return go ? (
-                <button
-                  key={b.id}
-                  onClick={go}
-                  className="h-32 w-72 shrink-0 overflow-hidden rounded-2xl"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={b.image_url} alt="" loading="lazy" className="size-full object-cover" />
-                </button>
-              ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={b.id}
-                  src={b.image_url}
-                  alt=""
-                  loading="lazy"
-                  className="h-32 w-72 shrink-0 rounded-2xl object-cover"
-                />
-              );
-            })}
-        </div>
-      )}
+      <Banners
+        banners={banners}
+        categories={cats}
+        items={items}
+        onCategory={setActive}
+        onOpenItem={onOpenItem}
+      />
 
       {settings?.welcome_message && (
         <p className="px-4 pt-4 text-sm text-m-dim">{settings.welcome_message}</p>
