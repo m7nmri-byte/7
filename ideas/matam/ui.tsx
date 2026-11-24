@@ -15,8 +15,11 @@ export const PhoneBench = PhoneMode.Provider;
 
 /**
  * كل واجهة تعيش داخل عرض جوال.
- * على الجوال تملأ الشاشة، وعلى سطح المكتب تظهر كجهاز قائم بذاته —
- * فيمكن فتح واجهتين جنبًا إلى جنب ومتابعة الطلب وهو ينتقل بينهما.
+ *
+ * على الجوال تملأ الشاشة بلا إطار — فالجهاز بيدك هو الإطار، ورسمُ
+ * إطارٍ داخل إطار عبث. وعلى الشاشة العريضة يظهر هيكل جهاز: حافّة
+ * داكنة وكاميرا وأزرار جانبية، فيُقرأ أنّه جوالٌ قائم بذاته — ويمكن
+ * فتح واجهتين جنبًا إلى جنب ومتابعة الطلب وهو ينتقل بينهما.
  */
 export function Phone({
   children,
@@ -28,21 +31,97 @@ export function Phone({
   const mode = useContext(PhoneMode);
   /** المظهر يُقرأ هنا مرّة، فيَرِثه كل ما في الجهاز */
   const { style, card } = useTheme();
-  const frame =
-    mode === "embedded"
-      ? "relative h-full w-full rounded-[1.75rem] border border-m-line shadow-xl shadow-black/30"
-      : "relative mx-auto h-dvh w-full max-w-[26rem] sm:my-[2.5dvh] sm:h-[min(44rem,95dvh)] sm:rounded-[2rem] sm:border sm:border-m-line sm:shadow-2xl sm:shadow-black/40";
+  const embedded = mode === "embedded";
 
-  return (
+  /** الشاشة: هي ما يُقصّ عليه المحتوى، وفيها تُفتح الأوراق المنبثقة */
+  const screen = (
     <div
       data-matam
       data-card={card}
       style={style}
-      className={`flex flex-col overflow-hidden bg-m-bg ${frame}`}
+      className={
+        "relative flex min-h-0 flex-1 flex-col overflow-hidden bg-m-bg " +
+        (embedded ? "rounded-[1.6rem]" : "sm:rounded-[1.6rem]")
+      }
     >
       {children}
       {bar}
     </div>
+  );
+
+  /** على الجوال: بلا هيكل، الشاشة وحدها تملأ المساحة */
+  if (!embedded) {
+    return (
+      <div className="relative mx-auto flex h-dvh w-full max-w-[26rem] flex-col sm:my-[2.5dvh] sm:h-[min(44rem,95dvh)]">
+        <Device>{screen}</Device>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative h-full w-full">
+      <Device embedded>{screen}</Device>
+    </div>
+  );
+}
+
+/**
+ * هيكل الجهاز: حافّة داكنة وكاميرا وأزرار.
+ *
+ * ألوانه ثابتة لا من متغيّرات المطعم: هذا عتادٌ لا واجهة، فلا يتبدّل
+ * بلوحة المدير. والأزرار خارج الحافّة فلا يُقصّ الهيكل.
+ */
+function Device({
+  children,
+  embedded,
+}: {
+  children: React.ReactNode;
+  embedded?: boolean;
+}) {
+  /** على الجوال الحقيقي لا هيكل — يبدأ من sm */
+  const body = embedded
+    ? "flex h-full w-full flex-col rounded-[1.95rem] bg-[#15161a] p-[0.35rem] pt-[1.1rem] shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)] ring-1 ring-[#33353c]"
+    : "flex h-full w-full flex-col sm:rounded-[1.95rem] sm:bg-[#15161a] sm:p-[0.35rem] sm:pt-[1.1rem] sm:shadow-[0_18px_40px_-12px_rgba(0,0,0,0.55)] sm:ring-1 sm:ring-[#33353c]";
+
+  const chrome = embedded ? "" : "hidden sm:block";
+
+  return (
+    <>
+      <div className={body}>
+        {/* الكاميرا في الحافّة لا فوق الشاشة، فلا تحجب شيئًا من الواجهة */}
+        <span
+          aria-hidden
+          className={
+            "pointer-events-none absolute inset-x-0 top-[0.42rem] mx-auto size-[0.34rem] rounded-full bg-[#2c2f36] ring-1 ring-[#3f434c] " +
+            chrome
+          }
+        />
+        {children}
+      </div>
+
+      {/* أزرار جانبية — زينةٌ تُكمل الهيئة، ولا تلتقط ضغطًا */}
+      <span
+        aria-hidden
+        className={
+          "pointer-events-none absolute -left-0.5 top-[7.5rem] h-10 w-0.5 rounded-full bg-[#2c2f36] " +
+          chrome
+        }
+      />
+      <span
+        aria-hidden
+        className={
+          "pointer-events-none absolute -left-0.5 top-[10.6rem] h-10 w-0.5 rounded-full bg-[#2c2f36] " +
+          chrome
+        }
+      />
+      <span
+        aria-hidden
+        className={
+          "pointer-events-none absolute -right-0.5 top-[8.8rem] h-14 w-0.5 rounded-full bg-[#2c2f36] " +
+          chrome
+        }
+      />
+    </>
   );
 }
 
